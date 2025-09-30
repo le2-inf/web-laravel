@@ -49,7 +49,6 @@ use Illuminate\Validation\ValidationException;
 /**
  * @property int                 $vm_id                   保养序号
  * @property int                 $ve_id                   车辆序号
- * @property string              $plate_no                车牌号
  * @property null|int            $so_id                   订单序号
  * @property int                 $sc_id                   修理厂序号
  * @property Carbon              $entry_datetime          进厂日时

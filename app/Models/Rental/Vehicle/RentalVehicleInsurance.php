@@ -58,7 +58,6 @@ use Illuminate\Validation\ValidationException;
 /**
  * @property int         $vi_id                               保险单序号
  * @property int         $ve_id                               车辆序号
- * @property string      $plate_no                            车牌号
  * @property null|mixed  $compulsory_policy_file              交强险保单文件路径
  * @property null|mixed  $compulsory_policy_photos            交强险保单照片路径
  * @property null|mixed  $compulsory_policy_addendum_file     交强险批单文件路径

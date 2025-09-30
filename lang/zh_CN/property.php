@@ -420,7 +420,6 @@ return [
     'RentalVehicleAccident' => [
         'va_id'              => '出险序号',
         've_id'              => '车辆序号',
-        'plate_no'           => '车牌号',
         'so_id'              => '订单序号',
         'sc_id'              => '修理厂序号',
         'accident_location'  => '事故地点',
@@ -478,7 +477,6 @@ return [
     'RentalVehicleInsurance' => [
         'vi_id'                               => '保险单序号',
         've_id'                               => '车辆序号',
-        'plate_no'                            => '车牌号',
         'compulsory_policy_file'              => '交强险保单文件路径',
         'compulsory_policy_photos'            => '交强险保单照片路径',
         'compulsory_policy_addendum_file'     => '交强险批单文件路径',
@@ -517,7 +515,6 @@ return [
     'RentalVehicleMaintenance' => [
         'vm_id'                   => '保养序号',
         've_id'                   => '车辆序号',
-        'plate_no'                => '车牌号',
         'so_id'                   => '订单序号',
         'sc_id'                   => '修理厂序号',
         'entry_datetime'          => '进厂日时',
@@ -542,7 +539,6 @@ return [
     'RentalVehicleManualViolation' => [
         'vmv_id'             => '违章序号',
         've_id'              => '车辆序号',
-        'plate_no'           => '车牌号',
         'vu_id'              => '车辆使用时间段序号',
         'violation_datetime' => '违章发生日时',
         'violation_content'  => '违章内容',
@@ -575,7 +571,6 @@ return [
     'RentalVehicleRepair' => [
         'vr_id'                   => '维修记录序号',
         've_id'                   => '车辆序号',
-        'plate_no'                => '车牌号',
         'so_id'                   => '订单序号',
         'sc_id'                   => '修理厂序号',
         'entry_datetime'          => '进厂日时',

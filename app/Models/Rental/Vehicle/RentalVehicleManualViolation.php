@@ -33,7 +33,6 @@ use Illuminate\Validation\ValidationException;
 /**
  * @property int         $vmv_id             违章序号
  * @property int         $ve_id              车辆序号；指向车辆表
- * @property string      $plate_no           车牌号
  * @property null|int    $vu_id              车辆使用时间段序号
  * @property null|Carbon $violation_datetime 违章发生日时
  * @property null|string $violation_content  违章内容
