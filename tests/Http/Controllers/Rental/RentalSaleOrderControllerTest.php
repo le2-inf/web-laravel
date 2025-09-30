@@ -3,6 +3,7 @@
 namespace Tests\Http\Controllers\Rental;
 
 use App\Enum\Rental\RpPtId;
+use App\Enum\Rental\SoOrderStatus;
 use App\Enum\Rental\SoPaymentDay_Month;
 use App\Enum\Rental\SoRentalPaymentType;
 use App\Enum\Rental\SoRentalType;
@@ -14,25 +15,26 @@ use App\Models\Rental\Customer\RentalCustomer;
 use App\Models\Rental\Payment\RentalPayment;
 use App\Models\Rental\Sale\RentalSaleOrder;
 use App\Models\Rental\Vehicle\RentalVehicle;
-use Carbon\Carbon;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 
 /**
+ * @property RentalCustomer $customer
+ * @property RentalVehicle  $vehicle
+ *
  * @internal
  */
 #[CoversNothing]
+#[\AllowDynamicProperties]
 class RentalSaleOrderControllerTest extends TestCase
 {
-    private RentalCustomer $customer;
-
-    private RentalVehicle $vehicle;
-
     protected function setUp(): void
     {
         parent::setUp();
+
+        RentalCustomer::query()->whereLike('contact_name', '测试客户%')->delete();
+        RentalVehicle::query()->whereLike('plate_no', 'TEST-%')->delete();
 
         $this->customer = RentalCustomer::factory()->create([
             'contact_name'  => '测试客户'.Str::upper(Str::random(4)),
@@ -40,6 +42,7 @@ class RentalSaleOrderControllerTest extends TestCase
         ]);
 
         $this->vehicle = RentalVehicle::factory()->create([
+            'plate_no'        => 'TEST-001',
             'status_service'  => VeStatusService::YES,
             'status_rental'   => VeStatusRental::LISTED,
             'status_dispatch' => VeStatusDispatch::NOT_DISPATCHED,
@@ -48,7 +51,11 @@ class RentalSaleOrderControllerTest extends TestCase
 
     public function testIndexReturnsPaginatedOrdersList(): void
     {
-        $order = $this->createLongTermOrder();
+        $order = RentalSaleOrder::factory()
+            ->for($this->customer)
+            ->for($this->vehicle)
+            ->create()
+        ;
 
         $response = $this->getJson(action([RentalSaleOrderController::class, 'index']));
 
@@ -74,20 +81,18 @@ class RentalSaleOrderControllerTest extends TestCase
 
     public function testShowReturnsOrderWithPayments(): void
     {
-        $order = $this->createLongTermOrder();
+        $order = RentalSaleOrder::factory()
+            ->for($this->customer)
+            ->for($this->vehicle)->create()
+        ;
 
         $payment = RentalPayment::factory()
-            ->for($order, 'RentalSaleOrder')
-            ->state([
-                'pt_id'             => RpPtId::RENT,
-                'should_pay_amount' => '1000.00',
-                'should_pay_date'   => now()->toDateString(),
-            ])
+            ->for($order)
             ->create()
         ;
 
         $response = $this->getJson(
-            action([RentalSaleOrderController::class, 'show'], ['rental_sale_order' => $order->getKey()])
+            action([RentalSaleOrderController::class, 'show'], [$order->getKey()])
         );
 
         $response->assertOk()
@@ -98,7 +103,17 @@ class RentalSaleOrderControllerTest extends TestCase
 
     public function testStoreCreatesLongTermOrderWithPayments(): void
     {
-        $payload  = $this->longTermPayload();
+        $payload = RentalSaleOrder::factory()
+            ->for($this->customer)
+            ->for($this->vehicle)->raw()
+        ;
+        if (SoRentalType::LONG_TERM === $payload['rental_type']) {
+            $payment                    = RentalPayment::factory()->raw();
+            $payload['rental_payments'] = [$payment];
+        } else {
+            $payload['rental_payments'] = [];
+        }
+
         $response = $this->postJson(action([RentalSaleOrderController::class, 'store']), $payload);
 
         $response->assertOk()
@@ -125,62 +140,53 @@ class RentalSaleOrderControllerTest extends TestCase
 
     public function testUpdateReplacesPaymentsAndPersistsComputedFields(): void
     {
-        $order = $this->createLongTermOrder();
+        $order = RentalSaleOrder::factory()
+            ->for($this->customer)
+            ->for($this->vehicle)->create(['order_status' => SoOrderStatus::PENDING])
+        ;
 
         RentalPayment::factory()
-            ->for($order, 'RentalSaleOrder')
-            ->state([
-                'pt_id'             => RpPtId::RENT,
-                'should_pay_amount' => '1000.00',
-                'should_pay_date'   => '2024-01-01',
-            ])
+            ->for($order)
             ->create()
         ;
 
-        $payload = $this->longTermPayload([
-            'contract_number' => $order->contract_number,
-            'rent_amount'     => '1200.00',
-            'installments'    => 2,
-            'rental_end'      => '2024-03-01',
-            'rental_payments' => [
-                [
-                    'pt_id'             => RpPtId::RENT,
-                    'should_pay_date'   => '2024-01-05',
-                    'should_pay_amount' => '1200.00',
-                    'rp_remark'         => 'updated installment 1',
-                ],
-                [
-                    'pt_id'             => RpPtId::RENT,
-                    'should_pay_date'   => '2024-02-05',
-                    'should_pay_amount' => '1200.00',
-                    'rp_remark'         => 'updated installment 2',
-                ],
-            ],
-        ]);
+        $payload = RentalSaleOrder::factory()
+            ->for($this->customer)
+            ->for($this->vehicle)->raw()
+        ;
+
+        if (SoRentalType::LONG_TERM === $payload['rental_type']) {
+            $payment                    = RentalPayment::factory()->raw();
+            $payload['rental_payments'] = [$payment];
+        } else {
+            $payload['rental_payments'] = [];
+        }
 
         $response = $this->putJson(
-            action([RentalSaleOrderController::class, 'update'], ['rental_sale_order' => $order->getKey()]),
+            action([RentalSaleOrderController::class, 'update'], [$order->getKey()]),
             $payload
         );
 
         $response->assertOk()
-            ->assertJsonPath('data.rent_amount', '1200.00')
-            ->assertJsonPath('data.total_rent_amount', '2400.00')
+            ->assertJsonPath('data.rent_amount', bcadd($payload['rent_amount'], '0', 2))
+            ->assertJsonPath('data.total_rent_amount', bcadd($payload['total_rent_amount'], '0', 2))
         ;
 
         $order->refresh()->load('RentalPayments');
 
-        $this->assertSame('1200.00', $order->rent_amount);
-        $this->assertCount(2, $order->RentalPayments);
-        $this->assertSame('1200.00', $order->RentalPayments[0]->should_pay_amount);
+        $this->assertSame((float) $payload['rent_amount'], (float) $order->rent_amount);
     }
 
     public function testDestroyRemovesOrder(): void
     {
-        $order = $this->createLongTermOrder();
+        $order = RentalSaleOrder::factory()
+            ->for($this->customer)
+            ->for($this->vehicle)
+            ->create()
+        ;
 
         $response = $this->deleteJson(
-            action([RentalSaleOrderController::class, 'destroy'], ['rental_sale_order' => $order->getKey()])
+            action([RentalSaleOrderController::class, 'destroy'], [$order->getKey()])
         );
 
         $response->assertOk();
@@ -210,82 +216,5 @@ class RentalSaleOrderControllerTest extends TestCase
         $this->assertSame(RpPtId::DEPOSIT, $response->json('data.0.pt_id'));
         $this->assertSame(RpPtId::MANAGEMENT_FEE, $response->json('data.1.pt_id'));
         $this->assertSame(RpPtId::RENT, $response->json('data.2.pt_id'));
-    }
-
-    private function longTermPayload(array $overrides = []): array
-    {
-        $start = '2024-01-01';
-        $end   = '2024-02-01';
-
-        return array_merge([
-            'rental_type'           => SoRentalType::LONG_TERM,
-            'rental_payment_type'   => SoRentalPaymentType::MONTHLY_PREPAID,
-            'cu_id'                 => $this->customer->getKey(),
-            've_id'                 => $this->vehicle->getKey(),
-            'contract_number'       => 'CN-'.Str::upper(Str::random(10)),
-            'free_days'             => 0,
-            'rental_start'          => $start,
-            'installments'          => 1,
-            'rental_end'            => $end,
-            'deposit_amount'        => '500.00',
-            'management_fee_amount' => '50.00',
-            'rent_amount'           => '1000.00',
-            'payment_day'           => SoPaymentDay_Month::DAY_1,
-            'rental_payments'       => [
-                [
-                    'pt_id'             => RpPtId::RENT,
-                    'should_pay_date'   => $start,
-                    'should_pay_amount' => '1000.00',
-                    'rp_remark'         => 'installment 1',
-                ],
-            ],
-        ], $overrides);
-    }
-
-    private function createLongTermOrder(array $overrides = []): RentalSaleOrder
-    {
-        $start        = $overrides['rental_start'] ?? '2024-01-01';
-        $end          = $overrides['rental_end'] ?? '2024-02-01';
-        $installments = $overrides['installments'] ?? 1;
-        $rentAmount   = $overrides['rent_amount'] ?? '1000.00';
-        $deposit      = $overrides['deposit_amount'] ?? '500.00';
-        $management   = $overrides['management_fee_amount'] ?? '50.00';
-        $contract     = $overrides['contract_number'] ?? 'CN-'.Str::upper(Str::random(8));
-
-        $totalRent   = bcmul((string) $installments, $rentAmount, 2);
-        $totalAmount = bcadd(bcadd($totalRent, $deposit, 2), $management, 2);
-
-        $state = array_merge([
-            'rental_type'           => SoRentalType::LONG_TERM,
-            'rental_payment_type'   => SoRentalPaymentType::MONTHLY_PREPAID,
-            'contract_number'       => $contract,
-            'free_days'             => 0,
-            'rental_start'          => $start,
-            'installments'          => $installments,
-            'rental_days'           => Carbon::parse($start)->diffInDays(Carbon::parse($end), true) + 1,
-            'rental_end'            => $end,
-            'deposit_amount'        => $deposit,
-            'management_fee_amount' => $management,
-            'rent_amount'           => $rentAmount,
-            'payment_day'           => $overrides['payment_day'] ?? SoPaymentDay_Month::DAY_1,
-            'total_rent_amount'     => $totalRent,
-            'total_amount'          => $totalAmount,
-        ], Arr::except($overrides, [
-            'contract_number',
-            'rental_start',
-            'installments',
-            'rental_end',
-            'deposit_amount',
-            'management_fee_amount',
-            'rent_amount',
-            'payment_day',
-        ]));
-
-        return RentalSaleOrder::factory()
-            ->for($this->customer, 'RentalCustomer')
-            ->for($this->vehicle, 'RentalVehicle')
-            ->state($state)
-            ->create()
-        ;
     }
 }

@@ -7,6 +7,7 @@ use App\Enum\Booking\BoOrderStatus;
 use App\Enum\Booking\BoPaymentStatus;
 use App\Enum\Booking\BoRefundStatus;
 use App\Enum\Booking\BvIsListed;
+use App\Enum\Vehicle\VeStatusService;
 use App\Http\Controllers\Admin\Sale\RentalBookingOrderController;
 use App\Models\Rental\Customer\RentalCustomer;
 use App\Models\Rental\Sale\RentalBookingOrder;
@@ -34,7 +35,7 @@ class RentalBookingOrdersControllerTest extends TestCase
         RentalBookingVehicle::query()->whereLike('plate_no', 'TEST-%')->delete();
         RentalBookingOrder::query()->whereLike('plate_no', 'TEST-%')->delete();
 
-        $this->vehicle  = RentalVehicle::factory()->create(['plate_no' => 'TEST-001']);
+        $this->vehicle  = RentalVehicle::factory()->create(['plate_no' => 'TEST-001', 'status_service' => VeStatusService::YES]);
         $this->customer = RentalCustomer::factory()->create(['contact_name' => 'TEST-001']);
 
         $this->rentalBookingVehicle = RentalBookingVehicle::factory()->for($this->vehicle)->create(['is_listed' => BvIsListed::LISTED]);

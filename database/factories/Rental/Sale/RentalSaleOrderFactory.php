@@ -60,9 +60,9 @@ class RentalSaleOrderFactory extends Factory
 
             $insurance_base_fee_amount       = $this->faker->randomFloat(0, 1000, 5000);
             $insurance_additional_fee_amount = $this->faker->randomFloat(0, 1000, 5000);
-            $other_fee_amount                = $this->faker->optional()->randomFloat(0, 1000, 5000);
+            $other_fee_amount                = $this->faker->randomFloat(0, 1000, 5000);
 
-            $total_amount = $total_rent_amount + $insurance_base_fee_amount + $insurance_additional_fee_amount + $other_fee_amount;
+            $total_amount = $deposit_amount + $management_fee_amount + $total_rent_amount + $insurance_base_fee_amount + $insurance_additional_fee_amount + $other_fee_amount;
         }
         $order_status = SoOrderStatus::label_key_random();
 

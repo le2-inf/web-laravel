@@ -5,6 +5,7 @@ namespace Tests\Http\Controllers\Admin\Rental;
 use App\Enum\Booking\BvBType;
 use App\Enum\Booking\BvIsListed;
 use App\Enum\Booking\RbvProps;
+use App\Enum\Vehicle\VeStatusService;
 use App\Http\Controllers\Admin\Sale\RentalBookingVehicleController;
 use App\Models\Rental\Sale\RentalBookingVehicle;
 use App\Models\Rental\Vehicle\RentalVehicle;
@@ -31,7 +32,7 @@ class RentalBookingVehiclesControllerTest extends TestCase
         RentalVehicle::query()->whereLike('plate_no', 'TEST-%')->delete();
         RentalBookingVehicle::query()->whereLike('plate_no', 'TEST-%')->delete();
 
-        $this->vehicle = RentalVehicle::factory()->create(['plate_no' => 'TEST-004']);
+        $this->vehicle = RentalVehicle::factory()->create(['plate_no' => 'TEST-004', 'status_service' => VeStatusService::YES]);
     }
 
     public function testIndexReturnsOk()

@@ -141,7 +141,7 @@ class RentalSaleOrderController extends Controller
     #[PermissionAction(PermissionAction::SHOW)]
     public function show(RentalSaleOrder $rentalSaleOrder): Response
     {
-        $rentalSaleOrder->load('RentalCustomer', 'RentalVehicle');
+        $rentalSaleOrder->load('RentalCustomer', 'RentalVehicle', 'RentalPayments');
 
         $this->response()->withExtras(
             RentalVehicleReplacement::kvList(so_id: $rentalSaleOrder->so_id),
