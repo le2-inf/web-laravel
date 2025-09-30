@@ -59,6 +59,7 @@ class RentalVehicleInsuranceController extends Controller
     #[PermissionAction(PermissionAction::ADD)]
     public function create(Request $request): Response
     {
+        $this->options();
         $this->response()->withExtras(
             RentalVehicle::options(),
         );
@@ -77,12 +78,15 @@ class RentalVehicleInsuranceController extends Controller
     #[PermissionAction(PermissionAction::SHOW)]
     public function show(RentalVehicleInsurance $rentalVehicleInsurance): Response
     {
+        $this->options();
+
         return $this->response()->withData($rentalVehicleInsurance)->respond();
     }
 
     #[PermissionAction(PermissionAction::EDIT)]
     public function edit(RentalVehicleInsurance $rentalVehicleInsurance): Response
     {
+        $this->options();
         $this->response()->withExtras(
             RentalVehicle::options(),
         );
