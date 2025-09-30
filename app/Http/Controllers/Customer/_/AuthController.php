@@ -1,0 +1,124 @@
+<?php
+
+namespace App\Http\Controllers\Customer\_;
+
+use App\Http\Controllers\Controller;
+use App\Models\Rental\Customer\RentalCustomer;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
+
+class AuthController extends Controller
+{
+    public static function labelOptions(Controller $controller): void
+    {
+        $controller->response()->withExtras(
+        );
+    }
+
+    public function sendVerificationCode(Request $request): Response
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'phone' => ['required', 'digits:11', Rule::exists(RentalCustomer::class, 'contact_phone')],
+            ]
+        )->after(function (\Illuminate\Validation\Validator $validator) use ($request, &$cacheKey) {
+            if (!$validator->failed()) {
+                // 限制每分钟只能请求一次验证码
+                $cacheKey = 'phone_verification_'.$request->input('phone');
+                if (Cache::has($cacheKey)) {
+                    $validator->errors()->add('email', '请求过于频繁，请稍后再试');
+                }
+            }
+        });
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        $input = $validator->validated();
+
+        $code = rand(1000, 9999);
+
+        Cache::put($cacheKey, $code, 5 * 60);
+
+        // 发送验证码短信，使用短信服务商的 API 进行发送
+        // 示例：SmsService::send($request->phone, $code);
+
+        return $this->response()->withData(['message' => '验证码已发送'])->respond();
+    }
+
+    public function login(Request $request): Response
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'phone' => ['required', 'digits:11', Rule::exists(RentalCustomer::class, 'contact_phone')],
+                'code'  => ['required', 'digits:4'],
+            ]
+        )->after(function (\Illuminate\Validation\Validator $validator) use ($request, &$cacheKey) {
+            if (!$validator->failed()) {
+                $cacheKey = 'phone_verification_'.$request->input('phone');
+
+                $cachedCode = Cache::get($cacheKey);
+
+                if ($cachedCode != $request->input('code')) {
+                    $validator->errors()->add('code', '验证码不正确');
+                }
+            }
+        });
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        $input = $validator->validated();
+
+        $rentalCustomer = RentalCustomer::query()->where('contact_phone', $input['phone'])->first();
+
+        DB::transaction(function () use ($rentalCustomer, &$token, &$cacheKey) {
+            $rentalCustomer->tokens()->delete();
+
+            $token = $rentalCustomer->createToken('rc')->plainTextToken;
+
+            Cache::forget($cacheKey);
+        });
+
+        return $this->response()->withData([
+            'token'    => $token,
+            'customer' => $rentalCustomer,
+        ])->respond();
+    }
+
+    public function getUserInfo(Request $request): Response
+    {
+        return $this->response()->withData($request->user())->respond();
+    }
+
+    public function mock(Request $request): Response
+    {
+        /** @var RentalCustomer $rentalCustomer */
+        $rentalCustomer = RentalCustomer::query()->whereLike('contact_name', '演示%')->inRandomOrder()->firstOrFail();
+
+        $token = Str::random(32);
+
+        Cache::set("temporary_customer:{$token}", $rentalCustomer->cu_id, 3600 * 3);
+
+        return $this->response()->withData([
+            'customer' => $rentalCustomer,
+            'token'    => $token,
+        ])->respond();
+    }
+
+    protected function options(?bool $with_group_count = false): void
+    {
+        $this->response()->withExtras(
+        );
+    }
+}

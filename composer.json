@@ -6,12 +6,29 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
+        "ext-bcmath": "*",
+        "ext-curl": "*",
+        "ext-pdo": "*",
+        "alibabacloud/ocr-api-20210707": "^3.1",
+        "alibabacloud/tea-utils": "^0.2.21",
+        "guzzlehttp/guzzle": "^7.2",
+        "jeroennoten/laravel-adminlte": "^3.13",
+        "laravel-lang/common": "^6.4",
         "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.10.1"
+        "laravel/sanctum": "^4.0",
+        "laravel/tinker": "^2.10.1",
+        "laravel/ui": "^4.5",
+        "league/flysystem-aws-s3-v3": "^3.0",
+        "phpoffice/phpspreadsheet": "^5.0",
+        "phpoffice/phpword": "dev-master",
+        "smi2/phpclickhouse": "^1.5",
+        "spatie/laravel-permission": "^6.9",
+        "symfony/dom-crawler": "^7.1",
+        "vlucas/phpdotenv": "^5.6"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.23",
+        "fakerphp/faker": "2.0.x-dev",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
         "laravel/sail": "^1.41",
@@ -40,12 +57,12 @@
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
         ],
         "post-root-package-install": [
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+            
+        ],
+	"post-install-cmd": [
         ],
         "post-create-project-cmd": [
-            "@php artisan key:generate --ansi",
-            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
-            "@php artisan migrate --graceful --ansi"
+            "@php artisan key:generate --ansi"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
@@ -59,6 +76,17 @@
     "extra": {
         "laravel": {
             "dont-discover": []
+        },
+        "hooks": {
+            "pre-commit": [
+                "echo \"Committing as $(git config user.name)\"",
+                "export PHP_CS_FIXER_IGNORE_ENV=1",
+                "bin_dir=$(composer -q global config bin-dir --absolute)",
+                "files=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\\.php$')",
+                "if [ -n \"$files\" ]; then",
+                "  \"$bin_dir/php-cs-fixer\" fix --diff --config=./.php-cs-fixer.php $files && git add $files",
+                "fi"
+            ]
         }
     },
     "config": {
@@ -68,7 +96,8 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
-        }
+        },
+        "github-protocols": ["ssh"]
     },
     "minimum-stability": "stable",
     "prefer-stable": true
