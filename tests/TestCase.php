@@ -14,7 +14,14 @@ abstract class TestCase extends BaseTestCase
         // 遇到异常直接抛出，便于定位问题
         //                $this->withoutExceptionHandling();
 
-        $admin = Admin::query()->where('name', '=', config('setting.super_user.name'))->first();
-        $this->actingAs($admin);
+        try {
+            $admin = Admin::query()->where('name', '=', config('setting.super_user.name'))->first();
+        } catch (\Throwable $e) {
+            $admin = null;
+        }
+
+        if ($admin) {
+            $this->actingAs($admin);
+        }
     }
 }
