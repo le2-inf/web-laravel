@@ -1,11 +1,6 @@
 <?php
 
 return [
-    'aliyun' => [
-        'key'    => env('ALIBABA_CLOUD_ACCESS_KEY_ID'),
-        'secret' => env('ALIBABA_CLOUD_ACCESS_KEY_SECRET'),
-    ],
-
     'dblog' => [
         'tables' => [
             'admins'                           => 'id',

@@ -74,9 +74,7 @@ class LogRequests
 
         // —— 记录请求（注意：任何异常都要吞掉，避免影响主流程）
         try {
-            $logger = Log::channel('reqres');
-
-            $logger->info('request', [
+            Log::channel('reqres')->info('request', [
                 'rid'     => $rid,
                 'ip'      => $request->ip(),
                 'method'  => $request->getMethod(),
@@ -118,8 +116,7 @@ class LogRequests
         }
 
         try {
-            $logger = Log::channel('reqres');
-            $logger->info('response', [
+            Log::channel('reqres')->info('response', [
                 'rid'         => $rid,
                 'status'      => method_exists($response, 'getStatusCode') ? $response->getStatusCode() : null,
                 'duration_ms' => $durationMs,

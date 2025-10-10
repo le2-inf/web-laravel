@@ -1,22 +1,5 @@
 <?php
 
-use AlibabaCloud\SDK\Ocrapi\V20210707\Ocrapi;
-use ClickHouseDB\Client;
-
-if (!function_exists('app_clickhouse')) {
-    function app_clickhouse(): Client
-    {
-        return app(Client::class);
-    }
-}
-
-if (!function_exists('app_ocrapi')) {
-    function app_ocrapi(): Ocrapi
-    {
-        return app(Ocrapi::class);
-    }
-}
-
 function deepDiff(array $after, array $before): array
 {
     $diff = [];

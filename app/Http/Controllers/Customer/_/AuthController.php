@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Customer\_;
 
 use App\Http\Controllers\Controller;
 use App\Models\Rental\Customer\RentalCustomer;
+use App\Services\SmsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -21,19 +22,33 @@ class AuthController extends Controller
         );
     }
 
-    public function sendVerificationCode(Request $request): Response
+    public function sendVerificationCode(Request $request, SmsService $smsService): Response
     {
         $validator = Validator::make(
             $request->all(),
             [
                 'phone' => ['required', 'digits:11', Rule::exists(RentalCustomer::class, 'contact_phone')],
             ]
-        )->after(function (\Illuminate\Validation\Validator $validator) use ($request, &$cacheKey) {
+        )->after(function (\Illuminate\Validation\Validator $validator) use ($request, &$cacheKey, &$cacheIpKey) {
             if (!$validator->failed()) {
+                // 客户端ip限制
+                $ip = $request->ip();
+
+                $cacheIpKey = 'customer_verification_ip:'.$ip;
+                $attempts   = Cache::get($cacheIpKey, 0);
+
+                if ($attempts > 3) {
+                    $validator->errors()->add('email', '你已操作超过限制次数，请联系客服。');
+
+                    return;
+                }
+
                 // 限制每分钟只能请求一次验证码
-                $cacheKey = 'phone_verification_'.$request->input('phone');
+                $cacheKey = 'customer_verification_code:'.$request->input('phone');
                 if (Cache::has($cacheKey)) {
                     $validator->errors()->add('email', '请求过于频繁，请稍后再试');
+
+                    return;
                 }
             }
         });
@@ -44,14 +59,15 @@ class AuthController extends Controller
 
         $input = $validator->validated();
 
-        $code = rand(1000, 9999);
+        $code = mt_rand(1000, 9999);
 
-        Cache::put($cacheKey, $code, 5 * 60);
+        Cache::put($cacheKey, $code, 1 * 60);
+        Cache::has($cacheIpKey) ? Cache::increment($cacheIpKey) : Cache::put($cacheIpKey, 1);
 
         // 发送验证码短信，使用短信服务商的 API 进行发送
-        // 示例：SmsService::send($request->phone, $code);
+        $smsService->verificationCode($input['phone'], $code);
 
-        return $this->response()->withData(['message' => '验证码已发送'])->respond();
+        return $this->response()->withMessages('验证码已发送')->respond();
     }
 
     public function login(Request $request): Response

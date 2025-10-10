@@ -167,11 +167,6 @@ final class ResponseBuilder
         return $this;
     }
 
-    //    private function toJson(int $status): JsonResponse
-    //    {
-    //        return response()->json($this->payload(), $status);
-    //    }
-
     private function payload(): array
     {
         return [

@@ -32,12 +32,26 @@ class PasswordResetController extends Controller
             [
                 'email' => ['required', 'email', Rule::exists(Admin::class, 'email')],
             ]
-        )->after(function (\Illuminate\Validation\Validator $validator) use ($request, &$cacheKey) {
+        )->after(function (\Illuminate\Validation\Validator $validator) use ($request, &$cacheKey, &$cacheIpKey) {
             if (!$validator->failed()) {
-                // 限制每分钟只能请求一次验证码
-                $cacheKey = 'password_reset_attempts_'.$request->input('email');
+                // 客户端ip限制
+                $ip = $request->ip();
+
+                $cacheIpKey = 'password_reset_ip:'.$ip;
+                $attempts   = Cache::get($cacheIpKey, 0);
+
+                if ($attempts > 3) {
+                    $validator->errors()->add('email', '你已操作超过限制次数，请联系客服。');
+
+                    return;
+                }
+
+                // 限制该邮箱每分钟只能请求一次验证码
+                $cacheKey = 'password_reset_code:'.$request->input('email');
                 if (Cache::has($cacheKey)) {
                     $validator->errors()->add('email', '请求过于频繁，请稍后再试');
+
+                    return;
                 }
             }
         });
@@ -49,9 +63,10 @@ class PasswordResetController extends Controller
         $input = $validator->validated();
 
         // 生成并缓存验证码
-        $code = rand(100000, 999999);
-        Cache::put('password_reset_code_'.$input['email'], $code, now()->addMinutes(10));
-        Cache::put($cacheKey, true, now()->addMinute()); // 1分钟内不能再次请求
+        $code = mt_rand(1000, 9999);
+        Cache::put($cacheKey, $code, 1 * 60);
+
+        Cache::has($cacheIpKey) ? Cache::increment($cacheIpKey) : Cache::put($cacheIpKey, 1);
 
         // 发送验证码
         Mail::to($input['email'])->send(new PasswordResetCodeMail($code));

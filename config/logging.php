@@ -71,6 +71,13 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'aliyun' => [
+            'driver'               => 'daily',
+            'path'                 => storage_path('logs/aliyun.log'),
+            'level'                => env('LOG_LEVEL', 'debug'),
+            'days'                 => 14,
+            'replace_placeholders' => true,
+        ],
         'reqres' => [
             'driver'               => 'daily',
             'path'                 => storage_path('logs/reqres.log'),
@@ -78,7 +85,7 @@ return [
             'days'                 => 14,
             'replace_placeholders' => true,
             // 直接用 Monolog 的 JsonFormatter 输出 JSON 行
-            'formatter'      => JsonFormatter::class,
+            //            'formatter'      => JsonFormatter::class,
             'formatter_with' => [
                 // 让 JSON 更易读：不转义中文/斜杠；按需保留
                 'jsonFlags' => JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,

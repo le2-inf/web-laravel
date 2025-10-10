@@ -6,6 +6,7 @@ use AlibabaCloud\SDK\Ocrapi\V20210707\Models\RecognizeDrivingLicenseRequest;
 use AlibabaCloud\SDK\Ocrapi\V20210707\Models\RecognizeGeneralStructureRequest;
 use AlibabaCloud\SDK\Ocrapi\V20210707\Models\RecognizeIdcardRequest;
 use AlibabaCloud\SDK\Ocrapi\V20210707\Models\RecognizeVehicleLicenseRequest;
+use AlibabaCloud\SDK\Ocrapi\V20210707\Ocrapi;
 use AlibabaCloud\Tea\Exception\TeaError;
 use AlibabaCloud\Tea\Utils\Utils\RuntimeOptions;
 use App\Attributes\ClassName;
@@ -80,7 +81,7 @@ class RentalOcrImage extends Model
 
     public static function recognizeVehicleLicense($pathname)
     {
-        $client = app_ocrapi();
+        $client = app(Ocrapi::class);
 
         $bodyStream = new Stream(fopen($pathname, 'r'));
 
@@ -96,7 +97,7 @@ class RentalOcrImage extends Model
             if (!$error instanceof TeaError) {
                 $error = new TeaError([], $error->getMessage(), $error->getCode(), $error);
             }
-            Log::error($error->message);
+            Log::channel('aliyun')->error($error->message);
 
             throw $error;
         }
@@ -104,7 +105,7 @@ class RentalOcrImage extends Model
 
     public static function recognizeIdcardWithOptions($pathname)
     {
-        $client = app_ocrapi();
+        $client = app(Ocrapi::class);
 
         $bodyStream = new Stream(fopen($pathname, 'r'));
 
@@ -120,7 +121,7 @@ class RentalOcrImage extends Model
                 $error = new TeaError([], $error->getMessage(), $error->getCode(), $error);
             }
 
-            Log::error($error->message);
+            Log::channel('aliyun')->error($error->message);
 
             throw $error;
         }
@@ -128,7 +129,7 @@ class RentalOcrImage extends Model
 
     public static function recognizeDrivingLicenseWithOptions($pathname)
     {
-        $client = app_ocrapi();
+        $client = app(Ocrapi::class);
 
         $bodyStream = new Stream(fopen($pathname, 'r'));
 
@@ -143,7 +144,7 @@ class RentalOcrImage extends Model
             if (!$error instanceof TeaError) {
                 $error = new TeaError([], $error->getMessage(), $error->getCode(), $error);
             }
-            Log::error($error->message);
+            Log::channel('aliyun')->error($error->message);
 
             throw $error;
         }
@@ -151,7 +152,7 @@ class RentalOcrImage extends Model
 
     public static function recognizeGeneralStructureWithOptions($pathname)
     {
-        $client = app_ocrapi();
+        $client = app(Ocrapi::class);
 
         $bodyStream = new Stream(fopen($pathname, 'r'));
 
@@ -166,7 +167,7 @@ class RentalOcrImage extends Model
             if (!$error instanceof TeaError) {
                 $error = new TeaError([], $error->getMessage(), $error->getCode(), $error);
             }
-            Log::error($error->message);
+            Log::channel('aliyun')->error($error->message);
 
             throw $error;
         }

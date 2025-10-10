@@ -6,6 +6,7 @@ use App\Attributes\PermissionAction;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
@@ -72,7 +73,7 @@ class PermissionImport extends Command
             try {
                 $reflectionMethod = new \ReflectionMethod(str_replace('@', '::', $uses));
             } catch (\ReflectionException $e) {
-                logger()->error($e->getMessage());
+                Log::channel('console')->error($e->getMessage());
 
                 continue;
             }

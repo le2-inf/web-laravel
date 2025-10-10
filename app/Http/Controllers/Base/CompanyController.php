@@ -62,16 +62,16 @@ class CompanyController extends Controller
             'contact_name.required'  => '请填写联系人',
             'contact_phone.required' => '请填写手机号',
             'contact_phone.digits'   => '手机号必须是11位数字',
-        ])->after(function ($validator) use ($request, &$cacheKey) {
+        ])->after(function ($validator) use ($request, &$cacheIpKey) {
             if (!$validator->failed()) {
+                // 客户端ip限制
                 $ip = $request->ip();
 
-                $cacheKey = 'register_attempts:'.$ip;
-                $attempts = Cache::get($cacheKey, 0);
+                $cacheIpKey = 'register_attempts_ip:'.$ip;
+                $attempts   = Cache::get($cacheIpKey, 0);
 
-                $max = 2;
-                if ($attempts >= $max) {
-                    $validator->errors()->add('company_name', '超过注册次数限制，每个 IP 最多只能注册 '.$max.' 次。');
+                if ($attempts > 3) {
+                    $validator->errors()->add('company_name', '超过注册次数限制，请联系客服。');
                 }
             }
         });
@@ -86,17 +86,12 @@ class CompanyController extends Controller
                 ->send(new CompanyRegistration($input))
             ;
         } catch (\Exception $e) {
-            throw new ServerException('发送公司注册邮件失败：', 0, $e);
+            throw new ServerException('发送公司注册邮件失败，请联系客服。', 0, $e);
         }
 
-        $this->response()->withMessages('已发送，请等待审核。');
+        $this->response()->withMessages('已发送，请等待审核，也可联系客服。');
 
-        if (Cache::has($cacheKey)) {
-            Cache::increment($cacheKey);
-        } else {
-            //            Cache::forever($cacheKey, 1);
-            Cache::put($cacheKey, 1, now()->addHours(12));
-        }
+        Cache::has($cacheIpKey) ? Cache::increment($cacheIpKey) : Cache::put($cacheIpKey, 1);
 
         return $this->response()->respond();
     }
