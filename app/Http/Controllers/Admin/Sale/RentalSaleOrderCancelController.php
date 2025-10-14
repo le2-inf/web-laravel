@@ -34,19 +34,17 @@ class RentalSaleOrderCancelController extends Controller
             []
         )
             ->after(function (\Illuminate\Validation\Validator $validator) use ($rentalSaleOrder) {
-                if (!$rentalSaleOrder->check_order_status([SoOrderStatus::PENDING], $validator)) {
+                if (!$rentalSaleOrder->check_order_status([SoOrderStatus::PENDING, SoOrderStatus::SIGNED], $validator)) {
                     return;
                 }
 
-                $rentalVehicle = $rentalSaleOrder->RentalVehicle;
-                if (!$rentalVehicle) {
+                if (!$rentalVehicle = $rentalSaleOrder->RentalVehicle) {
                     $validator->errors()->add('ve_id', 'The vehicle does not exist.');
 
                     return;
                 }
 
-                $pass = $rentalVehicle->check_status(VeStatusService::YES, [VeStatusRental::RESERVED], [VeStatusDispatch::NOT_DISPATCHED], $validator);
-                if (!$pass) {
+                if (!$rentalVehicle->check_status(VeStatusService::YES, [VeStatusRental::RESERVED, VeStatusRental::RENTED], [VeStatusDispatch::NOT_DISPATCHED], $validator)) {
                     return;
                 }
             })
@@ -59,18 +57,36 @@ class RentalSaleOrderCancelController extends Controller
         $input = $validator->validated();
 
         DB::transaction(function () use (&$rentalSaleOrder) {
-            // 逻辑判断是否符合取消的条件
+            $rentalSaleOrder = $rentalSaleOrder->newQuery()->useWritePdo()
+                ->whereKey($rentalSaleOrder->getKey())->lockForUpdate()->firstOrFail()
+            ;
+
+            match ($rentalSaleOrder->order_status->value) {
+                SoOrderStatus::PENDING => (function () use ($rentalSaleOrder) {
+                    $rentalSaleOrder->RentalVehicle->updateStatus(
+                        status_rental: VeStatusRental::LISTED,
+                    );
+
+                    $rentalSaleOrder->RentalPayments()->update([
+                        'is_valid' => RpIsValid::INVALID,
+                    ]);
+                })(),
+                SoOrderStatus::SIGNED => (function () use ($rentalSaleOrder) {
+                    $rentalSaleOrder->RentalVehicle->updateStatus(
+                        status_rental: VeStatusRental::PENDING,
+                    );
+
+                    $rentalSaleOrder->RentalPayments->each(function ($item, $key) {
+                        $item->update([
+                            'is_valid' => RpIsValid::INVALID,
+                        ]);
+                    });
+                })(),
+            };
+
             $rentalSaleOrder->order_status = SoOrderStatus::CANCELLED;
             $rentalSaleOrder->canceled_at  = now();
             $rentalSaleOrder->save();
-
-            $rentalSaleOrder->RentalVehicle->updateStatus(
-                status_rental: VeStatusRental::LISTED,
-            );
-
-            $rentalSaleOrder->RentalPayments()->update([
-                'is_valid' => RpIsValid::INVALID,
-            ]);
         });
 
         $rentalSaleOrder->refresh();

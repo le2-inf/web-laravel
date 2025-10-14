@@ -16,32 +16,37 @@ class RentalPaymentObserver
 
     public function updated(RentalPayment $rentalPayment): void
     {
-        if (RpIsValid::VALID !== $rentalPayment->is_valid->value) {
-            throw new ClientException('无效财务信息');
-        }
+        $occur_amount = $account = $io_type = null;
+        $original     = $rentalPayment->getOriginal();
 
-        $original = $rentalPayment->getOriginal();
+        if (RpIsValid::VALID === $rentalPayment->is_valid->value) {
+            if (RpPayStatus::PAID === $rentalPayment->pay_status->value) { // 未支付→支付 支付→支付
+                $occur_amount = bcsub($rentalPayment->actual_pay_amount, $original['actual_pay_amount'] ?? '0', 2);
 
-        $occur_amount = $account = null;
+                $account = $rentalPayment->RentalPaymentAccount;
+                if (!$account) {
+                    return;
+                }
 
-        if (RpPayStatus::PAID === $rentalPayment->pay_status->value) { // 未支付→支付 支付→支付
-            $occur_amount = bcsub($rentalPayment->actual_pay_amount, $original['actual_pay_amount'] ?? '0', 2);
+                $io_type = bccomp($occur_amount, '0', '2') > 0 ? IoIoType::IN : IoIoType::OUT;
+            } elseif (RpPayStatus::PAID === $original['pay_status']->value && RpPayStatus::UNPAID === $rentalPayment->pay_status->value) { // 回退， 支付→未支付
+                // 更新账户金额
+                // 写一笔反向记录
 
-            $account = $rentalPayment->RentalPaymentAccount;
-            if (!$account) {
-                return;
+                $occur_amount = bcsub('0', $original['actual_pay_amount'], 2);
+
+                $account = RentalPaymentAccount::query()->find($original['pa_id']);
+
+                $io_type = bccomp($occur_amount, '0', '2') > 0 ? IoIoType::OUT_ : IoIoType::IN_;
             }
-
-            $io_type = bccomp($occur_amount, '0', '2') > 0 ? IoIoType::IN : IoIoType::OUT;
-        } elseif (RpPayStatus::PAID === $original['pay_status']->value && RpPayStatus::UNPAID === $rentalPayment->pay_status->value) { // 回退， 支付→未支付
-            // 更新账户金额
-            // 写一笔反向记录
-
-            $occur_amount = bcsub('0', $original['actual_pay_amount'], 2);
-
-            $account = RentalPaymentAccount::query()->find($original['pa_id']);
-
-            $io_type = bccomp($occur_amount, '0', '2') > 0 ? IoIoType::OUT_ : IoIoType::IN_;
+        } elseif (RpIsValid::INVALID === $rentalPayment->is_valid->value) { // 变更成无效的状态
+            // 已支付的 => 生成反向记录
+            if (RpPayStatus::PAID === $rentalPayment->pay_status->value) {
+                $occur_amount = bcsub('0', $original['actual_pay_amount'], 2);
+                $account      = RentalPaymentAccount::query()->find($original['pa_id']);
+                $io_type      = bccomp($occur_amount, '0', '2') > 0 ? IoIoType::OUT_ : IoIoType::IN_;
+            }
+            // 未支付的 => 不做处理
         }
 
         if (null !== $occur_amount) {
