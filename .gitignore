@@ -24,3 +24,5 @@ Thumbs.db
 yarn-error.log
 /composer.lock
 /package-lock.json
+/.bash_history
+/.composer/
