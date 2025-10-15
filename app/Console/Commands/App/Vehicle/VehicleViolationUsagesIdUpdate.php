@@ -7,7 +7,6 @@ use App\Models\Rental\Vehicle\RentalVehicleViolation;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command as CommandAlias;
 
@@ -24,30 +23,21 @@ class VehicleViolationUsagesIdUpdate extends Command
     {
         $this->info('开始更新 vu_id...');
 
-        $batchSize = 1000;
+        DB::transaction(function () {
+            $batchSize = 1000;
 
-        $classes = [
-            RentalVehicleManualViolation::class => RentalVehicleManualViolation::query(),
-            RentalVehicleViolation::class       => RentalVehicleViolation::query(),
-        ];
-        $pks = [
-            RentalVehicleManualViolation::class => 'vmv_id',
-            RentalVehicleViolation::class       => 'vv_id',
-        ];
+            foreach ([
+                ['vmv_id', RentalVehicleManualViolation::query()],
+                ['vv_id', RentalVehicleViolation::query()],
+            ] as $class) {
+                [$pk,$query] = $class;
 
-        foreach ($classes as $class => $query) {
-            $pk = $pks[$class];
+                /**
+                 * @var Builder $query
+                 */
+                $lastId = 0; // 初始最大ID
 
-            /**
-             * @var Builder $query
-             */
-            $lastId = 0; // 初始最大ID
-
-            while (true) {
-                // 开启一个新的事务，每个批次一个事务
-                DB::beginTransaction();
-
-                try {
+                while (true) {
                     // 查询下一个批次的记录，$pk 大于上一个批次的最大ID
                     $violations = $query->clone()->where($pk, '>', $lastId)
                         ->orderBy($pk)
@@ -56,9 +46,6 @@ class VehicleViolationUsagesIdUpdate extends Command
                     ;
 
                     if ($violations->isEmpty()) {
-                        // 没有更多记录需要处理
-                        DB::commit();
-
                         break;
                     }
 
@@ -119,18 +106,9 @@ class VehicleViolationUsagesIdUpdate extends Command
                             $violation->save();
                         }
                     }
-
-                    DB::commit();
-                } catch (\Exception $e) {
-                    // 回滚当前批次的事务
-                    DB::rollBack();
-                    $this->error('更新过程中出错: '.$e->getMessage());
-                    Log::channel('console')->error('更新 vu_id 过程中出错: '.$e->getMessage());
-
-                    return CommandAlias::FAILURE;
                 }
             }
-        }
+        });
 
         $this->info('所有违章记录已处理完毕。');
 

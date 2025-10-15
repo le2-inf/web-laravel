@@ -7,8 +7,8 @@ use App\Models\Rental\Vehicle\RentalVehicle;
 use App\Models\Rental\Vehicle\RentalVehicleViolation;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command as CommandAlias;
 
@@ -35,6 +35,7 @@ class OneViolationsImport extends Command
 
         $this->info("最大 turn 日期为: {$maxTurn}");
 
+        /** @var Collection<RentalOneRequest> $requests */
         $requests = RentalOneRequest::query()->where('status_code', '=', '200')
             ->where('turn', $maxTurn)
             ->where('key', 'like', 'violation,%')
@@ -51,9 +52,7 @@ class OneViolationsImport extends Command
 
         $this->info('已预加载车辆数据，开始处理违章记录...');
 
-        DB::beginTransaction();
-
-        try {
+        DB::transaction(function () use ($requests, $rentalVehicles) {
             foreach ($requests as $request) {
                 $response = $request->response;
 
@@ -118,14 +117,7 @@ class OneViolationsImport extends Command
                     $this->info('没有新的违章记录需要 upsert。');
                 }
             }
-
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            Log::channel('console')->error("处理请求ID {$request->or_id} 时出错: ".$e->getMessage());
-            $this->error("处理请求ID {$request->or_id} 时出错: ".$e->getMessage());
-        }
+        });
 
         $this->info('违章信息导入完成。');
 

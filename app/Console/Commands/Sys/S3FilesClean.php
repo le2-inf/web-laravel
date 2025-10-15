@@ -31,7 +31,7 @@ class S3FilesClean extends Command
         try {
             $s3Files = $storage->allFiles();
             $this->info('Total files found in S3: '.count($s3Files));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->error('Error retrieving files from S3: '.$e->getMessage());
 
             return 1;
@@ -104,7 +104,7 @@ class S3FilesClean extends Command
                             break;
                     }
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->error("Error retrieving files from table '{$table}', column '{$column}': ".$e->getMessage());
 
                 // 继续处理下一个表/列
@@ -145,7 +145,7 @@ class S3FilesClean extends Command
                 $storage->delete($file);
                 ++$deletedCount;
                 $this->line("Deleted: {$file}");
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->error("Failed to delete {$file}: ".$e->getMessage());
             }
         }

@@ -6,7 +6,6 @@ use App\Models\Rental\One\RentalOneRequest;
 use App\Models\Rental\Vehicle\RentalVehicle;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command as CommandAlias;
 
@@ -45,9 +44,7 @@ class OneVehiclesImport extends Command
             return CommandAlias::SUCCESS;
         }
 
-        try {
-            DB::beginTransaction();
-
+        DB::transaction(function () use ($requests) {
             /** @var RentalOneRequest $request */
             foreach ($requests as $request) {
                 $response = $request->response;
@@ -69,7 +66,7 @@ class OneVehiclesImport extends Command
                     // 准备 upsert 数据
                     $rentalVehiclesToUpsert[] = [
                         'plate_no' => $rentalVehicleJson['hphm'],
-                        //                        've_type' => $rentalVehicleJson['hpzlStr'],
+                        //    've_type' => $rentalVehicleJson['hpzlStr'],
                     ];
                 }
 
@@ -88,19 +85,10 @@ class OneVehiclesImport extends Command
                     $this->info('没有新的车辆记录需要 upsert。');
                 }
             }
+        });
 
-            DB::commit();
+        $this->info('车辆信息导入完成。');
 
-            $this->info('车辆信息导入完成。');
-
-            return CommandAlias::SUCCESS;
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            Log::channel('console')->error("处理请求ID {$request->or_id} 时出错: ".$e->getMessage());
-            $this->error("处理请求ID {$request->or_id} 时出错: ".$e->getMessage());
-
-            return CommandAlias::FAILURE;
-        }
+        return CommandAlias::SUCCESS;
     }
 }

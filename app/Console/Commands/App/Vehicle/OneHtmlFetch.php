@@ -168,7 +168,7 @@ class OneHtmlFetch extends Command
                     ]);
 
                     $responseData = $response->body();
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $vehRequest->update([
                         'response' => 'Error: '.$e->getMessage(),
                     ]);
@@ -333,7 +333,7 @@ class OneHtmlFetch extends Command
                             if (!$isLastPage) {
                                 ++$currentPage;
                             }
-                        } catch (\Exception $e) {
+                        } catch (\Throwable $e) {
                             // 捕获异常并更新违章查询数据库记录
                             $violationRequest->update([
                                 'response' => 'Error: '.$e->getMessage(),
@@ -452,7 +452,7 @@ class OneHtmlFetch extends Command
                         'status_code' => $statusCode,
                         'response'    => $responseData,
                     ]);
-                } catch (\Exception $e) {
+                } catch (\Throwable $e) {
                     $vehRequest->update([
                         'response' => 'Error: '.$e->getMessage(),
                     ]);
@@ -622,7 +622,7 @@ class OneHtmlFetch extends Command
                             if (!$isLastPage) {
                                 ++$currentPage;
                             }
-                        } catch (\Exception $e) {
+                        } catch (\Throwable $e) {
                             // 捕获异常并更新违章查询数据库记录
                             $violationRequest->update([
                                 'response' => 'Error: '.$e->getMessage(),

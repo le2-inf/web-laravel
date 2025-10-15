@@ -39,15 +39,9 @@ class SmtpSelfTest extends Command
 
         $body = "SMTP 自检邮件发送于 {$now}。如果你收到这封邮件，说明当前 SMTP 正常工作。";
 
-        try {
-            Mail::raw($body, function ($message) use ($recipient, $subject): void {
-                $message->to($recipient)->subject($subject);
-            });
-        } catch (\Throwable $e) {
-            $this->error('发送邮件失败：'.$e->getMessage());
-
-            return CommandAlias::FAILURE;
-        }
+        Mail::raw($body, function ($message) use ($recipient, $subject): void {
+            $message->to($recipient)->subject($subject);
+        });
 
         $this->info('已派发 SMTP 自检邮件到：'.$recipient);
 

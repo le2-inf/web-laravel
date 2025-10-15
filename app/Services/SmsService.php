@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 class SmsService
 {
-    public function verificationCode(string $phone, int $code)
+    public function verificationCode(string $phone, int $code): bool
     {
         $client         = app(Dysmsapi::class);
         $sendSmsRequest = new SendSmsRequest([
@@ -27,6 +27,8 @@ class SmsService
         try {
             $resp = $client->sendSmsWithOptions($sendSmsRequest, $runtime);
             Log::channel('aliyun')->info(Utils::toJSONString($resp));
+
+            return true;
         } catch (\Exception $error) {
             if (!$error instanceof TeaError) {
                 $error = new TeaError([], $error->getMessage(), $error->getCode(), $error);
@@ -34,5 +36,7 @@ class SmsService
 
             Log::channel('aliyun')->error($error);
         }
+
+        return false;
     }
 }
