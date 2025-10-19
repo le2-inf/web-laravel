@@ -99,6 +99,22 @@ class RentalVehicleReplacement extends Model
         ;
     }
 
+    public static function indexColumns(): array
+    {
+        return [
+            'RentalCustomer.contact_name'                     => fn ($item) => $item->contact_name,
+            'RentalCustomer.contact_phone'                    => fn ($item) => $item->contact_phone,
+            'RentalVehicleReplacement.replacement_type'       => fn ($item) => $item->replacement_type_label,
+            'RentalVehicleReplacement.current_ve_plate_no'    => fn ($item) => $item->current_ve_plate_no,
+            'RentalVehicleReplacement.new_ve_plate_no'        => fn ($item) => $item->new_ve_plate_no,
+            'RentalVehicleReplacement.replacement_date'       => fn ($item) => $item->replacement_date,
+            'RentalVehicleReplacement.replacement_start_date' => fn ($item) => $item->replacement_start_date,
+            'RentalVehicleReplacement.replacement_end_date'   => fn ($item) => $item->replacement_end_date,
+            'RentalVehicleReplacement.replacement_status'     => fn ($item) => $item->replacement_status_label,
+            'RentalVehicleReplacement.vr_remark'              => fn ($item) => $item->vr_remark,
+        ];
+    }
+
     public static function options(?\Closure $where = null): array
     {
         return [];

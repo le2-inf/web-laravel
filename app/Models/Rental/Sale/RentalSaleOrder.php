@@ -249,6 +249,37 @@ class RentalSaleOrder extends Model
         ;
     }
 
+    public static function indexColumns(): array
+    {
+        return [
+            'RentalSaleOrder.rental_type'                     => fn ($item) => $item->rental_type_label,
+            'RentalSaleOrder.rental_payment_type'             => fn ($item) => $item->rental_payment_type_label,
+            'RentalCustomer.contact_name'                     => fn ($item) => $item->contact_name,
+            'RentalCustomer.contact_phone'                    => fn ($item) => $item->contact_phone,
+            'RentalVehicle.plate_no'                          => fn ($item) => $item->plate_no,
+            'RentalVehicleModel.brand_model'                  => fn ($item) => $item->brand_name.'-'.$item->model_name,
+            'RentalSaleOrder.contract_number'                 => fn ($item) => $item->contract_number,
+            'RentalSaleOrder.rental_start'                    => fn ($item) => $item->rental_start,
+            'RentalSaleOrder.installments'                    => fn ($item) => $item->installments,
+            'RentalSaleOrder.rental_end'                      => fn ($item) => $item->rental_end,
+            'RentalSaleOrder.deposit_amount'                  => fn ($item) => $item->deposit_amount,
+            'RentalSaleOrder.management_fee_amount'           => fn ($item) => $item->management_fee_amount,
+            'RentalSaleOrder.rent_amount'                     => fn ($item) => $item->rent_amount,
+            'RentalSaleOrder.payment_day'                     => fn ($item) => $item->payment_day,
+            'RentalSaleOrder.total_rent_amount'               => fn ($item) => $item->total_rent_amount,
+            'RentalSaleOrder.insurance_base_fee_amount'       => fn ($item) => $item->insurance_base_fee_amount,
+            'RentalSaleOrder.insurance_additional_fee_amount' => fn ($item) => $item->insurance_additional_fee_amount,
+            'RentalSaleOrder.other_fee_amount'                => fn ($item) => $item->other_fee_amount,
+            'RentalSaleOrder.total_amount'                    => fn ($item) => $item->total_amount,
+            'RentalSaleOrder.order_status'                    => fn ($item) => $item->order_status_label,
+            'RentalSaleOrder.order_at'                        => fn ($item) => $item->order_at_,
+            'RentalSaleOrder.signed_at'                       => fn ($item) => $item->signed_at_,
+            'RentalSaleOrder.canceled_at'                     => fn ($item) => $item->canceled_at_,
+            'RentalSaleOrder.completed_at'                    => fn ($item) => $item->completed_at_,
+            'RentalSaleOrder.early_termination_at'            => fn ($item) => $item->early_termination_at_,
+        ];
+    }
+
     public static function CustomerHasVeId(): Builder
     {
         $cu_id = auth()->id();

@@ -42,7 +42,8 @@ class RentalVehicleReplacementController extends Controller
         $this->response()->withExtras(
         );
 
-        $query = RentalVehicleReplacement::indexQuery();
+        $query   = RentalVehicleReplacement::indexQuery();
+        $columns = RentalVehicleReplacement::indexColumns();
 
         $paginate = new PaginateService(
             [],
@@ -51,7 +52,7 @@ class RentalVehicleReplacementController extends Controller
             []
         );
 
-        $paginate->paginator($query, $request, []);
+        $paginate->paginator($query, $request, [], $columns);
 
         return $this->response()->withData($paginate)->respond();
     }

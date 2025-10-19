@@ -14,7 +14,6 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 #[ClassName('122账号信息')]
@@ -23,7 +22,7 @@ use Illuminate\Support\Facades\Storage;
  * @property OaOaType|string $oa_type           账号类型；个人、公司
  * @property string          $oa_name           账号名称
  * @property null|string     $oa_province
- * @property null|string     $cookie_value      cookie信息
+ * @property null|string     $cookie_string     cookie信息
  * @property null|Carbon     $cookie_refresh_at cookie更新时间
  */
 class RentalOneAccount extends Model
@@ -60,30 +59,28 @@ class RentalOneAccount extends Model
 
         $cookieJar = new FileCookieJar($cookieFilePath, true);
 
-        if (!$this->cookie_value) {
-            Log::channel('console')->warning('No valid cookie data found in Vehicle122Account.');
-        } else {
-            $domain = $this->oa_province_value['url'];
+        $url = $this->oa_province_value['url'];
 
-            $domainMap = [
-                'JSESSIONID-L'    => $domain,
-                'tmri_csfr_token' => $domain,
-                '_uab_collina'    => $domain,
-                'user'            => $domain,
-                'accessToken'     => $domain,
-                'userpub'         => $domain,
-            ];
+        $domain = preg_replace('/^https?:\/\//', '', $url);
 
-            foreach (explode(';', $this->cookie_value) as $cookie) {
-                [$name, $value] = array_map('trim', explode('=', $cookie, 2) + [null, null]);
-                if ($name && $value) {
-                    $cookieJar->setCookie(new SetCookie([
-                        'Name'   => $name,
-                        'Value'  => $value,
-                        'Domain' => $domainMap[$name] ?? '.122.gov.cn',
-                        'Path'   => '/',
-                    ]));
-                }
+        $domainMap = [
+            'JSESSIONID-L'    => $domain,
+            'tmri_csfr_token' => $domain,
+            '_uab_collina'    => $domain,
+            'user'            => $domain,
+            'accessToken'     => $domain,
+            'userpub'         => $domain,
+        ];
+
+        foreach (explode(';', $this->cookie_string) as $cookie) {
+            [$name, $value] = array_map('trim', explode('=', $cookie, 2) + [null, null]);
+            if ($name && $value) {
+                $cookieJar->setCookie(new SetCookie([
+                    'Name'   => $name,
+                    'Value'  => $value,
+                    'Domain' => $domainMap[$name] ?? '.122.gov.cn',
+                    'Path'   => '/',
+                ]));
             }
         }
 

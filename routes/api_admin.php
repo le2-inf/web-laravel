@@ -175,6 +175,7 @@ Route::group(['middleware' => [config('setting.mock.enable') ? TemporaryAdmin::c
 
     // risk
     Route::post('rental-vehicle-schedules/upload', [RentalVehicleScheduleController::class, 'upload']);
+    Route::get('rental-vehicle-schedules/st_vehicle', [RentalVehicleScheduleController::class, 'st_vehicle']);
     Route::resource('rental-vehicle-schedules', RentalVehicleScheduleController::class);
 
     Route::post('rental-vehicle-insurances/upload', [RentalVehicleInsuranceController::class, 'upload']);

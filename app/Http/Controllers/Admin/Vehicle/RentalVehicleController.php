@@ -7,6 +7,7 @@ use App\Attributes\PermissionType;
 use App\Enum\Vehicle\VeStatusDispatch;
 use App\Enum\Vehicle\VeStatusRental;
 use App\Enum\Vehicle\VeStatusService;
+use App\Enum\Vehicle\VeVeType;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Admin;
 use App\Models\Configuration;
@@ -34,6 +35,7 @@ class RentalVehicleController extends Controller
     public static function labelOptions(Controller $controller): void
     {
         $controller->response()->withExtras(
+            VeVeType::labelOptions(),
             VeStatusService::labelOptions(),
             VeStatusRental::labelOptions(),
             VeStatusDispatch::labelOptions(),
@@ -48,7 +50,8 @@ class RentalVehicleController extends Controller
             RentalVehicleModel::options(),
         );
 
-        $query = RentalVehicle::indexQuery();
+        $query   = RentalVehicle::indexQuery();
+        $columns = RentalVehicle::indexColumns();
 
         // 如果是管理员和经理，则可以看到所有的车辆；如果不是管理员和经理，则只能看到车管为自己的车辆。
         $user = $request->user();
@@ -66,16 +69,21 @@ class RentalVehicleController extends Controller
             []
         );
 
-        $paginate->paginator($query, $request, [
-            'kw__func' => function ($value, Builder $builder) {
-                $builder->where(function (Builder $builder) use ($value) {
-                    $builder->where('ve.plate_no', 'like', '%'.$value.'%')
-                        ->orWhere('ve.ve_owner', 'like', '%'.$value.'%')
-                        ->orWhere('ve.ve_address', 'like', '%'.$value.'%')
-                    ;
-                });
-            },
-        ]);
+        $paginate->paginator(
+            $query,
+            $request,
+            [
+                'kw__func' => function ($value, Builder $builder) {
+                    $builder->where(function (Builder $builder) use ($value) {
+                        $builder->where('ve.plate_no', 'like', '%'.$value.'%')
+                            ->orWhere('ve.ve_license_owner', 'like', '%'.$value.'%')
+                            ->orWhere('ve.ve_license_address', 'like', '%'.$value.'%')
+                        ;
+                    });
+                },
+            ],
+            $columns
+        );
 
         return $this->response()->withData($paginate)->respond();
     }
@@ -107,26 +115,27 @@ class RentalVehicleController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'plate_no'            => ['required', 'string', 'max:64', Rule::unique(RentalVehicle::class, 'plate_no')->ignore($rentalVehicle)],
-                'vm_id'               => ['nullable', 'integer', Rule::exists(RentalVehicleModel::class)],
-                'status_service'      => ['required', Rule::in(VeStatusService::label_keys())],
-                'status_rental'       => ['required', Rule::in(VeStatusRental::label_keys())],
-                'status_dispatch'     => ['required', Rule::in(VeStatusDispatch::label_keys())],
-                'vehicle_manager'     => ['nullable', Rule::exists(Admin::class, 'id')],
-                've_owner'            => ['nullable', 'string', 'max:100'],
-                've_address'          => ['nullable', 'string', 'max:255'],
-                've_usage'            => ['nullable', 'string', 'max:50'],
-                've_type'             => ['nullable', 'string', 'max:50'],
-                've_company'          => ['nullable', 'string', 'max:100'],
-                've_vin_code'         => ['nullable', 'string', 'max:50'],
-                've_engine_no'        => ['nullable', 'string', 'max:50'],
-                've_purchase_date'    => ['nullable', 'date'],
-                've_valid_until_date' => ['nullable', 'date', 'after:ve_purchase_date'],
-                've_mileage'          => ['nullable', 'integer'],
-                've_color'            => ['nullable', 'string', 'max:30'],
+                'plate_no'                    => ['required', 'string', 'max:64', Rule::unique(RentalVehicle::class, 'plate_no')->ignore($rentalVehicle)],
+                've_type'                     => ['nullable', Rule::in(VeVeType::label_keys())],
+                'vm_id'                       => ['nullable', 'integer', Rule::exists(RentalVehicleModel::class)],
+                'status_service'              => ['required', Rule::in(VeStatusService::label_keys())],
+                'status_rental'               => ['required', Rule::in(VeStatusRental::label_keys())],
+                'status_dispatch'             => ['required', Rule::in(VeStatusDispatch::label_keys())],
+                'vehicle_manager'             => ['nullable', Rule::exists(Admin::class, 'id')],
+                've_license_owner'            => ['nullable', 'string', 'max:100'],
+                've_license_address'          => ['nullable', 'string', 'max:255'],
+                've_license_usage'            => ['nullable', 'string', 'max:50'],
+                've_license_type'             => ['nullable', 'string', 'max:50'],
+                've_license_company'          => ['nullable', 'string', 'max:100'],
+                've_license_vin_code'         => ['nullable', 'string', 'max:50'],
+                've_license_engine_no'        => ['nullable', 'string', 'max:50'],
+                've_license_purchase_date'    => ['nullable', 'date'],
+                've_license_valid_until_date' => ['nullable', 'date', 'after:ve_license_purchase_date'],
+                've_mileage'                  => ['nullable', 'integer'],
+                've_color'                    => ['nullable', 'string', 'max:30'],
             ]
-            + Uploader::validator_rule_upload_object('license_face_photo')
-            + Uploader::validator_rule_upload_object('license_back_photo'),
+            + Uploader::validator_rule_upload_object('ve_license_face_photo')
+            + Uploader::validator_rule_upload_object('ve_license_back_photo'),
             [],
             trans_property(RentalVehicle::class)
         )
@@ -204,12 +213,13 @@ class RentalVehicleController extends Controller
     #[PermissionAction(PermissionAction::EDIT)]
     public function upload(Request $request): Response
     {
-        return Uploader::upload($request, 'vehicle', ['license_face_photo', 'license_back_photo'], $this);
+        return Uploader::upload($request, 'vehicle', ['ve_license_face_photo', 've_license_back_photo'], $this);
     }
 
     protected function options(?bool $with_group_count = false): void
     {
         $this->response()->withExtras(
+            VeVeType::options(),
             $with_group_count ? VeStatusService::options_with_count(RentalVehicle::class) : VeStatusService::options(),
             $with_group_count ? VeStatusRental::options_with_count(RentalVehicle::class) : VeStatusRental::options(),
             $with_group_count ? VeStatusDispatch::options_with_count(RentalVehicle::class) : VeStatusDispatch::options(),

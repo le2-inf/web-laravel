@@ -171,6 +171,25 @@ class RentalPayment extends Model
         ;
     }
 
+    public static function indexColumns(): array
+    {
+        return [
+            'RentalSaleOrder.contract_number'    => fn ($item) => $item->contract_number,
+            'RentalVehicle.plate_no'             => fn ($item) => $item->plate_no,
+            'RentalVehicleModel.brand_model'     => fn ($item) => $item->brand_name.'-'.$item->model_name,
+            'RentalCustomer.contact_name'        => fn ($item) => $item->contact_name,
+            'RentalPaymentType.pt_name'          => fn ($item) => $item->pt_name,
+            'RentalPayment.should_pay_date'      => fn ($item) => $item->should_pay_date,
+            'RentalPayment.should_pay_amount'    => fn ($item) => $item->should_pay_amount,
+            'RentalPayment.actual_pay_date'      => fn ($item) => $item->actual_pay_date,
+            'RentalPayment.actual_pay_amount'    => fn ($item) => $item->actual_pay_amount,
+            'RentalPayment.pay_status_label'     => fn ($item) => $item->pay_status_label,
+            'RentalPayment.is_valid_label'       => fn ($item) => $item->is_valid_label,
+            'RentalSaleOrder.order_status_label' => fn ($item) => $item->order_status_label,
+            'RentalPayment.rp_remark'            => fn ($item) => $item->rp_remark,
+        ];
+    }
+
     public static function indexStat($list): array
     {
         $accounts_receivable_amount = $actual_received_amount = $pending_receivable_amount = $pending_receivable_size = $less_receivable_amount = '0';

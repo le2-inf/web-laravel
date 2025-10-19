@@ -26,7 +26,7 @@ class RentalExpiryVehicleController extends Controller
 
         $paginate = new PaginateService(
             [],
-            [['ve.ve_valid_until_date', 'desc']],
+            [['ve.ve_license_valid_until_date', 'desc']],
             [],
             []
         );

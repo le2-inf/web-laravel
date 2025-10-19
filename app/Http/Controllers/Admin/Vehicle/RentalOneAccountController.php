@@ -86,10 +86,10 @@ class RentalOneAccountController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'oa_type'      => ['required', Rule::in(OaOaType::label_keys())],
-                'oa_name'      => ['required', 'string', 'max:255', Rule::unique(RentalOneAccount::class)->ignore($rentalOneAccount)],
-                'oa_province'  => ['required', 'string', Rule::in(OaOaProvince::getKeys())],
-                'cookie_value' => ['nullable', 'string'],
+                'oa_type'       => ['required', Rule::in(OaOaType::label_keys())],
+                'oa_name'       => ['required', 'string', 'max:255', Rule::unique(RentalOneAccount::class)->ignore($rentalOneAccount)],
+                'oa_province'   => ['required', 'string', Rule::in(OaOaProvince::getKeys())],
+                'cookie_string' => ['nullable', 'string'],
             ],
             [],
             trans_property(RentalOneAccount::class)

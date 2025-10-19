@@ -66,7 +66,7 @@ class OneVehiclesImport extends Command
                     // 准备 upsert 数据
                     $rentalVehiclesToUpsert[] = [
                         'plate_no' => $rentalVehicleJson['hphm'],
-                        //    've_type' => $rentalVehicleJson['hpzlStr'],
+                        've_type'  => $rentalVehicleJson['hpzl'],
                     ];
                 }
 
@@ -77,6 +77,7 @@ class OneVehiclesImport extends Command
                         ['plate_no'], // 唯一键
                         [ // 需要更新的字段
                             'plate_no',
+                            've_type',
                         ]
                     );
 

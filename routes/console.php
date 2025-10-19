@@ -8,7 +8,7 @@ use App\Console\Commands\App\Vehicle\VehicleViolationUsagesIdUpdate;
 use App\Console\Commands\Sys\SmtpSelfTest;
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command(OneRefreshCookie::class)->everyTenMinutes()->withoutOverlapping();
+Schedule::command(OneRefreshCookie::class)->everyFifteenMinutes()->withoutOverlapping();
 
 Schedule::command(VehicleViolationUsagesIdUpdate::class)->everyTenMinutes();
 

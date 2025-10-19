@@ -30,7 +30,7 @@ class OneHtmlFetch extends Command
         $this->turn = $this->option('turn') ?: Carbon::now()->format('Y-m-d');
 
         $rentalOneAccounts = RentalOneAccount::query()
-            ->whereRaw('LENGTH(cookie_value) > ?', [30])
+            ->whereRaw('LENGTH(cookie_string) > ?', [30])
             ->where(function (Builder $query) {
                 $query->where('cookie_refresh_at', '>=', now()->subMinutes(30))
                     ->orWhereNull('cookie_refresh_at')
@@ -146,7 +146,7 @@ class OneHtmlFetch extends Command
                     // 发送 POST 请求
                     $response = Http::withHeaders($headers)
                         ->withHeaders([
-                            'Cookie' => $rentalOneAccount->cookie_value,
+                            'Cookie' => $rentalOneAccount->cookie_string,
                         ])
                         ->asForm()
                         ->post($url, $formData)
@@ -296,7 +296,7 @@ class OneHtmlFetch extends Command
                             // 发送违章查询 POST 请求
                             $violationResponse = Http::withHeaders($violationHeaders)
                                 ->withHeaders([
-                                    'Cookie' => $rentalOneAccount->cookie_value,
+                                    'Cookie' => $rentalOneAccount->cookie_string,
                                 ])
                                 ->asForm()
                                 ->post($violationUrl, $violationFormData)

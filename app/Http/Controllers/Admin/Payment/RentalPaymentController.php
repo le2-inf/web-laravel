@@ -46,7 +46,8 @@ class RentalPaymentController extends Controller
         $this->response()->withExtras(
         );
 
-        $query = RentalPayment::indexQuery();
+        $query   = RentalPayment::indexQuery();
+        $columns = RentalPayment::indexColumns();
 
         $paginate = new PaginateService(
             [],
@@ -55,18 +56,23 @@ class RentalPaymentController extends Controller
             []
         );
 
-        $paginate->paginator($query, $request, [
-            'kw__func' => function ($value, Builder $builder) {
-                $builder->where(function (Builder $builder) use ($value) {
-                    $builder->whereLike('so.contract_number', '%'.$value.'%')
-                        ->orWhereLike('rp.rp_remark', '%'.$value.'%')
-                        ->orWhereLike('ve.plate_no', '%'.$value.'%')
-                        ->orWhereLike('cu.contact_name', '%'.$value.'%')
-                        ->orWhereLike('cu.contact_phone', '%'.$value.'%')
-                    ;
-                });
-            },
-        ]);
+        $paginate->paginator(
+            $query,
+            $request,
+            [
+                'kw__func' => function ($value, Builder $builder) {
+                    $builder->where(function (Builder $builder) use ($value) {
+                        $builder->whereLike('so.contract_number', '%'.$value.'%')
+                            ->orWhereLike('rp.rp_remark', '%'.$value.'%')
+                            ->orWhereLike('ve.plate_no', '%'.$value.'%')
+                            ->orWhereLike('cu.contact_name', '%'.$value.'%')
+                            ->orWhereLike('cu.contact_phone', '%'.$value.'%')
+                        ;
+                    });
+                },
+            ],
+            $columns
+        );
 
         return $this->response()->withData($paginate)->respond();
     }

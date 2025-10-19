@@ -150,6 +150,28 @@ class RentalVehicleRepair extends Model
         ;
     }
 
+    public static function indexColumns(): array
+    {
+        return [
+            'RentalVehicle.plate_no'                 => fn ($item) => $item->plate_no,
+            'RentalCustomer.contact_name'            => fn ($item) => $item->contact_name,
+            'RentalVehicleRepair.entry_datetime'     => fn ($item) => $item->entry_datetime_,
+            'RentalVehicleRepair.vr_mileage'         => fn ($item) => $item->vr_mileage,
+            'RentalVehicleRepair.repair_cost'        => fn ($item) => $item->repair_cost,
+            'RentalVehicleRepair.delay_days'         => fn ($item) => $item->delay_days,
+            'RentalServiceCenter.sc_name'            => fn ($item) => $item->sc_name,
+            'RentalVehicleRepair.repair_content'     => fn ($item) => $item->repair_content,
+            'RentalVehicleRepair.departure_datetime' => fn ($item) => $item->departure_datetime_,
+            'RentalVehicleRepair.repair_status'      => fn ($item) => $item->repair_status_label,
+            'RentalVehicleRepair.pickup_status'      => fn ($item) => $item->pickup_status_label,
+            'RentalVehicleRepair.settlement_status'  => fn ($item) => $item->settlement_status_label,
+            'RentalVehicleRepair.custody_vehicle'    => fn ($item) => $item->custody_vehicle_label,
+            'RentalVehicleRepair.repair_attribute'   => fn ($item) => $item->repair_attribute_label,
+            'RentalVehicleRepair.vr_remark'          => fn ($item) => $item->vr_remark,
+            'RentalVehicleRepair.repair_info'        => fn ($item) => static::str_render($item->repair_info, 'repair_info'),
+        ];
+    }
+
     public static function indexQuery(array $search = []): Builder
     {
         $ve_id = $search['ve_id'] ?? null;

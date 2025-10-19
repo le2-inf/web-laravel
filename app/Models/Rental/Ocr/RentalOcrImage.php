@@ -31,8 +31,8 @@ class RentalOcrImage extends Model
     use ModelTrait;
 
     public const array types = [
-        'license_face_photo'        => 'RecognizeVehicleLicense', // 行驶证 ok
-        'license_back_photo'        => 'RecognizeVehicleLicense',
+        've_license_face_photo'     => 'RecognizeVehicleLicense', // 行驶证 ok
+        've_license_back_photo'     => 'RecognizeVehicleLicense',
         'cui_id1_photo'             => 'recognizeIdcardWithOptions', // 身份证 ok
         'cui_id2_photo'             => 'recognizeIdcardWithOptions',
         'cui_driver_license1_photo' => 'recognizeDrivingLicenseWithOptions', // 驾驶证
@@ -230,19 +230,19 @@ class RentalOcrImage extends Model
                         case 'RecognizeVehicleLicense':
                             $face_data = $data['face']['data'] ?? null;
                             if ($face_data) {
-                                $return['ve_address']       = $face_data['address'];
-                                $return['ve_engine_no']     = $face_data['engineNumber'];
-                                $return['ve_owner']         = $face_data['owner'];
-                                $return['ve_purchase_date'] = $face_data['registrationDate'];
-                                $return['ve_usage']         = $face_data['useNature'];
-                                $return['ve_type']          = $face_data['vehicleType'];
-                                $return['ve_vin_code']      = $face_data['vinCode'];
+                                $return['ve_license_address']       = $face_data['address'];
+                                $return['ve_license_engine_no']     = $face_data['engineNumber'];
+                                $return['ve_license_owner']         = $face_data['owner'];
+                                $return['ve_license_purchase_date'] = $face_data['registrationDate'];
+                                $return['ve_license_usage']         = $face_data['useNature'];
+                                $return['ve_license_type']          = $face_data['vehicleType'];
+                                $return['ve_license_vin_code']      = $face_data['vinCode'];
                             }
 
                             $back_data = $data['back']['data'] ?? null;
                             if ($back_data) {
                                 if (preg_match('{(\d+)年(\d+)月}u', $back_data['inspectionRecord'], $matches)) {
-                                    $return['ve_valid_until_date'] = "{$matches[1]}-{$matches[2]}-01";
+                                    $return['ve_license_valid_until_date'] = "{$matches[1]}-{$matches[2]}-01";
                                 }
                             }
 

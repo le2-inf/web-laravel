@@ -132,6 +132,38 @@ class RentalSaleSettlement extends Model
         ;
     }
 
+    public static function indexColumns(): array
+    {
+        return [
+            'RentalCustomer.contact_name'                     => fn ($item) => $item->contact_name,
+            'RentalCustomer.contact_phone'                    => fn ($item) => $item->contact_phone,
+            'RentalVehicle.plate_no'                          => fn ($item) => $item->plate_no,
+            'RentalVehicleModel.brand_model'                  => fn ($item) => $item->brand_name.'-'.$item->model_name,
+            'RentalSaleSettlement.deposit_amount'             => fn ($item) => $item->deposit_amount,
+            'RentalSaleSettlement.received_deposit'           => fn ($item) => $item->received_deposit,
+            'RentalSaleSettlement.early_return_penalty'       => fn ($item) => $item->early_return_penalty,
+            'RentalSaleSettlement.overdue_inspection_penalty' => fn ($item) => $item->overdue_inspection_penalty,
+            'RentalSaleSettlement.overdue_rent'               => fn ($item) => $item->overdue_rent,
+            'RentalSaleSettlement.overdue_penalty'            => fn ($item) => $item->overdue_penalty,
+            'RentalSaleSettlement.accident_depreciation_fee'  => fn ($item) => $item->accident_depreciation_fee,
+            'RentalSaleSettlement.insurance_surcharge'        => fn ($item) => $item->insurance_surcharge,
+            'RentalSaleSettlement.violation_withholding_fee'  => fn ($item) => $item->violation_withholding_fee,
+            'RentalSaleSettlement.violation_penalty'          => fn ($item) => $item->violation_penalty,
+            'RentalSaleSettlement.repair_fee'                 => fn ($item) => $item->repair_fee,
+            'RentalSaleSettlement.insurance_deductible'       => fn ($item) => $item->insurance_deductible,
+            'RentalSaleSettlement.forced_collection_fee'      => fn ($item) => $item->forced_collection_fee,
+            'RentalSaleSettlement.other_deductions'           => fn ($item) => $item->other_deductions,
+            'RentalSaleSettlement.other_deductions_remark'    => fn ($item) => $item->other_deductions_remark,
+            'RentalSaleSettlement.refund_amount'              => fn ($item) => $item->refund_amount,
+            'RentalSaleSettlement.refund_details'             => fn ($item) => $item->refund_details,
+            'RentalSaleSettlement.settlement_amount'          => fn ($item) => $item->settlement_amount,
+            'RentalSaleSettlement.deposit_return_date'        => fn ($item) => $item->deposit_return_date,
+            'RentalSaleSettlement.return_status'              => fn ($item) => $item->return_status_label,
+            'RentalSaleSettlement.return_datetime'            => fn ($item) => $item->return_datetime_,
+            'RentalSaleSettlement.ss_remark'                  => fn ($item) => $item->ss_remark,
+        ];
+    }
+
     public static function options(?\Closure $where = null): array
     {
         return [];

@@ -4,6 +4,7 @@ namespace App\Models\Rental\Vehicle;
 
 use App\Attributes\ClassName;
 use App\Attributes\ColumnDesc;
+use App\Enum\Vehicle\VeStatusService;
 use App\Enum\Vehicle\VsInspectionType;
 use App\Models\Configuration;
 use App\Models\ModelTrait;
@@ -26,15 +27,19 @@ use Illuminate\Validation\ValidationException;
 #[ColumnDesc('next_inspection_date', required: true)]
 #[ColumnDesc('vs_remark')]
 /**
- * @property int         $vs_id                年检记录序号
- * @property string      $inspection_type      年检类型
- * @property int         $ve_id                车辆序号
- * @property string      $inspector            年检处理人
- * @property Carbon      $inspection_date      年检日期
- * @property float       $inspection_amount    年检金额
- * @property Carbon      $next_inspection_date 下次年检日期
- * @property null|mixed  $additional_photos    附加照片;存储照片路径的JSON数组
- * @property null|string $vs_remark            年检备注
+ * @property int                     $vs_id                      年检记录序号
+ * @property string|VsInspectionType $inspection_type            年检类型
+ * @property int                     $ve_id                      车辆序号
+ * @property string                  $inspector                  年检处理人
+ * @property Carbon                  $inspection_date            年检日期
+ * @property float                   $inspection_amount          年检金额
+ * @property Carbon                  $next_inspection_date       下次年检日期
+ * @property null|mixed              $additional_photos          附加照片;存储照片路径的JSON数组
+ * @property null|string             $vs_remark                  年检备注
+ * @property null|string             $vehicle_last_date          最后一次车辆年检时间
+ * @property null|string             $gas_cylinder_last_date     最后一次气罐年检时间
+ * @property null|string             $certificate_last_date      最后一次车证年检时间
+ * @property null|string             $business_license_last_date 最后一次营业执照年检时间
  */
 class RentalVehicleSchedule extends Model
 {
@@ -173,6 +178,45 @@ class RentalVehicleSchedule extends Model
     public static function options(?\Closure $where = null): array
     {
         return [];
+    }
+
+    public static function stQuery(array $search = []): Builder
+    {
+        $subSql = "
+SELECT
+  ve_id,
+  MAX(inspection_date) FILTER (WHERE inspection_type = 'vehicle')       AS vehicle_last_date,
+  MAX(inspection_date) FILTER (WHERE inspection_type = 'gas_cylinder')  AS gas_cylinder_last_date,
+  MAX(inspection_date) FILTER (WHERE inspection_type = 'certificate')   AS certificate_last_date,
+  MAX(inspection_date) FILTER (WHERE inspection_type = 'business_license')   AS business_license_last_date
+FROM rental_vehicle_schedules
+GROUP BY ve_id
+";
+
+        return DB::query()
+            ->from('rental_vehicles', 've')
+            ->leftJoin('rental_vehicle_models as vm', 've.vm_id', '=', 'vm.vm_id')
+            ->leftJoinSub($subSql, 'vs', 'vs.ve_id', '=', 've.ve_id')
+            ->select('ve.*', 'vm.brand_name', 'vm.model_name', 'vs.vehicle_last_date', 'vs.gas_cylinder_last_date', 'vs.certificate_last_date', 'vs.business_license_last_date')
+            ->orderBy('ve.ve_id', 'desc')
+            ->where('ve.status_service', '=', VeStatusService::YES)
+        ;
+    }
+
+    public static function stColumns(): array
+    {
+        return [
+            'RentalVehicle.ve_id'                              => fn ($item) => $item->ve_id,
+            'RentalVehicle.plate_no'                           => fn ($item) => $item->plate_no,
+            'RentalVehicleModel.brand_model'                   => fn ($item) => $item->brand_name.'-'.$item->model_name,
+            'RentalVehicle.ve_license_owner'                   => fn ($item) => $item->ve_license_owner,
+            'RentalVehicle.ve_license_vin_code'                => fn ($item) => $item->ve_license_vin_code,
+            'RentalVehicle.ve_license_engine_no'               => fn ($item) => $item->ve_license_engine_no,
+            'RentalVehicleSchedule.vehicle_last_date'          => fn ($item) => $item->vehicle_last_date,
+            'RentalVehicleSchedule.gas_cylinder_last_date'     => fn ($item) => $item->gas_cylinder_last_date,
+            'RentalVehicleSchedule.certificate_last_date'      => fn ($item) => $item->certificate_last_date,
+            'RentalVehicleSchedule.business_license_last_date' => fn ($item) => $item->business_license_last_date,
+        ];
     }
 
     protected function inspectionTypeLabel(): Attribute

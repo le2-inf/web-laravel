@@ -32,19 +32,6 @@ final class ResponseBuilder
         }
     }
 
-    //    /**
-    //     * 静态构造：不带任何参数.
-    //     */
-    //    public static function make(): self
-    //    {
-    //        static $instance = null;
-    //        if (null === $instance) {
-    //            $instance = new self();
-    //        }
-    //
-    //        return $instance;
-    //    }
-
     /**
      * 设置 data（可以多次调用覆盖或追加）.
      */
@@ -137,9 +124,9 @@ final class ResponseBuilder
     {
         if ($wantsJson = $this->request->wantsJson()) {
             if (PageExcel::check_request($this->request) && $this->data instanceof PaginateService) {
-                $pageExcel = new PageExcel($this->controller_class);
+                $pageExcel = new PageExcel($this->request->route()->getActionName());
 
-                $export = $pageExcel->export($this->data->builder);
+                $export = $pageExcel->export($this->data->builder, $this->data->columns);
 
                 $this->withData($export);
             }

@@ -24,11 +24,11 @@ class RentalExpiryVehicle extends Model
             ->leftJoin('rental_vehicle_models as vm', 've.vm_id', '=', 'vm.vm_id')
             ->select('ve.*', 'vm.brand_name', 'vm.model_name')
             ->addSelect(
-                DB::raw('EXTRACT(EPOCH FROM now() - ve.ve_valid_until_date) / 86400.0 as valid_until_date_interval'),
+                DB::raw('EXTRACT(EPOCH FROM now() - ve.ve_license_valid_until_date) / 86400.0 as valid_until_date_interval'),
             )
             ->where('ve.status_service', VeStatusService::YES)
             ->where(function ($q) use ($targetDate) {
-                $q->where('ve.ve_valid_until_date', '<=', $targetDate);
+                $q->where('ve.ve_license_valid_until_date', '<=', $targetDate);
             })
         ;
     }

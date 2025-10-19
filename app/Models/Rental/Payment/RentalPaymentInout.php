@@ -86,6 +86,25 @@ class RentalPaymentInout extends Model
         ;
     }
 
+    public static function indexColumns(): array
+    {
+        return [
+            'RentalInout.pa_name'                => fn ($item) => $item->pa_name,
+            'RentalInout.io_type'                => fn ($item) => $item->io_type_label,
+            'RentalCustomer.contact_name'        => fn ($item) => $item->_contact_name,
+            'RentalPaymentType.pt_name'          => fn ($item) => $item->_pt_name,
+            'RentalInout.occur_datetime'         => fn ($item) => $item->occur_datetime_,
+            'RentalInout.occur_amount'           => fn ($item) => $item->occur_amount,
+            'RentalInout.account_balance'        => fn ($item) => $item->account_balance,
+            'RentalPayment.should_pay_date'      => fn ($item) => $item->_should_pay_date,
+            'RentalPayment.should_pay_amount'    => fn ($item) => $item->_should_pay_amount,
+            'RentalSaleOrder.contract_number'    => fn ($item) => $item->_contract_number,
+            'RentalVehicle.plate_no'             => fn ($item) => $item->_plate_no,
+            'RentalVehicleModel.brand_full_name' => fn ($item) => $item->_brand_full_name,
+            'RentalPayment.rp_remark'            => fn ($item) => $item->rp_remark,
+        ];
+    }
+
     public static function option(Collection $RentalPayments): array
     {
         return [

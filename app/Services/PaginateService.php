@@ -24,8 +24,10 @@ class PaginateService
     public Builder|EloquentBuilder $builder;
 
     public ?LengthAwarePaginator $paginator = null;
-    protected array $DefaultOrder           = [];
-    protected array $DefaultParam           = [];
+
+    public ?array $columns        = null;
+    protected array $DefaultOrder = [];
+    protected array $DefaultParam = [];
 
     protected array $AllowOrderField = [];
 
@@ -61,13 +63,15 @@ class PaginateService
         return $return;
     }
 
-    public function paginator(Builder|EloquentBuilder $query, $request, $searchMap = null): ?LengthAwarePaginator
+    public function paginator(Builder|EloquentBuilder $query, $request, $searchMap = null, ?array $columns = null): ?LengthAwarePaginator
     {
         $this->builder = $query;
 
         $this->setParam($request);
 
         $this->searchBuilder($searchMap);
+
+        $this->columns = $columns;
 
         $this->orderBuilder();
 

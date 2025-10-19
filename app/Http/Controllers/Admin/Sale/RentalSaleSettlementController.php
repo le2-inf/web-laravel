@@ -50,7 +50,8 @@ class RentalSaleSettlementController extends Controller
         $this->response()->withExtras(
         );
 
-        $query = RentalSaleSettlement::indexQuery();
+        $query   = RentalSaleSettlement::indexQuery();
+        $columns = RentalSaleSettlement::indexColumns();
 
         $paginate = new PaginateService(
             [],
@@ -59,17 +60,22 @@ class RentalSaleSettlementController extends Controller
             []
         );
 
-        $paginate->paginator($query, $request, [
-            'kw__func' => function ($value, Builder $builder) {
-                $builder->where(function (Builder $builder) use ($value) {
-                    $builder->where('ve.plate_no', 'like', '%'.$value.'%')
-                        ->orWhere('cu.contact_name', 'like', '%'.$value.'%')
-                        ->orWhere('cu.contact_phone', 'like', '%'.$value.'%')
-                        ->orWhere('ss.ss_remark', 'like', '%'.$value.'%')
-                    ;
-                });
-            },
-        ]);
+        $paginate->paginator(
+            $query,
+            $request,
+            [
+                'kw__func' => function ($value, Builder $builder) {
+                    $builder->where(function (Builder $builder) use ($value) {
+                        $builder->where('ve.plate_no', 'like', '%'.$value.'%')
+                            ->orWhere('cu.contact_name', 'like', '%'.$value.'%')
+                            ->orWhere('cu.contact_phone', 'like', '%'.$value.'%')
+                            ->orWhere('ss.ss_remark', 'like', '%'.$value.'%')
+                        ;
+                    });
+                },
+            ],
+            $columns
+        );
 
         return $this->response()->withData($paginate)->respond();
     }

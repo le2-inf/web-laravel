@@ -100,6 +100,21 @@ class RentalVehicleViolation extends Model
         ;
     }
 
+    public static function indexColumns(): array
+    {
+        return [
+            'RentalVehicleViolation.plate_no'           => fn ($item) => $item->plate_no,
+            'RentalVehicleViolation.violation_datetime' => fn ($item) => $item->violation_datetime_,
+            'RentalVehicleViolation.location'           => fn ($item) => $item->location,
+            'RentalVehicleViolation.fine_amount'        => fn ($item) => $item->fine_amount,
+            'RentalVehicleViolation.penalty_points'     => fn ($item) => $item->penalty_points,
+            'RentalVehicleViolation.payment_status'     => fn ($item) => $item->payment_status_label,
+            'RentalVehicleViolation.process_status'     => fn ($item) => $item->process_status_label,
+            'RentalVehicleViolation.violation_content'  => fn ($item) => $item->violation_content,
+            'RentalVehicleViolation.vv_remark'          => fn ($item) => $item->vv_remark,
+        ];
+    }
+
     public static function indexStat($list): bool
     {
         return count($list) > 0;

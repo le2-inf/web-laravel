@@ -18,7 +18,7 @@ class Vehicle122AccountObserver
      */
     public function updated(RentalOneAccount $rentalOneAccount): void
     {
-        if ($rentalOneAccount->wasChanged('cookie_value')) {
+        if ($rentalOneAccount->wasChanged('cookie_string')) {
             $rentalOneAccount->deleteCookies();
         }
     }

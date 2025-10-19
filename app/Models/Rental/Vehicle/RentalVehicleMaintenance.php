@@ -179,6 +179,26 @@ class RentalVehicleMaintenance extends Model
         ;
     }
 
+    public static function indexColumns()
+    {
+        return [
+            'RentalVehicle.plate_no'                       => fn ($item) => $item->plate_no,
+            'RentalCustomer.contact_name'                  => fn ($item) => $item->contact_name,
+            'RentalServiceCenter.sc_name'                  => fn ($item) => $item->sc_name,
+            'RentalVehicleMaintenance.entry_datetime'      => fn ($item) => $item->entry_datetime_,
+            'RentalVehicleMaintenance.maintenance_amount'  => fn ($item) => $item->maintenance_amount,
+            'RentalVehicleMaintenance.entry_mileage'       => fn ($item) => $item->entry_mileage,
+            'RentalVehicleMaintenance.departure_datetime'  => fn ($item) => $item->departure_datetime_,
+            'RentalVehicleMaintenance.maintenance_mileage' => fn ($item) => $item->maintenance_mileage,
+            'RentalVehicleMaintenance.settlement_status'   => fn ($item) => $item->settlement_status_label,
+            'RentalVehicleMaintenance.pickup_status'       => fn ($item) => $item->pickup_status_label,
+            'RentalVehicleMaintenance.settlement_method'   => fn ($item) => $item->settlement_method_label,
+            'RentalVehicleMaintenance.custody_vehicle'     => fn ($item) => $item->custody_vehicle_label,
+            'RentalVehicleMaintenance.vm_remark'           => fn ($item) => $item->vm_remark,
+            'RentalVehicleMaintenance.maintenance_info'    => fn ($item) => static::str_render($item->maintenance_info, 'maintenance_info'),
+        ];
+    }
+
     public static function importColumns(): array
     {
         return [

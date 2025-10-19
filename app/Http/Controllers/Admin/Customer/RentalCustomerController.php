@@ -45,7 +45,8 @@ class RentalCustomerController extends Controller
     {
         $this->options(true);
 
-        $query = RentalCustomer::indexQuery();
+        $query   = RentalCustomer::indexQuery();
+        $columns = RentalCustomer::indexColumns();
 
         // 如果是管理员或经理，则可以看到所有的用户；如果不是管理员或经理，则只能看到销售或驾管为自己的用户。
         $user = $request->user();
@@ -67,7 +68,7 @@ class RentalCustomerController extends Controller
             []
         );
 
-        $paginate->paginator($query, $request, []);
+        $paginate->paginator($query, $request, [], $columns);
 
         return $this->response()->withData($paginate)->respond();
     }

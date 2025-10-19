@@ -174,6 +174,33 @@ class RentalVehicleAccident extends Model
         ;
     }
 
+    public static function indexColumns(): array
+    {
+        return [
+            'RentalVehicle.plate_no'                   => fn ($item) => $item->plate_no,
+            'RentalCustomer.contact_name'              => fn ($item) => $item->contact_name,
+            'RentalVehicleAccident.accident_location'  => fn ($item) => $item->accident_location,
+            'RentalVehicleAccident.accident_dt'        => fn ($item) => $item->accident_dt_,
+            'RentalVehicleAccident.responsible_party'  => fn ($item) => $item->responsible_party,
+            'RentalVehicleAccident.claim_status'       => fn ($item) => $item->claim_status_label,
+            'RentalVehicleAccident.self_amount'        => fn ($item) => $item->self_amount,
+            'RentalVehicleAccident.third_party_amount' => fn ($item) => $item->third_party_amount,
+            'RentalVehicleAccident.insurance_company'  => fn ($item) => $item->insurance_company,
+            'RentalVehicleAccident.description'        => fn ($item) => $item->description,
+            'RentalVehicleAccident.factory_in_dt'      => fn ($item) => $item->factory_in_dt_,
+            'RentalServiceCenter.sc_name'              => fn ($item) => $item->sc_name,
+            'RentalVehicleAccident.repair_content'     => fn ($item) => $item->repair_content,
+            'RentalVehicleAccident.repair_status'      => fn ($item) => $item->repair_status_label,
+            'RentalVehicleAccident.factory_out_dt'     => fn ($item) => $item->factory_out_dt_,
+            'RentalVehicleAccident.settlement_status'  => fn ($item) => $item->settlement_status_label,
+            'RentalVehicleAccident.pickup_status'      => fn ($item) => $item->pickup_status_label,
+            'RentalVehicleAccident.settlement_method'  => fn ($item) => $item->settlement_method_label,
+            'RentalVehicleAccident.managed_vehicle'    => fn ($item) => $item->managed_vehicle_label,
+            'RentalVehicleAccident.va_remark'          => fn ($item) => $item->va_remark,
+            'RentalVehicleAccident.accident_info'      => fn ($item) => static::str_render($item->accident_info, 'accident_info'),
+        ];
+    }
+
     public static function importColumns(): array
     {
         return [

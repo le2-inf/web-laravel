@@ -57,7 +57,8 @@ class RentalVehicleRepairController extends Controller
             RentalVehicle::options(),
         );
 
-        $query = RentalVehicleRepair::indexQuery();
+        $query   = RentalVehicleRepair::indexQuery();
+        $columns = RentalVehicleRepair::indexColumns();
 
         $paginate = new PaginateService(
             [],
@@ -66,15 +67,20 @@ class RentalVehicleRepairController extends Controller
             []
         );
 
-        $paginate->paginator($query, $request, [
-            'kw__func' => function ($value, Builder $builder) {
-                $builder->where(function (Builder $builder) use ($value) {
-                    $builder->where('ve.plate_no', 'like', '%'.$value.'%')
-                        ->orWhere('vr.vr_remark', 'like', '%'.$value.'%')
-                    ;
-                });
-            },
-        ]);
+        $paginate->paginator(
+            $query,
+            $request,
+            [
+                'kw__func' => function ($value, Builder $builder) {
+                    $builder->where(function (Builder $builder) use ($value) {
+                        $builder->where('ve.plate_no', 'like', '%'.$value.'%')
+                            ->orWhere('vr.vr_remark', 'like', '%'.$value.'%')
+                        ;
+                    });
+                },
+            ],
+            $columns
+        );
 
         return $this->response()->withData($paginate)->respond();
     }

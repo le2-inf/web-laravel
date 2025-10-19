@@ -104,6 +104,24 @@ class RentalVehicleInspection extends Model
         ;
     }
 
+    public static function indexColumns(): array
+    {
+        return [
+            'RentalVehicleInspection.inspection_type'       => fn ($item) => $item->inspection_type_label,
+            'RentalCustomer.contact_name'                   => fn ($item) => $item->contact_name,
+            'RentalVehicle.plate_no'                        => fn ($item) => $item->plate_no,
+            'RentalVehicleInspection.policy_copy'           => fn ($item) => $item->policy_copy_label,
+            'RentalVehicleInspection.driving_license'       => fn ($item) => $item->driving_license_label,
+            'RentalVehicleInspection.operation_license'     => fn ($item) => $item->operation_license_label,
+            'RentalVehicleInspection.vi_mileage'            => fn ($item) => $item->vi_mileage,
+            'RentalVehicleInspection.vehicle_damage_status' => fn ($item) => $item->vehicle_damage_status_label,
+            'RentalVehicleInspection.inspection_datetime'   => fn ($item) => $item->inspection_datetime_,
+            'RentalVehicleInspection.vi_remark'             => fn ($item) => $item->vi_remark,
+            'RentalVehicleInspection.processed_by'          => fn ($item) => $item->processed_by,
+            'RentalVehicleInspection.inspection_info'       => fn ($item) => static::str_render($item->inspection_info, 'inspection_info'),
+        ];
+    }
+
     public static function indexQuery(array $search = []): Builder
     {
         $ve_id = $search['ve_id'] ?? null;

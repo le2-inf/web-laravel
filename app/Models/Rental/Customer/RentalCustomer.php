@@ -134,6 +134,44 @@ class RentalCustomer extends Authenticatable
         ;
     }
 
+    public static function indexColumns(): array
+    {
+        return [
+            'RentalCustomer.cu_id'                                    => fn ($item) => $item->cu_id,
+            'RentalCustomer.cu_type'                                  => fn ($item) => $item->cu_type_label,
+            'RentalCustomer.contact_name'                             => fn ($item) => $item->contact_name,
+            'RentalCustomer.contact_phone'                            => fn ($item) => $item->contact_phone,
+            'RentalCustomer.contact_email'                            => fn ($item) => $item->contact_email,
+            'RentalCustomer.contact_wechat'                           => fn ($item) => $item->contact_wechat,
+            'RentalCustomer.contact_live_city'                        => fn ($item) => $item->contact_live_city,
+            'RentalCustomer.contact_live_address'                     => fn ($item) => $item->contact_live_address,
+            'RentalCustomer.cu_remark'                                => fn ($item) => $item->cu_remark,
+            'RentalCustomerIndividual.cui_name'                       => fn ($item) => $item->cui_name,
+            'RentalCustomerIndividual.cui_gender'                     => fn ($item) => $item->cui_gender_label,
+            'RentalCustomerIndividual.cui_date_of_birth'              => fn ($item) => $item->cui_date_of_birth,
+            'RentalCustomerIndividual.cui_id_number'                  => fn ($item) => $item->cui_id_number,
+            'RentalCustomerIndividual.cui_id_address'                 => fn ($item) => $item->cui_id_address,
+            'RentalCustomerIndividual.cui_id_expiry_date'             => fn ($item) => $item->cui_id_expiry_date,
+            'RentalCustomerIndividual.cui_driver_license_number'      => fn ($item) => $item->cui_driver_license_number,
+            'RentalCustomerIndividual.cui_driver_license_category'    => fn ($item) => $item->cui_driver_license_category,
+            'RentalCustomerIndividual.cui_driver_license_expiry_date' => fn ($item) => $item->cui_driver_license_expiry_date,
+            'RentalCustomerIndividual.cui_emergency_contact_name'     => fn ($item) => $item->cui_emergency_contact_name,
+            'RentalCustomerIndividual.cui_emergency_contact_phone'    => fn ($item) => $item->cui_emergency_contact_phone,
+            'RentalCustomerIndividual.cui_emergency_relationship'     => fn ($item) => $item->cui_emergency_relationship,
+            'RentalCustomerCompany.cuc_unified_credit_code'           => fn ($item) => $item->cuc_unified_credit_code,
+            'RentalCustomerCompany.cuc_registration_address'          => fn ($item) => $item->cuc_registration_address,
+            'RentalCustomerCompany.cuc_office_address'                => fn ($item) => $item->cuc_office_address,
+            'RentalCustomerCompany.cuc_establishment_date'            => fn ($item) => $item->cuc_establishment_date,
+            'RentalCustomerCompany.cuc_number_of_employees'           => fn ($item) => $item->cuc_number_of_employees,
+            'RentalCustomerCompany.cuc_industry'                      => fn ($item) => $item->cuc_industry,
+            'RentalCustomerCompany.cuc_annual_revenue'                => fn ($item) => $item->cuc_annual_revenue,
+            'RentalCustomerCompany.cuc_legal_representative'          => fn ($item) => $item->cuc_legal_representative,
+            'RentalCustomerCompany.cuc_contact_person_position'       => fn ($item) => $item->cuc_contact_person_position,
+            'RentalCustomerCompany.cuc_tax_registration_number'       => fn ($item) => $item->cuc_tax_registration_number,
+            'RentalCustomerCompany.cuc_business_scope'                => fn ($item) => $item->cuc_business_scope,
+        ];
+    }
+
     public function SalesManager(): BelongsTo
     {
         return $this->belongsTo(Admin::class, 'sales_manager', 'cu_id');

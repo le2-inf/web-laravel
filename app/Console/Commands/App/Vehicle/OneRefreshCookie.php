@@ -25,16 +25,9 @@ class OneRefreshCookie extends Command
         'Cache-Control'             => 'no-cache',
         'Connection'                => 'keep-alive',
         'Pragma'                    => 'no-cache',
-        'Referer'                   => 'https://sc.122.gov.cn/',
-        'Sec-Fetch-Dest'            => 'document',
-        'Sec-Fetch-Mode'            => 'navigate',
-        'Sec-Fetch-Site'            => 'same-origin',
-        'Sec-Fetch-User'            => '?1',
+        'Referer'                   => 'https://gab.122.gov.cn/',
         'Upgrade-Insecure-Requests' => '1',
-        'User-Agent'                => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
-        'sec-ch-ua'                 => '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
-        'sec-ch-ua-mobile'          => '?0',
-        'sec-ch-ua-platform'        => '"macOS"',
+        'User-Agent'                => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36',
     ];
 
     protected $signature   = '_app:one-cookie:refresh';
@@ -48,7 +41,7 @@ class OneRefreshCookie extends Command
                     ->orWhere('cookie_refresh_at', '>=', now()->subMinutes(30))
                 ;
             })
-            ->whereRaw('LENGTH(cookie_value) > ?', [30])
+            ->whereRaw('LENGTH(cookie_string) > ?', [30])
             ->orderBy('cookie_refresh_at', 'DESC')
             ->get()
         ;
@@ -75,12 +68,13 @@ class OneRefreshCookie extends Command
 
     private function processPerson(RentalOneAccount $rentalOneAccount)
     {
-        $client    = new Client();
+        $client    = new Client(['cookies' => true]);
         $cookieJar = $rentalOneAccount->initializeCookies();
 
         $domain = $rentalOneAccount->oa_province_value['url'];
 
-        $location     = $domain.'/views/member/';
+        $location = $domain.'/views/member/';
+
         $requestCount = 1;
 
         $filePath = null;
@@ -100,7 +94,7 @@ class OneRefreshCookie extends Command
 
             Storage::delete($filePath);
         } else {
-            $rentalOneAccount->cookie_value = null;
+            $rentalOneAccount->cookie_string = null;
             $rentalOneAccount->save();
         }
     }
@@ -121,7 +115,6 @@ class OneRefreshCookie extends Command
     private function makeRequest(RentalOneAccount $rentalOneAccount, Client $client, string $url, FileCookieJar $cookieJar, &$filePath)
     {
         Log::channel('console')->info("Request URL: {$url}");
-        Log::channel('console')->info('Cookies Before Request: '.json_encode($cookieJar->toArray()));
 
         $domain = $rentalOneAccount->oa_province_value['url'];
 
@@ -133,12 +126,10 @@ class OneRefreshCookie extends Command
             'headers'         => $header,
             'cookies'         => $cookieJar,
             'allow_redirects' => false,
+            'debug'           => fopen(storage_path(sprintf('logs/122-%d-%s.log', $rentalOneAccount->oa_id, date('Y-m-d'))), 'a+'),
         ]);
 
         $statusCode = $response->getStatusCode();
-        Log::channel('console')->info("Response Status Code: {$statusCode}");
-        Log::channel('console')->info('Cookies After Request: '.json_encode($cookieJar->toArray()));
-        Log::channel('console')->info('Response Headers: '.json_encode($response->getHeaders()));
 
         //        if (!app()->isProduction()) {
         if (200 === $statusCode) {
@@ -150,5 +141,36 @@ class OneRefreshCookie extends Command
         return $response;
     }
 
-    private function processCompany(mixed $account) {} // todo
+    private function processCompany(RentalOneAccount $rentalOneAccount)
+    {
+        $client    = new Client();
+        $cookieJar = $rentalOneAccount->initializeCookies();
+
+        $domain = $rentalOneAccount->oa_province_value['url'];
+
+        $location = $domain.'/';
+
+        $requestCount = 1;
+
+        $filePath = null;
+
+        while ($location && $requestCount <= 10) {
+            $response = $this->makeRequest($rentalOneAccount, $client, $location, $cookieJar, $filePath);
+
+            $location = $response->getHeaderLine('Location');
+            ++$requestCount;
+        }
+
+        if ($filePath && $this->findWelcome($filePath, $searchString = '欢迎')) {
+            Log::channel('console')->info('Response Body contain : '.$searchString);
+
+            $rentalOneAccount->cookie_refresh_at = now();
+            $rentalOneAccount->save();
+
+            Storage::delete($filePath);
+        } else {
+            $rentalOneAccount->cookie_string = null;
+            $rentalOneAccount->save();
+        }
+    }
 }

@@ -66,6 +66,15 @@ class RentalVehicleModel extends Model
         ;
     }
 
+    public static function indexColumns(): array
+    {
+        return [
+            'RentalVehicleModel.vm_id'      => fn ($item) => $item->vm_id,
+            'RentalVehicleModel.brand_name' => fn ($item) => $item->brand_name,
+            'RentalVehicleModel.model_name' => fn ($item) => $item->model_name,
+        ];
+    }
+
     protected function casts(): array
     {
         return [

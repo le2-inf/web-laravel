@@ -15,7 +15,7 @@ class CheckAdminIsMock
         if ($admin->is_mock ?? false) {
             $method = $request->method();
             if (!in_array($method, ['GET'])) {
-                abort(403, '体验模式禁止此操作');
+                abort(403, '体验模式禁止此操作！');
             }
         }
 

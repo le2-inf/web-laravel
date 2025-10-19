@@ -9,6 +9,7 @@ use App\Enum\Vehicle\VePendingStatusRental;
 use App\Enum\Vehicle\VeStatusDispatch;
 use App\Enum\Vehicle\VeStatusRental;
 use App\Enum\Vehicle\VeStatusService;
+use App\Enum\Vehicle\VeVeType;
 use App\Exceptions\ClientException;
 use App\Models\Admin\Admin;
 use App\Models\ModelTrait;
@@ -20,56 +21,59 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 
 #[ClassName('车辆', '信息')]
 #[ColumnDesc('plate_no', required: true, unique: true)]
+#[ColumnDesc('ve_type', required: false, enum_class: VeVeType::class)]
 #[ColumnDesc('vm_id', required: true, desc: '通过[车型信息管理]添加的序号，文本格式')]
-#[ColumnDesc('ve_owner')]
-#[ColumnDesc('ve_address')]
-#[ColumnDesc('ve_usage')]
-#[ColumnDesc('ve_type')]
-#[ColumnDesc('ve_company')]
-#[ColumnDesc('ve_vin_code')]
-#[ColumnDesc('ve_engine_no')]
-#[ColumnDesc('ve_purchase_date', type: ColumnType::DATE)]
-#[ColumnDesc('ve_valid_until_date', type: ColumnType::DATE)]
+#[ColumnDesc('ve_license_owner')]
+#[ColumnDesc('ve_license_address')]
+#[ColumnDesc('ve_license_usage')]
+#[ColumnDesc('ve_license_type')]
+#[ColumnDesc('ve_license_company')]
+#[ColumnDesc('ve_license_vin_code')]
+#[ColumnDesc('ve_license_engine_no')]
+#[ColumnDesc('ve_license_purchase_date', type: ColumnType::DATE)]
+#[ColumnDesc('ve_license_valid_until_date', type: ColumnType::DATE)]
 #[ColumnDesc('ve_mileage')]
 #[ColumnDesc('ve_color')]
 /**
- * @property int                          $ve_id                    车辆序号
- * @property string                       $plate_no                 车牌号
- * @property null|int                     $vm_id                    车型序号；表示车辆属于哪种车型
- * @property mixed|VeStatusService        $status_service           运营状态
- * @property string|VeStatusRental        $status_rental            租赁状态；
- * @property string|VePendingStatusRental $pending_status_rental    待租赁状态；
- * @property mixed|VeStatusDispatch       $status_dispatch          是否发车；例如未发车或已发车
- * @property mixed                        $status_accident__        ；出险状态；例如无出险或发生事故 //todo
- * @property mixed                        $status_maintenance__     ；保养状态；例如无需保养、保养中
- * @property null|mixed                   $license_face_photo       行驶证照片
- * @property null|mixed                   $license_back_photo       行驶证背面照片
- * @property null|string                  $ve_owner                 车辆所有人
- * @property null|string                  $ve_address               车辆所有人住所
- * @property null|string                  $ve_usage                 车辆使用性质；例如私用、公用等
- * @property null|string                  $ve_type                  车辆类型；例如轿车、SUV等
- * @property null|string                  $ve_company               车辆所属公司名称
- * @property null|string                  $ve_vin_code              车辆识别号码；唯一标识每辆车
- * @property null|string                  $ve_engine_no             发动机编号；唯一标识车辆的发动机
- * @property null|Carbon                  $ve_purchase_date         车辆购置日期
- * @property null|Carbon                  $ve_valid_until_date      检验有效期至
- * @property null|int                     $ve_mileage               车辆当前总行驶公里数
- * @property null|string                  $ve_color                 车辆颜色
- * @property null|string                  $vehicle_manager          负责车管
- *                                                                  -
+ * @property int                          $ve_id                       车辆序号
+ * @property string                       $plate_no                    车牌号
+ * @property string|VeVeType              $ve_type                     车辆类型
+ * @property null|int                     $vm_id                       车型序号；表示车辆属于哪种车型
+ * @property mixed|VeStatusService        $status_service              运营状态
+ * @property string|VeStatusRental        $status_rental               租赁状态；
+ * @property string|VePendingStatusRental $pending_status_rental       待租赁状态；
+ * @property mixed|VeStatusDispatch       $status_dispatch             是否发车；例如未发车或已发车
+ * @property mixed                        $status_accident__           ；出险状态；例如无出险或发生事故 //todo
+ * @property mixed                        $status_maintenance__        ；保养状态；例如无需保养、保养中
+ * @property null|mixed                   $ve_license_face_photo       行驶证照片
+ * @property null|mixed                   $ve_license_back_photo       行驶证背面照片
+ * @property null|string                  $ve_license_owner            车辆所有人
+ * @property null|string                  $ve_license_address          车辆所有人住所
+ * @property null|string                  $ve_license_usage            车辆使用性质；例如私用、公用等
+ * @property null|string                  $ve_license_type             车辆类型；例如轿车、SUV等
+ * @property null|string                  $ve_license_company          车辆所属公司名称
+ * @property null|string                  $ve_license_vin_code         车辆识别号码；唯一标识每辆车
+ * @property null|string                  $ve_license_engine_no        发动机编号；唯一标识车辆的发动机
+ * @property null|Carbon                  $ve_license_purchase_date    车辆购置日期
+ * @property null|Carbon                  $ve_license_valid_until_date 检验有效期至
+ * @property null|int                     $ve_mileage                  车辆当前总行驶公里数
+ * @property null|string                  $ve_color                    车辆颜色
+ * @property null|string                  $vehicle_manager             负责车管
+ *                                                                     -
  * @property RentalVehicleModel           $RentalVehicleModel
  * @property Admin                        $VehicleManager
- *                                                                  -
- * @property null|string                  $vehicle_brand_model_name 车牌品牌车型
- * @property null|string                  $status_service_label     运营状态-中文
- * @property null|string                  $status_repair_label      维修状态-中文
- * @property null|string                  $status_rental_label      租车状态-中文
- * @property null|string                  $status_dispatch_label    是否发车状态-中文
+ *                                                                     -
+ * @property null|string                  $vehicle_brand_model_name    车牌品牌车型
+ * @property null|string                  $status_service_label        运营状态-中文
+ * @property null|string                  $status_repair_label         维修状态-中文
+ * @property null|string                  $status_rental_label         租车状态-中文
+ * @property null|string                  $status_dispatch_label       是否发车状态-中文
  */
 class RentalVehicle extends Model
 {
@@ -82,6 +86,7 @@ class RentalVehicle extends Model
     protected $guarded = ['ve_id'];
 
     protected $appends = [
+        've_type_label',
         'vehicle_brand_model_name',
         'status_service_label',
         'status_repair_label',
@@ -96,6 +101,7 @@ class RentalVehicle extends Model
     ];
 
     protected $casts = [
+        've_type'         => VeVeType::class,
         'status_service'  => VeStatusService::class,
         'status_rental'   => VeStatusRental::class,
         'status_dispatch' => VeStatusDispatch::class,
@@ -243,6 +249,21 @@ class RentalVehicle extends Model
         ;
     }
 
+    public static function indexColumns(): array
+    {
+        return [
+            'RentalVehicle.ve_id'                    => fn ($item) => $item->ve_id,
+            'RentalVehicle.plate_no'                 => fn ($item) => $item->plate_no,
+            'RentalVehicle.ve_type'                  => fn ($item) => $item->ve_type,
+            'RentalVehicleModel.brand_model'         => fn ($item) => $item->brand_name.'-'.$item->model_name,
+            'RentalVehicle.ve_license_owner'         => fn ($item) => $item->ve_license_owner,
+            'RentalVehicle.ve_license_usage'         => fn ($item) => $item->ve_license_usage,
+            'RentalVehicle.ve_license_type'          => fn ($item) => $item->ve_license_type,
+            'RentalVehicle.ve_license_purchase_date' => fn ($item) => $item->ve_license_purchase_date,
+            'RentalVehicle.status_service'           => fn ($item) => $item->status_service_label,
+        ];
+    }
+
     public static function plateNoKv(?string $plate_no = null)
     {
         static $kv = null;
@@ -266,25 +287,27 @@ class RentalVehicle extends Model
     public static function importColumns(): array
     {
         return [
-            'plate_no'            => [RentalVehicle::class, 'plate_no'],
-            'vm_id'               => [RentalVehicle::class, 'vm_id'],
-            've_owner'            => [RentalVehicle::class, 've_owner'],
-            've_address'          => [RentalVehicle::class, 've_address'],
-            've_usage'            => [RentalVehicle::class, 've_usage'],
-            've_type'             => [RentalVehicle::class, 've_type'],
-            've_company'          => [RentalVehicle::class, 've_company'],
-            've_vin_code'         => [RentalVehicle::class, 've_vin_code'],
-            've_engine_no'        => [RentalVehicle::class, 've_engine_no'],
-            've_purchase_date'    => [RentalVehicle::class, 've_purchase_date'],
-            've_valid_until_date' => [RentalVehicle::class, 've_valid_until_date'],
-            've_mileage'          => [RentalVehicle::class, 've_mileage'],
-            've_color'            => [RentalVehicle::class, 've_color'],
+            'plate_no'                    => [RentalVehicle::class, 'plate_no'],
+            've_type'                     => [RentalVehicle::class, 've_type'],
+            'vm_id'                       => [RentalVehicle::class, 'vm_id'],
+            've_license_owner'            => [RentalVehicle::class, 've_license_owner'],
+            've_license_address'          => [RentalVehicle::class, 've_license_address'],
+            've_license_usage'            => [RentalVehicle::class, 've_license_usage'],
+            've_license_type'             => [RentalVehicle::class, 've_license_type'],
+            've_license_company'          => [RentalVehicle::class, 've_license_company'],
+            've_license_vin_code'         => [RentalVehicle::class, 've_license_vin_code'],
+            've_license_engine_no'        => [RentalVehicle::class, 've_license_engine_no'],
+            've_license_purchase_date'    => [RentalVehicle::class, 've_license_purchase_date'],
+            've_license_valid_until_date' => [RentalVehicle::class, 've_license_valid_until_date'],
+            've_mileage'                  => [RentalVehicle::class, 've_mileage'],
+            've_color'                    => [RentalVehicle::class, 've_color'],
         ];
     }
 
     public static function importBeforeValidateDo(): \Closure
     {
         return function (&$item) {
+            $item['ve_type']              = VeVeType::searchValue($item['ve_type']);
             static::$fields['plate_no'][] = $item['plate_no'];
             static::$fields['vm_id'][]    = $item['vm_id'];
         };
@@ -293,19 +316,20 @@ class RentalVehicle extends Model
     public static function importValidatorRule(array $item, array $fieldAttributes): void
     {
         $rules = [
-            'plate_no'            => ['required', 'string', 'max:64'],
-            'vm_id'               => ['nullable', 'integer'],
-            've_owner'            => ['nullable', 'string', 'max:100'],
-            've_address'          => ['nullable', 'string', 'max:255'],
-            've_usage'            => ['nullable', 'string', 'max:50'],
-            've_type'             => ['nullable', 'string', 'max:50'],
-            've_company'          => ['nullable', 'string', 'max:100'],
-            've_vin_code'         => ['nullable', 'string', 'max:50'],
-            've_engine_no'        => ['nullable', 'string', 'max:50'],
-            've_purchase_date'    => ['nullable', 'date'],
-            've_valid_until_date' => ['nullable', 'date', 'after:ve_purchase_date'],
-            've_mileage'          => ['nullable', 'integer'],
-            've_color'            => ['nullable', 'string', 'max:30'],
+            'plate_no'                    => ['required', 'string', 'max:64'],
+            've_type'                     => ['nullable', 'string', Rule::in(VeVeType::label_keys())],
+            'vm_id'                       => ['nullable', 'integer'],
+            've_license_owner'            => ['nullable', 'string', 'max:100'],
+            've_license_address'          => ['nullable', 'string', 'max:255'],
+            've_license_usage'            => ['nullable', 'string', 'max:50'],
+            've_license_type'             => ['nullable', 'string', 'max:50'],
+            've_license_company'          => ['nullable', 'string', 'max:100'],
+            've_license_vin_code'         => ['nullable', 'string', 'max:50'],
+            've_license_engine_no'        => ['nullable', 'string', 'max:50'],
+            've_license_purchase_date'    => ['nullable', 'date'],
+            've_license_valid_until_date' => ['nullable', 'date', 'after:ve_license_purchase_date'],
+            've_mileage'                  => ['nullable', 'integer'],
+            've_color'                    => ['nullable', 'string', 'max:30'],
         ];
 
         $validator = \Illuminate\Support\Facades\Validator::make($item, $rules, [], $fieldAttributes);
@@ -374,6 +398,13 @@ class RentalVehicle extends Model
     {
         return Attribute::make(
             get: fn () => $this->getAttribute('status_repair')?->label
+        );
+    }
+
+    protected function veTypeLabel(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->getAttribute('ve_type')?->label
         );
     }
 

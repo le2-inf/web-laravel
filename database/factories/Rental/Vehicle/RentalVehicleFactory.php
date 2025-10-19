@@ -38,27 +38,27 @@ class RentalVehicleFactory extends Factory
             'status_dispatch' => VeStatusDispatch::label_key_random(),
 
             // jsonb 可空；给出一个简单对象，Eloquent 会自动 JSON 编码
-            'license_face_photo' => $this->faker->boolean(60) ? [
+            've_license_face_photo' => $this->faker->boolean(60) ? [
                 'url'  => $this->faker->imageUrl(800, 600, 'document', true),
                 'hash' => $this->faker->sha1(),
             ] : null,
-            'license_back_photo' => $this->faker->boolean(60) ? [
+            've_license_back_photo' => $this->faker->boolean(60) ? [
                 'url'  => $this->faker->imageUrl(800, 600, 'document', true),
                 'hash' => $this->faker->sha1(),
             ] : null,
 
-            've_owner'   => $this->faker->name(),
-            've_address' => $this->faker->address(),
-            've_usage'   => $this->faker->randomElement(['commercial', 'personal', 'rental']),
-            've_type'    => $this->faker->randomElement(['sedan', 'suv', 'van', 'truck', 'ev']),
-            've_company' => $this->faker->company(),
+            've_license_owner'   => $this->faker->name(),
+            've_license_address' => $this->faker->address(),
+            've_license_usage'   => $this->faker->randomElement(['commercial', 'personal', 'rental']),
+            've_license_type'    => $this->faker->randomElement(['sedan', 'suv', 'van', 'truck', 'ev']),
+            've_license_company' => $this->faker->company(),
 
             // VIN 通常 17 位大写字母数字（不严格排除 I/O/Q）
-            've_vin_code'  => strtoupper(Str::random(17)),
-            've_engine_no' => strtoupper($this->faker->bothify('??##########')), // 12 位左右
+            've_license_vin_code'  => strtoupper(Str::random(17)),
+            've_license_engine_no' => strtoupper($this->faker->bothify('??##########')), // 12 位左右
 
-            've_purchase_date'    => $purchaseAt->format('Y-m-d'),
-            've_valid_until_date' => $validUntil->format('Y-m-d'),
+            've_license_purchase_date'    => $purchaseAt->format('Y-m-d'),
+            've_license_valid_until_date' => $validUntil->format('Y-m-d'),
 
             've_mileage' => $this->faker->numberBetween(0, 300000),
             've_color'   => $this->faker->safeColorName(),

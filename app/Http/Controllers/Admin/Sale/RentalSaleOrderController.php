@@ -73,7 +73,8 @@ class RentalSaleOrderController extends Controller
             RentalVehicle::options(),
         );
 
-        $query = RentalSaleOrder::indexQuery();
+        $query   = RentalSaleOrder::indexQuery();
+        $columns = RentalSaleOrder::indexColumns();
 
         // 如果是管理员或经理，则可以看到所有的用户；如果不是管理员或经理，则只能看到销售或驾管为自己的用户。
         $user = $request->user();
@@ -90,17 +91,22 @@ class RentalSaleOrderController extends Controller
             []
         );
 
-        $paginate->paginator($query, $request, [
-            'kw__func' => function ($value, Builder $builder) {
-                $builder->where(function (Builder $builder) use ($value) {
-                    $builder->where('so.contract_number', 'like', '%'.$value.'%')
-                        ->orWhere('ve.plate_no', 'like', '%'.$value.'%')
-                        ->orWhere('cu.contact_name', 'like', '%'.$value.'%')
-                        ->orWhere('so.so_remark', 'like', '%'.$value.'%')
-                    ;
-                });
-            },
-        ]);
+        $paginate->paginator(
+            $query,
+            $request,
+            [
+                'kw__func' => function ($value, Builder $builder) {
+                    $builder->where(function (Builder $builder) use ($value) {
+                        $builder->where('so.contract_number', 'like', '%'.$value.'%')
+                            ->orWhere('ve.plate_no', 'like', '%'.$value.'%')
+                            ->orWhere('cu.contact_name', 'like', '%'.$value.'%')
+                            ->orWhere('so.so_remark', 'like', '%'.$value.'%')
+                        ;
+                    });
+                },
+            ],
+            $columns
+        );
 
         return $this->response()->withData($paginate)->respond();
     }

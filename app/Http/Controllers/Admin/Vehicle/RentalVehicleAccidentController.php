@@ -48,6 +48,8 @@ class RentalVehicleAccidentController extends Controller
 
         $query = RentalVehicleAccident::indexQuery();
 
+        $columns = RentalVehicleAccident::indexColumns();
+
         $paginate = new PaginateService(
             [],
             [['va.va_id', 'desc']],
@@ -55,17 +57,22 @@ class RentalVehicleAccidentController extends Controller
             []
         );
 
-        $paginate->paginator($query, $request, [
-            'kw__func' => function ($value, Builder $builder) {
-                $builder->where(function (Builder $builder) use ($value) {
-                    $builder->where('ve.plate_no', 'like', '%'.$value.'%')
-                        ->orWhere('va.accident_location', 'like', '%'.$value.'%')
-                        ->orWhere('va.description', 'like', '%'.$value.'%')
-                        ->orWhere('cu.contact_name', 'like', '%'.$value.'%')
-                    ;
-                });
-            },
-        ]);
+        $paginate->paginator(
+            $query,
+            $request,
+            [
+                'kw__func' => function ($value, Builder $builder) {
+                    $builder->where(function (Builder $builder) use ($value) {
+                        $builder->where('ve.plate_no', 'like', '%'.$value.'%')
+                            ->orWhere('va.accident_location', 'like', '%'.$value.'%')
+                            ->orWhere('va.description', 'like', '%'.$value.'%')
+                            ->orWhere('cu.contact_name', 'like', '%'.$value.'%')
+                        ;
+                    });
+                },
+            ],
+            $columns
+        );
 
         return $this->response()->withData($paginate)->respond();
     }

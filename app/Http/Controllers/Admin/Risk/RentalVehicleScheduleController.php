@@ -183,6 +183,29 @@ class RentalVehicleScheduleController extends Controller
         return Uploader::upload($request, 'vehicle_schedule', ['additional_photos'], $this);
     }
 
+    #[PermissionAction(PermissionAction::INDEX)]
+    public function st_vehicle(Request $request): Response
+    {
+        $this->options(true);
+        $this->response()->withExtras(
+            RentalVehicle::options(),
+        );
+
+        $query   = RentalVehicleSchedule::stQuery();
+        $columns = RentalVehicleSchedule::stColumns();
+
+        $paginate = new PaginateService(
+            [],
+            [],
+            [],
+            []
+        );
+
+        $paginate->paginator($query, $request, [], $columns);
+
+        return $this->response()->withData($paginate)->respond();
+    }
+
     protected function options(?bool $with_group_count = false): void
     {
         $this->response()->withExtras(
