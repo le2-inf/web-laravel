@@ -390,6 +390,7 @@ return [
     'RentalVehicle' => [
         've_id'                       => '车辆序号',
         'plate_no'                    => '车牌号',
+        've_type'                     => '车辆类型',
         'vm_id'                       => '车型序号',
         'status_service'              => '运营状态',
         'status_rental'               => '租赁状态',
