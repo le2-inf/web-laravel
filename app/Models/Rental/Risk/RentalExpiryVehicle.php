@@ -15,7 +15,7 @@ class RentalExpiryVehicle extends Model
 
     public static function indexQuery(array $search = []): Builder
     {
-        $days = 3000;
+        $days = 60;
 
         $targetDate = Carbon::today()->addDays($days)->toDateString();
 
@@ -24,12 +24,10 @@ class RentalExpiryVehicle extends Model
             ->leftJoin('rental_vehicle_models as vm', 've.vm_id', '=', 'vm.vm_id')
             ->select('ve.*', 'vm.brand_name', 'vm.model_name')
             ->addSelect(
-                DB::raw('EXTRACT(EPOCH FROM now() - ve.ve_license_valid_until_date) / 86400.0 as valid_until_date_interval'),
+                DB::raw('trunc(EXTRACT(EPOCH FROM now() - ve.ve_cert_valid_to) / 86400.0,0) as ve_cert_valid_interval'),
             )
-            ->where('ve.status_service', VeStatusService::YES)
-            ->where(function ($q) use ($targetDate) {
-                $q->where('ve.ve_license_valid_until_date', '<=', $targetDate);
-            })
+            ->where('ve.status_service', '=', VeStatusService::YES)
+            ->where('ve.ve_cert_valid_to', '<=', $targetDate)
         ;
     }
 

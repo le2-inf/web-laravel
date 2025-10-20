@@ -117,7 +117,9 @@ class RentalCustomerController extends Controller
                 'contact_wechat'       => ['nullable', 'string', 'max:255'],
                 'contact_live_city'    => ['nullable', 'string', 'max:64'],
                 'contact_live_address' => ['nullable', 'string', 'max:255'],
-                'cu_remark'            => ['nullable', 'string'],
+                'cu_cert_no'           => ['nullable', 'string', 'max:50'],
+                'cu_cert_valid_to'     => ['nullable', 'date'],
+                'cu_remark'            => ['nullable', 'string', 'max:255'],
 
                 'sales_manager'  => ['nullable', Rule::exists(Admin::class)],
                 'driver_manager' => ['nullable', Rule::exists(Admin::class)],
@@ -141,7 +143,9 @@ class RentalCustomerController extends Controller
             + Uploader::validator_rule_upload_object('customer_individual.cui_id1_photo')
             + Uploader::validator_rule_upload_object('customer_individual.cui_id2_photo')
             + Uploader::validator_rule_upload_object('customer_individual.cui_driver_license1_photo')
-            + Uploader::validator_rule_upload_object('customer_individual.cui_driver_license2_photo'),
+            + Uploader::validator_rule_upload_object('customer_individual.cui_driver_license2_photo')
+            + Uploader::validator_rule_upload_object('cu_cert_photo')
+            + Uploader::validator_rule_upload_array('cu_additional_photos'),
             [],
             trans_property(RentalCustomer::class) + trans_property(RentalCustomerIndividual::class) + trans_property(RentalCustomerCompany::class),
         )->after(function (\Illuminate\Validation\Validator $validator) {
@@ -259,7 +263,7 @@ class RentalCustomerController extends Controller
         return Uploader::upload(
             $request,
             'customer',
-            ['cui_id1_photo', 'cui_id2_photo', 'cui_driver_license1_photo', 'cui_driver_license2_photo', 'cuc_business_license_photo'],
+            ['cui_id1_photo', 'cui_id2_photo', 'cui_driver_license1_photo', 'cui_driver_license2_photo', 'cuc_business_license_photo', 'cu_cert_photo', 'cu_additional_photos'],
             $this
         );
     }

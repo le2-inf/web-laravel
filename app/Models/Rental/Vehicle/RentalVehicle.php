@@ -40,6 +40,9 @@ use Illuminate\Validation\Validator;
 #[ColumnDesc('ve_license_valid_until_date', type: ColumnType::DATE)]
 #[ColumnDesc('ve_mileage')]
 #[ColumnDesc('ve_color')]
+#[ColumnDesc('ve_cert_no')]
+#[ColumnDesc('ve_cert_valid_to', type: ColumnType::DATE)]
+#[ColumnDesc('ve_remark')]
 /**
  * @property int                          $ve_id                       车辆序号
  * @property string                       $plate_no                    车牌号
@@ -65,6 +68,11 @@ use Illuminate\Validation\Validator;
  * @property null|int                     $ve_mileage                  车辆当前总行驶公里数
  * @property null|string                  $ve_color                    车辆颜色
  * @property null|string                  $vehicle_manager             负责车管
+ * @property null|string                  $ve_cert_no                  车证号
+ * @property null|array<string>           $ve_cert_photo               车证照片
+ * @property null|Carbon                  $ve_cert_valid_to            车证到期日期
+ * @property null|array<array<string>>    $ve_additional_photos        车辆附加照片
+ * @property null|string                  $ve_remark                   车辆备注
  *                                                                     -
  * @property RentalVehicleModel           $RentalVehicleModel
  * @property Admin                        $VehicleManager
@@ -301,6 +309,9 @@ class RentalVehicle extends Model
             've_license_valid_until_date' => [RentalVehicle::class, 've_license_valid_until_date'],
             've_mileage'                  => [RentalVehicle::class, 've_mileage'],
             've_color'                    => [RentalVehicle::class, 've_color'],
+            've_cert_no'                  => [RentalVehicle::class, 've_cert_no'],
+            've_cert_valid_to'            => [RentalVehicle::class, 've_cert_valid_to'],
+            've_remark'                   => [RentalVehicle::class, 've_remark'],
         ];
     }
 
@@ -330,6 +341,9 @@ class RentalVehicle extends Model
             've_license_valid_until_date' => ['nullable', 'date', 'after:ve_license_purchase_date'],
             've_mileage'                  => ['nullable', 'integer'],
             've_color'                    => ['nullable', 'string', 'max:30'],
+            've_cert_no'                  => ['nullable', 'string', 'max:50'],
+            've_cert_valid_to'            => ['nullable', 'date'],
+            've_remark'                   => ['nullable', 'string', 'max:255'],
         ];
 
         $validator = \Illuminate\Support\Facades\Validator::make($item, $rules, [], $fieldAttributes);
@@ -416,5 +430,15 @@ class RentalVehicle extends Model
     protected function licenseBackPhoto(): Attribute
     {
         return $this->uploadFile();
+    }
+
+    protected function veCertPhoto(): Attribute
+    {
+        return $this->uploadFile();
+    }
+
+    protected function veAdditionalPhotos(): Attribute
+    {
+        return $this->uploadFileArray();
     }
 }

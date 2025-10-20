@@ -4,6 +4,7 @@ namespace App\Models\Rental\Customer;
 
 use App\Attributes\ClassName;
 use App\Attributes\ColumnDesc;
+use App\Attributes\ColumnType;
 use App\Enum\Customer\CuCuType;
 use App\Enum\Customer\CuiCuiGender;
 use App\Exceptions\ClientException;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -30,6 +32,8 @@ use Laravel\Sanctum\HasApiTokens;
 #[ColumnDesc('contact_wechat', )]
 #[ColumnDesc('contact_live_city', )]
 #[ColumnDesc('contact_live_address', )]
+#[ColumnDesc('cu_cert_no')]
+#[ColumnDesc('cu_cert_valid_to', type: ColumnType::DATE)]
 #[ColumnDesc('cu_remark', )]
 /**
  * @property int                           $cu_id                    客户序号
@@ -40,9 +44,13 @@ use Laravel\Sanctum\HasApiTokens;
  * @property null|string                   $contact_wechat           联系人微信号
  * @property null|string                   $contact_live_city        现住城市
  * @property null|string                   $contact_live_address     现住地址
- * @property null|string                   $cu_remark                顾客备注
  * @property null|int                      $sales_manager            负责销售
  * @property null|int                      $driver_manager           负责驾管
+ * @property null|string                   $cu_cert_no               人证号
+ * @property null|array<string>            $cu_cert_photo            人证照片
+ * @property null|Carbon                   $cu_cert_valid_to         人证到期日期
+ * @property null|array<array<string>>     $cu_additional_photos     顾客附加照片
+ * @property null|string                   $cu_remark                顾客备注
  *                                                                   -
  * @property null|RentalCustomerIndividual $RentalCustomerIndividual
  * @property null|RentalCustomerCompany    $RentalCustomerCompany
@@ -192,6 +200,8 @@ class RentalCustomer extends Authenticatable
             'contact_wechat'                 => [RentalCustomer::class, 'contact_wechat'],
             'contact_live_city'              => [RentalCustomer::class, 'contact_live_city'],
             'contact_live_address'           => [RentalCustomer::class, 'contact_live_address'],
+            'cu_cert_no'                     => [RentalCustomer::class, 'cu_cert_no'],
+            'cu_cert_valid_to'               => [RentalCustomer::class, 'cu_cert_valid_to'],
             'cu_remark'                      => [RentalCustomer::class, 'cu_remark'],
             'cui_name'                       => [RentalCustomerIndividual::class, 'cui_name'],
             'cui_gender'                     => [RentalCustomerIndividual::class, 'cui_gender'],
@@ -230,7 +240,9 @@ class RentalCustomer extends Authenticatable
             'contact_wechat'       => ['nullable', 'string', 'max:255'],
             'contact_live_city'    => ['nullable', 'string', 'max:64'],
             'contact_live_address' => ['nullable', 'string', 'max:255'],
-            'cu_remark'            => ['nullable', 'string'],
+            'cu_cert_no'           => ['nullable', 'string', 'max:50'],
+            'cu_cert_valid_to'     => ['nullable', 'date'],
+            'cu_remark'            => ['nullable', 'string', 'max:255'],
             // customer_individuals
             'cui_name'                       => ['nullable', 'string', 'max:255'],
             'cui_gender'                     => ['nullable', Rule::in(CuiCuiGender::label_keys())],
@@ -317,5 +329,15 @@ class RentalCustomer extends Authenticatable
                 $this->getOriginal('contact_phone'),
             ])
         );
+    }
+
+    protected function cuCertPhoto(): Attribute
+    {
+        return $this->uploadFile();
+    }
+
+    protected function cuAdditionalPhotos(): Attribute
+    {
+        return $this->uploadFileArray();
     }
 }

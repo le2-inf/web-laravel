@@ -133,9 +133,14 @@ class RentalVehicleController extends Controller
                 've_license_valid_until_date' => ['nullable', 'date', 'after:ve_license_purchase_date'],
                 've_mileage'                  => ['nullable', 'integer'],
                 've_color'                    => ['nullable', 'string', 'max:30'],
+                've_cert_no'                  => ['nullable', 'string', 'max:50'],
+                've_cert_valid_to'            => ['nullable', 'date'],
+                've_remark'                   => ['nullable', 'string', 'max:255'],
             ]
             + Uploader::validator_rule_upload_object('ve_license_face_photo')
-            + Uploader::validator_rule_upload_object('ve_license_back_photo'),
+            + Uploader::validator_rule_upload_object('ve_license_back_photo')
+            + Uploader::validator_rule_upload_object('ve_cert_photo')
+            + Uploader::validator_rule_upload_array('ve_additional_photos'),
             [],
             trans_property(RentalVehicle::class)
         )
@@ -213,7 +218,12 @@ class RentalVehicleController extends Controller
     #[PermissionAction(PermissionAction::EDIT)]
     public function upload(Request $request): Response
     {
-        return Uploader::upload($request, 'vehicle', ['ve_license_face_photo', 've_license_back_photo'], $this);
+        return Uploader::upload(
+            $request,
+            'vehicle',
+            ['ve_license_face_photo', 've_license_back_photo', 've_cert_photo', 've_additional_photos'],
+            $this
+        );
     }
 
     protected function options(?bool $with_group_count = false): void
