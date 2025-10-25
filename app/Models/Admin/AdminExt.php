@@ -3,7 +3,7 @@
 namespace App\Models\Admin;
 
 use App\Attributes\ClassName;
-use App\Models\ModelTrait;
+use App\Models\_\ModelTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;

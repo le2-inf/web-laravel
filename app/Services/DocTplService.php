@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Enum\Rental\DtDtExportType;
 use App\Enum\Rental\DtDtTypeMacroChars;
 use App\Exceptions\ServerException;
-use App\Models\Rental\Sale\RentalDocTpl;
+use App\Models\Sale\DocTpl;
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Model;
@@ -32,11 +32,11 @@ class DocTplService
     /**
      * @see https://help.libreoffice.org/latest/en-US/text/shared/guide/pdf_params.html
      */
-    public function GenerateDoc(RentalDocTpl $rentalDocTpl, string $mode, ?Model $model = null): array
+    public function GenerateDoc(DocTpl $docTpl, string $mode, ?Model $model = null): array
     {
-        $tempDocx = (function () use ($rentalDocTpl) {
+        $tempDocx = (function () use ($docTpl) {
             // 从 MinIO 获取模板文件流
-            $filepath = $rentalDocTpl->dt_file['path_'];
+            $filepath = $docTpl->dt_file['path_'];
             $stream   = $this->diskS3->readStream($filepath);
             if (!$stream) {
                 abort(404, '模板文件不存在');
@@ -56,13 +56,13 @@ class DocTplService
             return $tempDocxPathFull;
         })();
 
-        $tempFilledDocx = (function () use ($model, $rentalDocTpl, $tempDocx) {
+        $tempFilledDocx = (function () use ($model, $docTpl, $tempDocx) {
             // 替换模板占位符并保存到新的 DOCX 文件
             // https://phpword.readthedocs.io/en/latest/templates-processing.html
             $tpl = new TemplateProcessor($tempDocx);
             $tpl->setMacroChars(DtDtTypeMacroChars::Opening->value, DtDtTypeMacroChars::Closing->value);
 
-            $dt_type = $rentalDocTpl->dt_type;
+            $dt_type = $docTpl->dt_type;
             //            $rule = array_map(function ($value) {
             //                return '&#9608;';
             //            }, $rule);

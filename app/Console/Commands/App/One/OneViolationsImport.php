@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands\App\One;
 
-use App\Models\Rental\One\RentalOneRequest;
-use App\Models\Rental\Vehicle\RentalVehicle;
-use App\Models\Rental\Vehicle\RentalVehicleViolation;
+use App\Models\One\OneRequest;
+use App\Models\Vehicle\Vehicle;
+use App\Models\Vehicle\VehicleViolation;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
@@ -25,7 +25,7 @@ class OneViolationsImport extends Command
     {
         $this->info('开始导入违章信息...');
 
-        $maxTurn = RentalOneRequest::query()->max('turn');
+        $maxTurn = OneRequest::query()->max('turn');
 
         if (!$maxTurn) {
             $this->info('vehicle_122_requests 表中没有 turn 数据。');
@@ -35,8 +35,8 @@ class OneViolationsImport extends Command
 
         $this->info("最大 turn 日期为: {$maxTurn}");
 
-        /** @var Collection<RentalOneRequest> $requests */
-        $requests = RentalOneRequest::query()->where('status_code', '=', '200')
+        /** @var Collection<OneRequest> $requests */
+        $requests = OneRequest::query()->where('status_code', '=', '200')
             ->where('turn', $maxTurn)
             ->where('key', 'like', 'violation,%')
             ->get()
@@ -48,11 +48,11 @@ class OneViolationsImport extends Command
             return CommandAlias::SUCCESS;
         }
 
-        $rentalVehicles = RentalVehicle::all(['ve_id', 'plate_no'])->keyBy('plate_no');
+        $vehicles = Vehicle::all(['ve_id', 'plate_no'])->keyBy('plate_no');
 
         $this->info('已预加载车辆数据，开始处理违章记录...');
 
-        DB::transaction(function () use ($requests, $rentalVehicles) {
+        DB::transaction(function () use ($requests, $vehicles) {
             foreach ($requests as $request) {
                 $response = $request->response;
 
@@ -70,12 +70,12 @@ class OneViolationsImport extends Command
                 $violationsToUpsert = [];
 
                 foreach ($violations as $violation) {
-                    $rentalVehicle = $rentalVehicles->get($violation['hphm']);
+                    $vehicle = $vehicles->get($violation['hphm']);
 
                     // 准备 upsert 数据
                     $violationsToUpsert[] = [
                         'decision_number'    => $violation['xh'] ?? $violation['jdsbh'],
-                        've_id'              => $rentalVehicle->ve_id ?? null,
+                        've_id'              => $vehicle->ve_id ?? null,
                         'plate_no'           => $violation['hphm'],
                         'vu_id'              => null, // 根据需要填充
                         'violation_datetime' => Carbon::parse($violation['wfsj']),
@@ -95,7 +95,7 @@ class OneViolationsImport extends Command
                     }
 
                     // 使用 upsert 插入或更新违章记录
-                    $violationsToUpsertAffectRows = RentalVehicleViolation::query()->upsert(
+                    $violationsToUpsertAffectRows = VehicleViolation::query()->upsert(
                         $violationsToUpsert,
                         ['decision_number'], // 唯一键
                         [ // 需要更新的字段

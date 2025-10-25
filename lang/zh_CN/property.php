@@ -30,15 +30,62 @@ return [
         'guard_name' => '',
         'is_custom'  => '是否是自定义',
     ],
-    'Configuration' => [
-        'cfg_id'         => '',
-        'cfg_key'        => '设定名',
-        'cfg_value'      => '设定值',
-        'cfg_remark'     => '设定备注',
-        'usage_category' => '使用区分',
-        'masked'         => '是否打码',
+    'Customer' => [
+        'cu_id'                => '客户序号',
+        'cu_type'              => '客户类型',
+        'contact_name'         => '联系人姓名',
+        'contact_phone'        => '联系电话',
+        'contact_email'        => '联系人邮箱',
+        'contact_wechat'       => '联系人微信号',
+        'contact_live_city'    => '现住城市',
+        'contact_live_address' => '现住地址',
+        'sales_manager'        => '负责销售',
+        'driver_manager'       => '负责驾管',
+        'cu_cert_no'           => '人证号',
+        'cu_cert_photo'        => '人证照片',
+        'cu_cert_valid_to'     => '人证到期日期',
+        'cu_additional_photos' => '顾客附加照片',
+        'cu_remark'            => '顾客备注',
     ],
-    'RentalDeliveryChannel' => [
+    'CustomerCompany' => [
+        'cuc_id'                      => '企业客户序号',
+        'cu_id'                       => '客户序号',
+        'cuc_unified_credit_code'     => '公司统一信用代码',
+        'cuc_business_license_photo'  => '营业执照',
+        'cuc_registration_address'    => '注册地址',
+        'cuc_office_address'          => '办公地址',
+        'cuc_establishment_date'      => '成立日期',
+        'cuc_number_of_employees'     => '员工人数',
+        'cuc_industry'                => '所属行业',
+        'cuc_annual_revenue'          => '年收入',
+        'cuc_legal_representative'    => '法定代表人',
+        'cuc_contact_person_position' => '联系人职位',
+        'cuc_tax_registration_number' => '税务登记号码',
+        'cuc_business_scope'          => '经营范围',
+    ],
+    'CustomerIndividual' => [
+        'cui_id'                         => '个人客户序号',
+        'cu_id'                          => '客户序号',
+        'cui_name'                       => '姓名',
+        'cui_gender'                     => '性别',
+        'cui_date_of_birth'              => '出生日期',
+        'cui_id1_photo'                  => '身份证人脸照片',
+        'cui_id2_photo'                  => '身份证国徽照片',
+        'cui_id_number'                  => '身份证号码',
+        'cui_id_address'                 => '身份证地址',
+        'cui_id_expiry_date'             => '身份证有效期',
+        'cui_driver_license1_photo'      => '驾驶证照片',
+        'cui_driver_license2_photo'      => '驾驶证副本照片',
+        'cui_driver_license_number'      => '驾驶证号码',
+        'cui_driver_license_category'    => '驾驶证类别',
+        'cui_driver_license_expiry_date' => '驾驶证有效期',
+        'cui_emergency_relationship'     => '紧急联系人关系',
+        'cui_emergency_contact_name'     => '紧急联系人姓名',
+        'cui_emergency_id_number'        => '紧急联系人身份证号',
+        'cui_emergency_contact_phone'    => '紧急联系人电话',
+        'cui_gender_label'               => '性别-中文',
+    ],
+    'DeliveryChannel' => [
         'dc_id'       => '消息类型ID',
         'dc_key'      => '消息类型KEY',
         'dc_title'    => '消息类型标题',
@@ -47,7 +94,7 @@ return [
         'dc_provider' => '消息类型发送方式',
         'dc_status'   => '消息类型状态',
     ],
-    'RentalDeliveryLog' => [
+    'DeliveryLog' => [
         'dl_id'                  => '消息序号',
         'dc_key'                 => '消息类型key',
         'dl_key'                 => '消息key',
@@ -90,68 +137,13 @@ return [
         'db_note'      => '安装备注信息',
         'processed_by' => '操作人员',
     ],
-    'RentalCustomer' => [
-        'cu_id'                => '客户序号',
-        'cu_type'              => '客户类型',
-        'contact_name'         => '联系人姓名',
-        'contact_phone'        => '联系电话',
-        'contact_email'        => '联系人邮箱',
-        'contact_wechat'       => '联系人微信号',
-        'contact_live_city'    => '现住城市',
-        'contact_live_address' => '现住地址',
-        'sales_manager'        => '负责销售',
-        'driver_manager'       => '负责驾管',
-        'cu_cert_no'           => '人证号',
-        'cu_cert_photo'        => '人证照片',
-        'cu_cert_valid_to'     => '人证到期日期',
-        'cu_additional_photos' => '顾客附加照片',
-        'cu_remark'            => '顾客备注',
-    ],
-    'RentalCustomerCompany' => [
-        'cuc_id'                      => '企业客户序号',
-        'cu_id'                       => '客户序号',
-        'cuc_unified_credit_code'     => '公司统一信用代码',
-        'cuc_business_license_photo'  => '营业执照',
-        'cuc_registration_address'    => '注册地址',
-        'cuc_office_address'          => '办公地址',
-        'cuc_establishment_date'      => '成立日期',
-        'cuc_number_of_employees'     => '员工人数',
-        'cuc_industry'                => '所属行业',
-        'cuc_annual_revenue'          => '年收入',
-        'cuc_legal_representative'    => '法定代表人',
-        'cuc_contact_person_position' => '联系人职位',
-        'cuc_tax_registration_number' => '税务登记号码',
-        'cuc_business_scope'          => '经营范围',
-    ],
-    'RentalCustomerIndividual' => [
-        'cui_id'                         => '个人客户序号',
-        'cu_id'                          => '客户序号',
-        'cui_name'                       => '姓名',
-        'cui_gender'                     => '性别',
-        'cui_date_of_birth'              => '出生日期',
-        'cui_id1_photo'                  => '身份证人脸照片',
-        'cui_id2_photo'                  => '身份证国徽照片',
-        'cui_id_number'                  => '身份证号码',
-        'cui_id_address'                 => '身份证地址',
-        'cui_id_expiry_date'             => '身份证有效期',
-        'cui_driver_license1_photo'      => '驾驶证照片',
-        'cui_driver_license2_photo'      => '驾驶证副本照片',
-        'cui_driver_license_number'      => '驾驶证号码',
-        'cui_driver_license_category'    => '驾驶证类别',
-        'cui_driver_license_expiry_date' => '驾驶证有效期',
-        'cui_emergency_relationship'     => '紧急联系人关系',
-        'cui_emergency_contact_name'     => '紧急联系人姓名',
-        'cui_emergency_id_number'        => '紧急联系人身份证号',
-        'cui_emergency_contact_phone'    => '紧急联系人电话',
-        'cui_gender_label'               => '性别-中文',
-    ],
-    'RentalOcrImage' => [
+    'OcrImage' => [
         'oi_id'    => 'OCR识别序号',
         'file_md5' => '文件md5',
         'ocr_type' => '文件类型',
         'result'   => 'OCR识别结果',
     ],
-    'RentalOneAccount' => [
+    'OneAccount' => [
         'oa_id'             => '122账号序号',
         'oa_type'           => '账号类型',
         'oa_name'           => '账号名称',
@@ -159,7 +151,7 @@ return [
         'cookie_string'     => 'cookie信息',
         'cookie_refresh_at' => 'cookie更新时间',
     ],
-    'RentalOneRequest' => [
+    'OneRequest' => [
         'or_id'       => '',
         'turn'        => '',
         'url'         => '',
@@ -169,7 +161,7 @@ return [
         'status_code' => '',
         'response'    => '',
     ],
-    'RentalPayment' => [
+    'Payment' => [
         'rp_id'             => '财务记录序号',
         'so_id'             => '租车订单序号',
         'pt_id'             => '付款类型序号',
@@ -189,7 +181,7 @@ return [
         'pay_status_label'  => '支付状态-中文',
         'is_valid_label'    => '有效状态-中文',
     ],
-    'RentalPaymentAccount' => [
+    'PaymentAccount' => [
         'pa_id'              => '账户序号',
         'pa_name'            => '账户名称',
         'pa_status'          => '账户状态',
@@ -201,7 +193,7 @@ return [
         'is_alipay_plan'     => '是否为支付宝计划扣款账号',
         'pa_remark'          => '账户备注',
     ],
-    'RentalPaymentInout' => [
+    'PaymentInout' => [
         'io_id'           => '流水序号',
         'io_type'         => '流水类型',
         'cu_id'           => '客户序号',
@@ -211,34 +203,14 @@ return [
         'account_balance' => '收款账户当前余额',
         'rp_id'           => '租车收支序号',
     ],
-    'RentalPaymentType' => [
+    'PaymentType' => [
         'pt_id'          => '收付款类型序号',
         'pt_name'        => '收付款类型名称',
         'required'       => '是否不能关闭的',
         'is_active'      => '是否启用',
         'pt_description' => '描述',
     ],
-    'RentalCompany' => [
-        'only_one'                  => '',
-        'cp_id'                     => '公司ID',
-        'cp_name'                   => '公司名称',
-        'cp_address'                => '公司注册地址',
-        'cp_longitude'              => '公司地址经度',
-        'cp_latitude'               => '公司地址纬度',
-        'cp_phone'                  => '公司车辆预订联系电话',
-        'cp_description'            => '公司介绍',
-        'cp_rental_note'            => '租车须知',
-        'cp_purchase_note'          => '购车须知',
-        'cp_invoice_note'           => '开票信息',
-        'cp_bank_name'              => '公司开户银行',
-        'cp_bank_account_no'        => '公司银行账号',
-        'cp_social_credit_code'     => '公司统一社会信用代码',
-        'cp_company_photo'          => '公司照片',
-        'cp_business_license_photo' => '公司营业执照',
-        'cp_wechat_notify_mobile'   => '企业收款通知手机号',
-        'cp_verify_status'          => '公司上架认证状态',
-    ],
-    'RentalBookingOrder' => [
+    'BookingOrder' => [
         'bo_id'                => '订单序号',
         'bo_no'                => '订单编号',
         'bo_source'            => '订单来源',
@@ -264,7 +236,7 @@ return [
         'order_status_label'   => '',
         'refund_status_label'  => '',
     ],
-    'RentalBookingVehicle' => [
+    'BookingVehicle' => [
         'bv_id'                => '预订车辆序号',
         'b_type'               => '租期类型',
         'plate_no'             => '车牌号',
@@ -282,7 +254,7 @@ return [
         'is_listed'            => '上架状态',
         'listed_at'            => '上架时间',
     ],
-    'RentalDocTpl' => [
+    'DocTpl' => [
         'dt_id'        => '合同模板序号',
         'dt_type'      => '合同模板类型',
         'dt_file_type' => '合同模板格式类型',
@@ -292,13 +264,13 @@ return [
         'dt_html'      => '合同模板HTML',
         'dt_remark'    => '合同模板备注',
     ],
-    'RentalSaleOrder' => [
+    'SaleOrder' => [
         'so_id'                               => '租车序号',
         'rental_type'                         => '租车类型',
         'rental_type_label'                   => '租车类型-中文',
         'rental_type_short_label'             => '租车类型-短中文',
-        'rental_payment_type'                 => '付款方式',
-        'rental_payment_type_label'           => '付款类型-中文',
+        'payment_day_type'                    => '付款方式',
+        'payment_day_type_label'              => '付款类型-中文',
         'cu_id'                               => '客户序号',
         've_id'                               => '车辆序号',
         'contract_number'                     => '合同编号',
@@ -343,17 +315,17 @@ return [
         'discount_plan'                       => '优惠方案',
         'so_remark'                           => '订单备注',
     ],
-    'RentalSaleOrderExt' => [
+    'SaleOrderExt' => [
         'soe_id'              => '扩展订单ID',
         'so_id'               => '订单ID',
         'soe_wecom_group_url' => '微信群机器人url',
     ],
-    'RentalSaleOrderTpl' => [
+    'SaleOrderTpl' => [
         'sot_id'                          => '签约模板序号',
         'sot_name'                        => '签约模板名称',
         'sot_status'                      => '签约模板状态',
         'rental_type'                     => '租车类型',
-        'rental_payment_type'             => '付款类型',
+        'payment_day_type'                => '付款类型',
         'contract_number_prefix'          => '合同编号前缀',
         'free_days'                       => '免租天数',
         'installments'                    => '分期数',
@@ -372,7 +344,7 @@ return [
         'discount_plan'                   => '优惠方案',
         'so_remark'                       => '订单备注',
     ],
-    'RentalSaleSettlement' => [
+    'SaleSettlement' => [
         'ss_id'                      => '结算序号',
         'so_id'                      => '订单序号',
         'deposit_amount'             => '合同押金',
@@ -404,7 +376,7 @@ return [
         'approved_by'                => '审核人',
         'approved_at'                => '审核时间',
     ],
-    'RentalVehicleReplacement' => [
+    'VehicleReplacement' => [
         'vr_id'                  => '换车记录序号',
         'so_id'                  => '订单序号',
         'replacement_type'       => '换车类型',
@@ -419,7 +391,7 @@ return [
         'current_ve_plate_no'    => '旧车车牌号',
         'new_ve_plate_no'        => '新车车牌号',
     ],
-    'RentalServiceCenter' => [
+    'ServiceCenter' => [
         'sc_id'               => '修理厂ID',
         'sc_name'             => '修理厂名称',
         'sc_address'          => '修理厂地址',
@@ -431,7 +403,7 @@ return [
         'permitted_admin_ids' => '用户权限',
         'sc_status_label'     => '状态-中文',
     ],
-    'RentalVehicle' => [
+    'Vehicle' => [
         've_id'                       => '车辆序号',
         'plate_no'                    => '车牌号',
         've_type'                     => '车辆类型',
@@ -467,7 +439,7 @@ return [
         'status_rental_label'         => '租车状态-中文',
         'status_dispatch_label'       => '是否发车状态-中文',
     ],
-    'RentalVehicleAccident' => [
+    'VehicleAccident' => [
         'va_id'              => '出险序号',
         've_id'              => '车辆序号',
         'so_id'              => '订单序号',
@@ -492,7 +464,7 @@ return [
         'additional_photos'  => '附加照片',
         'accident_info'      => '车辆出险照片以及描述',
     ],
-    'RentalVehicleForceTake' => [
+    'VehicleForceTake' => [
         'vft_id'            => '序号',
         've_id'             => '车牌号',
         'cu_id'             => '客户姓名',
@@ -501,7 +473,7 @@ return [
         'additional_photos' => '附加照片',
         'reason'            => '原因',
     ],
-    'RentalVehicleInspection' => [
+    'VehicleInspection' => [
         'vi_id'                       => '验车序号',
         'so_id'                       => '订单序号',
         've_id'                       => '车辆序号',
@@ -524,7 +496,7 @@ return [
         'operation_license_label'     => '营运证',
         'vehicle_damage_status_label' => '车损状态',
     ],
-    'RentalVehicleInsurance' => [
+    'VehicleInsurance' => [
         'vi_id'                               => '保险单序号',
         've_id'                               => '车辆序号',
         'compulsory_policy_file'              => '交强险保单文件路径',
@@ -562,7 +534,7 @@ return [
         'is_company_borne'                    => '是否公司承担',
         'vi_remark'                           => '保险单备注',
     ],
-    'RentalVehicleMaintenance' => [
+    'VehicleMaintenance' => [
         'vm_id'                   => '保养序号',
         've_id'                   => '车辆序号',
         'so_id'                   => '订单序号',
@@ -586,7 +558,7 @@ return [
         'custody_vehicle_label'   => '代管车辆',
         'add_should_pay'          => '',
     ],
-    'RentalVehicleManualViolation' => [
+    'VehicleManualViolation' => [
         'vmv_id'             => '违章序号',
         've_id'              => '车辆序号',
         'vu_id'              => '车辆使用时间段序号',
@@ -598,7 +570,7 @@ return [
         'status'             => '违章状态',
         'vmv_remark'         => '违章备注',
     ],
-    'RentalVehicleModel' => [
+    'VehicleModel' => [
         'vm_id'             => '车型序号',
         'brand_name'        => '品牌',
         'model_name'        => '车型',
@@ -606,7 +578,7 @@ return [
         'vm_status'         => '状态',
         'additional_photos' => '附加照片',
     ],
-    'RentalVehiclePreparation' => [
+    'VehiclePreparation' => [
         'vp_id'             => '整备序号',
         've_id'             => '车辆序号，指向车辆表',
         'annual_check_is'   => '年审是否完备',
@@ -618,7 +590,7 @@ return [
         'document_check_is' => '证件是否完备',
         'document_check_dt' => '',
     ],
-    'RentalVehicleRepair' => [
+    'VehicleRepair' => [
         'vr_id'                   => '维修记录序号',
         've_id'                   => '车辆序号',
         'so_id'                   => '订单序号',
@@ -646,7 +618,7 @@ return [
         'custody_vehicle_label'   => '代管车辆-中文',
         'repair_attribute_label'  => '维修属性-中文',
     ],
-    'RentalVehicleSchedule' => [
+    'VehicleSchedule' => [
         'vs_id'                      => '年检记录序号',
         'inspection_type'            => '年检类型',
         've_id'                      => '车辆序号',
@@ -661,7 +633,7 @@ return [
         'certificate_last_date'      => '最后一次车证年检时间',
         'business_license_last_date' => '最后一次营业执照年检时间',
     ],
-    'RentalVehicleUsage' => [
+    'VehicleUsage' => [
         'vu_id'       => '行程记录序号',
         'so_id'       => '订单序号',
         've_id'       => '车辆序号',
@@ -669,7 +641,7 @@ return [
         'end_vi_id'   => '行程结束的验车序号',
         'vu_remark'   => '行程备注',
     ],
-    'RentalVehicleViolation' => [
+    'VehicleViolation' => [
         'vv_id'                => '违章记录序号',
         'decision_number'      => '决定书编号',
         've_id'                => '车辆序号',
@@ -685,5 +657,33 @@ return [
         'process_status_label' => '违章处理状态',
         'payment_status_label' => '违章交款状态',
         'vv_remark'            => '违章备注',
+    ],
+    'Company' => [
+        'only_one'                  => '',
+        'cp_id'                     => '公司ID',
+        'cp_name'                   => '公司名称',
+        'cp_address'                => '公司注册地址',
+        'cp_longitude'              => '公司地址经度',
+        'cp_latitude'               => '公司地址纬度',
+        'cp_phone'                  => '公司车辆预订联系电话',
+        'cp_description'            => '公司介绍',
+        'cp_rental_note'            => '租车须知',
+        'cp_purchase_note'          => '购车须知',
+        'cp_invoice_note'           => '开票信息',
+        'cp_bank_name'              => '公司开户银行',
+        'cp_bank_account_no'        => '公司银行账号',
+        'cp_social_credit_code'     => '公司统一社会信用代码',
+        'cp_company_photo'          => '公司照片',
+        'cp_business_license_photo' => '公司营业执照',
+        'cp_wechat_notify_mobile'   => '企业收款通知手机号',
+        'cp_verify_status'          => '公司上架认证状态',
+    ],
+    'Configuration' => [
+        'cfg_id'         => '',
+        'cfg_key'        => '设定名',
+        'cfg_value'      => '设定值',
+        'cfg_remark'     => '设定备注',
+        'usage_category' => '使用区分',
+        'masked'         => '是否打码',
     ],
 ];

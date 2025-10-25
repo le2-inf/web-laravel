@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Customer\_;
 
 use App\Http\Controllers\Controller;
-use App\Models\Rental\Customer\RentalCustomer;
+use App\Models\Customer\Customer;
 use App\Services\SmsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -27,7 +27,7 @@ class AuthController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'phone' => ['required', 'digits:11', Rule::exists(RentalCustomer::class, 'contact_phone')],
+                'phone' => ['required', 'digits:11', Rule::exists(Customer::class, 'contact_phone')],
             ]
         )->after(function (\Illuminate\Validation\Validator $validator) use ($request, &$cacheKey, &$cacheIpKey) {
             if (!$validator->failed()) {
@@ -75,7 +75,7 @@ class AuthController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'phone' => ['required', 'digits:11', Rule::exists(RentalCustomer::class, 'contact_phone')],
+                'phone' => ['required', 'digits:11', Rule::exists(Customer::class, 'contact_phone')],
                 'code'  => ['required', 'digits:4'],
             ]
         )->after(function (\Illuminate\Validation\Validator $validator) use ($request, &$cacheKey) {
@@ -96,19 +96,19 @@ class AuthController extends Controller
 
         $input = $validator->validated();
 
-        $rentalCustomer = RentalCustomer::query()->where('contact_phone', $input['phone'])->first();
+        $customer = Customer::query()->where('contact_phone', $input['phone'])->first();
 
-        DB::transaction(function () use ($rentalCustomer, &$token, &$cacheKey) {
-            $rentalCustomer->tokens()->delete();
+        DB::transaction(function () use ($customer, &$token, &$cacheKey) {
+            $customer->tokens()->delete();
 
-            $token = $rentalCustomer->createToken('rc')->plainTextToken;
+            $token = $customer->createToken('rc')->plainTextToken;
 
             Cache::forget($cacheKey);
         });
 
         return $this->response()->withData([
             'token'    => $token,
-            'customer' => $rentalCustomer,
+            'customer' => $customer,
         ])->respond();
     }
 
@@ -119,15 +119,15 @@ class AuthController extends Controller
 
     public function mock(Request $request): Response
     {
-        /** @var RentalCustomer $rentalCustomer */
-        $rentalCustomer = RentalCustomer::query()->whereLike('contact_name', '演示%')->inRandomOrder()->firstOrFail();
+        /** @var Customer $customer */
+        $customer = Customer::query()->whereLike('contact_name', '演示%')->inRandomOrder()->firstOrFail();
 
         $token = Str::random(32);
 
-        Cache::set("temporary_customer:{$token}", $rentalCustomer->cu_id, 3600 * 3);
+        Cache::set("temporary_customer:{$token}", $customer->cu_id, 3600 * 3);
 
         return $this->response()->withData([
-            'customer' => $rentalCustomer,
+            'customer' => $customer,
             'token'    => $token,
         ])->respond();
     }

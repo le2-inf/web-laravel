@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin\Config;
 use App\Enum\Config\CfgMasked;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\CheckAdminIsMock;
-use App\Models\Configuration;
+use App\Models\_\Configuration;
 use App\Services\PaginateService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

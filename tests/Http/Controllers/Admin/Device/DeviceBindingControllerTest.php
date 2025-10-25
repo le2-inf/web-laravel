@@ -6,15 +6,15 @@ use App\Http\Controllers\Admin\Device\IotDeviceBindingController;
 use App\Models\Admin\Admin;
 use App\Models\Iot\IotDevice;
 use App\Models\Iot\IotDeviceBinding;
-use App\Models\Rental\Vehicle\RentalVehicle;
+use App\Models\Vehicle\Vehicle;
 use Illuminate\Database\Eloquent\Builder;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 
 /**
- * @property IotDevice     $device
- * @property Admin         $admin
- * @property RentalVehicle $rentalVehicle
+ * @property IotDevice $device
+ * @property Admin     $admin
+ * @property Vehicle   $vehicle
  *
  * @internal
  */
@@ -32,7 +32,7 @@ class DeviceBindingControllerTest extends TestCase
         ]);
 
         IotDeviceBinding::query()
-            ->whereHas('RentalVehicle', function (Builder $q) {
+            ->whereHas('Vehicle', function (Builder $q) {
                 $q->whereLike('plate_no', 'TEST-%');
             })
             ->delete()
@@ -41,8 +41,8 @@ class DeviceBindingControllerTest extends TestCase
         IotDevice::query()->whereLike('device_code', 'test-%')->delete();
         $this->device = IotDevice::factory()->create(['device_code' => 'test-123']);
 
-        RentalVehicle::query()->whereLike('plate_no', 'TEST-%')->delete();
-        $this->vehicle = RentalVehicle::factory()->create(['plate_no' => 'TEST-004']);
+        Vehicle::query()->whereLike('plate_no', 'TEST-%')->delete();
+        $this->vehicle = Vehicle::factory()->create(['plate_no' => 'TEST-004']);
 
         $this->deviceBinding = IotDeviceBinding::factory()->create([
             'd_id'         => $this->device->getKey(),
@@ -92,7 +92,7 @@ class DeviceBindingControllerTest extends TestCase
 
         $payload = IotDeviceBinding::factory()
             ->for($this->device, 'Device')
-            ->for($this->vehicle, 'RentalVehicle')
+            ->for($this->vehicle, 'Vehicle')
             ->for($this->admin, 'ProcessedBy')
             ->raw()
         ;
@@ -126,7 +126,7 @@ class DeviceBindingControllerTest extends TestCase
         // 先制造一个未结束的
         IotDeviceBinding::factory()
             ->for($this->device, 'Device')
-            ->for($this->vehicle, 'RentalVehicle')
+            ->for($this->vehicle, 'Vehicle')
             ->for($this->admin, 'ProcessedBy')
             ->create([
                 'db_end_at' => null,
@@ -136,7 +136,7 @@ class DeviceBindingControllerTest extends TestCase
         // 又想新建一个未结束 => 不允许
         $payload = IotDeviceBinding::factory()
             ->for($this->device, 'Device')
-            ->for($this->vehicle, 'RentalVehicle')
+            ->for($this->vehicle, 'Vehicle')
             ->for($this->admin, 'ProcessedBy')
             ->raw([
                 'db_end_at' => null,
@@ -161,7 +161,7 @@ class DeviceBindingControllerTest extends TestCase
         // 已有一个未结束
         IotDeviceBinding::factory()
             ->for($this->device, 'Device')
-            ->for($this->vehicle, 'RentalVehicle')
+            ->for($this->vehicle, 'Vehicle')
             ->for($this->admin, 'ProcessedBy')
             ->create([
                 'db_end_at' => null,
@@ -172,7 +172,7 @@ class DeviceBindingControllerTest extends TestCase
         $payload
             = IotDeviceBinding::factory()
                 ->for($this->device, 'Device')
-                ->for($this->vehicle, 'RentalVehicle')
+                ->for($this->vehicle, 'Vehicle')
                 ->for($this->admin, 'ProcessedBy')
                 ->raw()
         ;
@@ -191,7 +191,7 @@ class DeviceBindingControllerTest extends TestCase
     {
         $payload = IotDeviceBinding::factory()
             ->for($this->device, 'Device')
-            ->for($this->vehicle, 'RentalVehicle')
+            ->for($this->vehicle, 'Vehicle')
             ->for($this->admin, 'ProcessedBy')
             ->raw([
                 'db_start_at' => now()->toDateTimeString(),
@@ -213,7 +213,7 @@ class DeviceBindingControllerTest extends TestCase
         $payload
             = IotDeviceBinding::factory()
                 ->for($this->device, 'Device')
-                ->for($this->vehicle, 'RentalVehicle')
+                ->for($this->vehicle, 'Vehicle')
                 ->for($this->admin, 'ProcessedBy')
                 ->raw(
                     [
@@ -238,7 +238,7 @@ class DeviceBindingControllerTest extends TestCase
     {
         $binding = IotDeviceBinding::factory()
             ->for($this->device, 'Device')
-            ->for($this->vehicle, 'RentalVehicle')
+            ->for($this->vehicle, 'Vehicle')
             ->for($this->admin, 'ProcessedBy')
             ->create([
                 'db_start_at' => now()->subDays(5),

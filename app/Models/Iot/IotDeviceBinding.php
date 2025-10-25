@@ -2,8 +2,8 @@
 
 namespace App\Models\Iot;
 
-use App\Models\ModelTrait;
-use App\Models\Rental\Vehicle\RentalVehicle;
+use App\Models\_\ModelTrait;
+use App\Models\Vehicle\Vehicle;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -39,9 +39,9 @@ class IotDeviceBinding extends Model
         return $this->BelongsTo(IotDevice::class, 'd_id');
     }
 
-    public function RentalVehicle(): BelongsTo
+    public function Vehicle(): BelongsTo
     {
-        return $this->BelongsTo(RentalVehicle::class, 've_id', 've_id');
+        return $this->BelongsTo(Vehicle::class, 've_id', 've_id');
     }
 
     public static function options(?\Closure $where = null): array

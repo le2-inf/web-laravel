@@ -13,7 +13,7 @@ class DcDcKeyDefault
             'dc_title'    => '租金支付提醒', 'dc_tn' => 6, 'dc_provider' => DcDcProvider::WECOM_BOT,
             'dc_template' => <<<'TXT'
 租金支付提醒
-车牌号：{{ $rental_sale_order['rental_vehicle']['plate_no'] ?? null }}
+车牌号：{{ $sale_order['vehicle']['plate_no'] ?? null }}
 本月应支付租金：{{ $should_pay_amount }}
 付款时间：{{ $should_pay_date }}
 TXT,
@@ -22,7 +22,7 @@ TXT,
             'dc_title'    => '合同到期提醒', 'dc_tn' => 30, 'dc_provider' => DcDcProvider::WECOM_BOT,
             'dc_template' => <<<'TXT'
 合同到期提醒
-车牌号：{{ $rental_vehicle['plate_no'] }}
+车牌号：{{ $vehicle['plate_no'] }}
 到期日期：{{ $rental_end }}
 TXT,
         ],
@@ -30,7 +30,7 @@ TXT,
             'dc_title'    => '车辆续保提醒', 'dc_tn' => 60, 'dc_provider' => DcDcProvider::WECOM_APP,
             'dc_template' => <<<'TXT'
 车辆续保提醒
-车牌号：{{ $rental_vehicle['plate_no'] }}
+车牌号：{{ $vehicle['plate_no'] }}
 到期日期：{{ $compulsory_end_date }}
 TXT,
         ],
@@ -39,7 +39,7 @@ TXT,
             'dc_template' => <<<'TXT'
 年检提醒
 年检类型：{{ $inspection_type_label }}
-车牌号：{{ $rental_vehicle['plate_no'] }}
+车牌号：{{ $vehicle['plate_no'] }}
 到期日期：{{ $next_inspection_date }}
 TXT,
         ],

@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Rental\Customer\RentalCustomer;
+use App\Models\Customer\Customer;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Http\Request;
@@ -44,8 +44,8 @@ class TemporaryCustomer
             return false;
         }
 
-        /** @var RentalCustomer $tempUser */
-        $tempUser = RentalCustomer::query()->find($cu_id);
+        /** @var Customer $tempUser */
+        $tempUser = Customer::query()->find($cu_id);
 
         // 覆盖当前认证用户
         Auth::setUser($tempUser);

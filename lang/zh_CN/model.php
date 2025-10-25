@@ -17,132 +17,132 @@ return [
         'name'   => '员工角色',
         'suffix' => '',
     ],
-    'Configuration' => [
-        'name'   => '设定值',
+    'Customer' => [
+        'name'   => '客户',
+        'suffix' => '信息',
+    ],
+    'CustomerCompany' => [
+        'name'   => '企业客户',
+        'suffix' => '',
+    ],
+    'CustomerIndividual' => [
+        'name'   => '个人客户',
         'suffix' => '',
     ],
     'IotDevice' => [
         'name'   => '',
         'suffix' => '',
     ],
-    'RentalCustomer' => [
-        'name'   => '客户',
-        'suffix' => '信息',
-    ],
-    'RentalCustomerCompany' => [
-        'name'   => '企业客户',
-        'suffix' => '',
-    ],
-    'RentalCustomerIndividual' => [
-        'name'   => '个人客户',
-        'suffix' => '',
-    ],
-    'RentalOcrImage' => [
+    'OcrImage' => [
         'name'   => 'OCR',
         'suffix' => '',
     ],
-    'RentalOneAccount' => [
+    'OneAccount' => [
         'name'   => '122账号信息',
         'suffix' => '',
     ],
-    'RentalPayment' => [
+    'Payment' => [
         'name'   => '财务',
         'suffix' => '记录',
     ],
-    'RentalPaymentAccount' => [
+    'PaymentAccount' => [
         'name'   => '收付款账户',
         'suffix' => '',
     ],
-    'RentalPaymentInout' => [
+    'PaymentInout' => [
         'name'   => '账户流水',
         'suffix' => '',
     ],
-    'RentalPaymentType' => [
+    'PaymentType' => [
         'name'   => '财务类型',
         'suffix' => '信息',
     ],
-    'RentalCompany' => [
-        'name'   => '公司',
-        'suffix' => '',
-    ],
-    'RentalBookingOrder' => [
+    'BookingOrder' => [
         'name'   => '预定订单',
         'suffix' => '',
     ],
-    'RentalBookingVehicle' => [
+    'BookingVehicle' => [
         'name'   => '预定车辆',
         'suffix' => '',
     ],
-    'RentalDocTpl' => [
+    'DocTpl' => [
         'name'   => '合同模板',
         'suffix' => '',
     ],
-    'RentalSaleOrder' => [
+    'SaleOrder' => [
         'name'   => '租车订单',
         'suffix' => '',
     ],
-    'RentalSaleOrderTpl' => [
+    'SaleOrderTpl' => [
         'name'   => '租车订单模板',
         'suffix' => '',
     ],
-    'RentalSaleSettlement' => [
+    'SaleSettlement' => [
         'name'   => '结算',
         'suffix' => '',
     ],
-    'RentalVehicleReplacement' => [
+    'VehicleReplacement' => [
         'name'   => '换车',
         'suffix' => '',
     ],
-    'RentalVehicle' => [
+    'Vehicle' => [
         'name'   => '车辆',
         'suffix' => '信息',
     ],
-    'RentalVehicleAccident' => [
+    'VehicleAccident' => [
         'name'   => '出险',
         'suffix' => '记录',
     ],
-    'RentalVehicleForceTake' => [
+    'VehicleForceTake' => [
         'name'   => '强制收车',
         'suffix' => '',
     ],
-    'RentalVehicleInspection' => [
+    'VehicleInspection' => [
         'name'   => '验车',
         'suffix' => '',
     ],
-    'RentalVehicleInsurance' => [
+    'VehicleInsurance' => [
         'name'   => '车辆保险单',
         'suffix' => '信息',
     ],
-    'RentalVehicleMaintenance' => [
+    'VehicleMaintenance' => [
         'name'   => '车辆保养',
         'suffix' => '记录',
     ],
-    'RentalVehicleManualViolation' => [
+    'VehicleManualViolation' => [
         'name'   => '手动违章',
         'suffix' => '记录',
     ],
-    'RentalVehicleModel' => [
+    'VehicleModel' => [
         'name'   => '车型',
         'suffix' => '',
     ],
-    'RentalVehiclePreparation' => [
+    'VehiclePreparation' => [
         'name'   => '车辆整备',
         'suffix' => '',
     ],
-    'RentalVehicleRepair' => [
+    'VehicleRepair' => [
         'name'   => '维修',
         'suffix' => '记录',
     ],
-    'RentalVehicleSchedule' => [
+    'VehicleSchedule' => [
         'name'   => '车辆年检',
         'suffix' => '记录',
     ],
-    'RentalVehicleUsage' => [
+    'VehicleUsage' => [
         'name'   => '行程',
         'suffix' => '',
     ],
-    'RentalVehicleViolation' => [
+    'VehicleViolation' => [
         'name'   => '违章',
         'suffix' => '记录',
+    ],
+    'Company' => [
+        'name'   => '公司',
+        'suffix' => '',
+    ],
+    'Configuration' => [
+        'name'   => '设定值',
+        'suffix' => '',
     ],
 ];

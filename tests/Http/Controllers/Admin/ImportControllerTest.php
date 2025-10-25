@@ -4,9 +4,9 @@ namespace Tests\Http\Controllers\Admin;
 
 use App\Enum\Config\ImportConfig;
 use App\Http\Controllers\Admin\Config\ImportController;
-use App\Models\Rental\Customer\RentalCustomer;
-use App\Models\Rental\Sale\RentalSaleOrder;
-use App\Models\Rental\Vehicle\RentalVehicle;
+use App\Models\Customer\Customer;
+use App\Models\Sale\SaleOrder;
+use App\Models\Vehicle\Vehicle;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -22,21 +22,21 @@ class ImportControllerTest extends TestCase
     {
         parent::setUp();
 
-        /** @var RentalCustomer $rentalCustomer */
-        $rentalCustomer = RentalCustomer::query()->where('contact_name', '=', '苏妹妹')->first();
-        if ($rentalCustomer) {
-            DB::transaction(function () use ($rentalCustomer) {
-                $rentalCustomer->RentalCustomerIndividual()->delete();
-                $rentalCustomer->RentalCustomerCompany()->delete();
-                $rentalCustomer->delete();
+        /** @var Customer $customer */
+        $customer = Customer::query()->where('contact_name', '=', '苏妹妹')->first();
+        if ($customer) {
+            DB::transaction(function () use ($customer) {
+                $customer->CustomerIndividual()->delete();
+                $customer->CustomerCompany()->delete();
+                $customer->delete();
             });
         }
-        RentalVehicle::query()->whereIn('plate_no', ['川N7JF90'])->delete();
-        $RentalSaleOrder = RentalSaleOrder::query()->whereLike('contract_number', 'TMP%')->first();
-        if ($RentalSaleOrder) {
-            DB::transaction(function () use ($RentalSaleOrder) {
-                $RentalSaleOrder->RentalPayments()->delete();
-                $RentalSaleOrder->delete();
+        Vehicle::query()->whereIn('plate_no', ['川N7JF90'])->delete();
+        $SaleOrder = SaleOrder::query()->whereLike('contract_number', 'TMP%')->first();
+        if ($SaleOrder) {
+            DB::transaction(function () use ($SaleOrder) {
+                $SaleOrder->Payments()->delete();
+                $SaleOrder->delete();
             });
         }
     }
@@ -79,7 +79,7 @@ class ImportControllerTest extends TestCase
             );
             $response11->assertStatus(200);
 
-            // $this->assertDatabaseHas('rental_customers', ['contact_name' => '苏妹妹']);
+            // $this->assertDatabaseHas('customers', ['contact_name' => '苏妹妹']);
         }
     }
 

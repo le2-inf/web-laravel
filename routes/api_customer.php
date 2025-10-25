@@ -1,17 +1,17 @@
 <?php
 
 use App\Http\Controllers\Customer\_\AuthController;
-use App\Http\Controllers\Customer\Rental\RentalPaymentController;
-use App\Http\Controllers\Customer\Rental\RentalSaleOrderController;
-use App\Http\Controllers\Customer\Rental\RentalVehicleAccidentController;
-use App\Http\Controllers\Customer\Rental\RentalVehicleMaintenanceController;
-use App\Http\Controllers\Customer\Rental\RentalVehicleManualViolationController;
-use App\Http\Controllers\Customer\Rental\RentalVehicleRepairController;
-use App\Http\Controllers\Customer\Rental\RentalVehicleReplacementController;
-use App\Http\Controllers\Customer\Rental\RentalVehicleViolationController;
-use App\Http\Controllers\Customer\Risk\RentalExpiryDriverController;
-use App\Http\Controllers\Customer\Risk\RentalExpiryVehicleController;
-use App\Http\Controllers\Customer\Risk\RentalVehicleScheduleController;
+use App\Http\Controllers\Customer\Rental\PaymentController;
+use App\Http\Controllers\Customer\Rental\SaleOrderController;
+use App\Http\Controllers\Customer\Rental\VehicleAccidentController;
+use App\Http\Controllers\Customer\Rental\VehicleMaintenanceController;
+use App\Http\Controllers\Customer\Rental\VehicleManualViolationController;
+use App\Http\Controllers\Customer\Rental\VehicleRepairController;
+use App\Http\Controllers\Customer\Rental\VehicleReplacementController;
+use App\Http\Controllers\Customer\Rental\VehicleViolationController;
+use App\Http\Controllers\Customer\Risk\ExpiryDriverController;
+use App\Http\Controllers\Customer\Risk\ExpiryVehicleController;
+use App\Http\Controllers\Customer\Risk\VehicleScheduleController;
 use App\Http\Middleware\TemporaryCustomer;
 use Illuminate\Support\Facades\Route;
 
@@ -27,16 +27,16 @@ Route::prefix('no-auth')->group(callback: function () {
 Route::group(['middleware' => [config('setting.mock.enable') ? TemporaryCustomer::class : 'auth:sanctum']], function () {
     Route::get('user', [AuthController::class, 'getUserInfo']);
 
-    Route::resource('rental-sale-orders', RentalSaleOrderController::class)->only(['index']);
-    Route::resource('rental-payments', RentalPaymentController::class)->only(['index']);
-    Route::resource('rental-vehicle-accidents', RentalVehicleAccidentController::class)->only(['index']);
-    Route::resource('rental-vehicle-replacement', RentalVehicleReplacementController::class)->only(['index']);
-    Route::resource('rental-vehicle-maintenances', RentalVehicleMaintenanceController::class)->only(['index']);
-    Route::resource('rental-vehicle-repairs', RentalVehicleRepairController::class)->only(['index']);
-    Route::resource('rental-vehicle-manual-violations', RentalVehicleManualViolationController::class)->only(['index']);
-    Route::resource('rental-vehicle-violations', RentalVehicleViolationController::class)->only(['index']);
+    Route::resource('sale-orders', SaleOrderController::class)->only(['index']);
+    Route::resource('payments', PaymentController::class)->only(['index']);
+    Route::resource('vehicle-accidents', VehicleAccidentController::class)->only(['index']);
+    Route::resource('vehicle-replacement', VehicleReplacementController::class)->only(['index']);
+    Route::resource('vehicle-maintenances', VehicleMaintenanceController::class)->only(['index']);
+    Route::resource('vehicle-repairs', VehicleRepairController::class)->only(['index']);
+    Route::resource('vehicle-manual-violations', VehicleManualViolationController::class)->only(['index']);
+    Route::resource('vehicle-violations', VehicleViolationController::class)->only(['index']);
     // 风控
-    Route::resource('rental-vehicle-schedules', RentalVehicleScheduleController::class)->only('index');
-    Route::resource('rental-expiry-drivers', RentalExpiryDriverController::class)->only('index');
-    Route::resource('rental-expiry-vehicles', RentalExpiryVehicleController::class)->only('index');
+    Route::resource('vehicle-schedules', VehicleScheduleController::class)->only('index');
+    Route::resource('expiry-drivers', ExpiryDriverController::class)->only('index');
+    Route::resource('expiry-vehicles', ExpiryVehicleController::class)->only('index');
 });

@@ -11,26 +11,26 @@ use App\Enum\Vehicle\VeStatusDispatch;
 use App\Enum\Vehicle\VeStatusRental;
 use App\Enum\Vehicle\VeStatusService;
 use App\Enum\Vehicle\ViInspectionType;
-use App\Http\Controllers\Admin\Sale\RentalSaleOrderController;
-use App\Models\Rental\Customer\RentalCustomer;
-use App\Models\Rental\Customer\RentalCustomerIndividual;
-use App\Models\Rental\Payment\RentalPayment;
-use App\Models\Rental\Payment\RentalPaymentAccount;
-use App\Models\Rental\Payment\RentalPaymentInout;
-use App\Models\Rental\Sale\RentalSaleOrder;
-use App\Models\Rental\Sale\RentalSaleSettlement;
-use App\Models\Rental\Sale\RentalVehicleReplacement;
-use App\Models\Rental\Vehicle\RentalServiceCenter;
-use App\Models\Rental\Vehicle\RentalVehicle;
-use App\Models\Rental\Vehicle\RentalVehicleForceTake;
-use App\Models\Rental\Vehicle\RentalVehicleInspection;
-use App\Models\Rental\Vehicle\RentalVehicleInsurance;
-use App\Models\Rental\Vehicle\RentalVehicleMaintenance;
-use App\Models\Rental\Vehicle\RentalVehicleManualViolation;
-use App\Models\Rental\Vehicle\RentalVehiclePreparation;
-use App\Models\Rental\Vehicle\RentalVehicleRepair;
-use App\Models\Rental\Vehicle\RentalVehicleSchedule;
-use App\Models\Rental\Vehicle\RentalVehicleUsage;
+use App\Http\Controllers\Admin\Sale\SaleOrderController;
+use App\Models\Customer\Customer;
+use App\Models\Customer\CustomerIndividual;
+use App\Models\Payment\Payment;
+use App\Models\Payment\PaymentAccount;
+use App\Models\Payment\PaymentInout;
+use App\Models\Sale\SaleOrder;
+use App\Models\Sale\SaleSettlement;
+use App\Models\Sale\VehicleReplacement;
+use App\Models\Vehicle\ServiceCenter;
+use App\Models\Vehicle\Vehicle;
+use App\Models\Vehicle\VehicleForceTake;
+use App\Models\Vehicle\VehicleInspection;
+use App\Models\Vehicle\VehicleInsurance;
+use App\Models\Vehicle\VehicleMaintenance;
+use App\Models\Vehicle\VehicleManualViolation;
+use App\Models\Vehicle\VehiclePreparation;
+use App\Models\Vehicle\VehicleRepair;
+use App\Models\Vehicle\VehicleSchedule;
+use App\Models\Vehicle\VehicleUsage;
 use App\Services\ProgressDisplay;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
@@ -56,51 +56,51 @@ class CsvDataGenerate extends Command
         // 先删除数据
 
         DB::transaction(function () {
-            RentalVehicleSchedule::query()->delete();
-            RentalVehicleManualViolation::query()->delete();
-            RentalVehicleMaintenance::query()->delete();
-            RentalVehicleInsurance::query()->delete();
-            RentalSaleSettlement::query()->delete();
-            RentalVehicleRepair::query()->delete();
-            RentalVehicleUsage::query()->delete();
-            RentalVehicleInspection::query()->delete();
-            RentalVehicleReplacement::query()->delete();
-            RentalServiceCenter::query()->delete();
+            VehicleSchedule::query()->delete();
+            VehicleManualViolation::query()->delete();
+            VehicleMaintenance::query()->delete();
+            VehicleInsurance::query()->delete();
+            SaleSettlement::query()->delete();
+            VehicleRepair::query()->delete();
+            VehicleUsage::query()->delete();
+            VehicleInspection::query()->delete();
+            VehicleReplacement::query()->delete();
+            ServiceCenter::query()->delete();
 
-            RentalPaymentAccount::query()->update(['pa_balance' => '0']);
-            RentalPaymentInout::query()->delete();
-            RentalPayment::query()->delete();
-            RentalSaleOrder::query()->delete();
-            RentalVehiclePreparation::query()->delete();
+            PaymentAccount::query()->update(['pa_balance' => '0']);
+            PaymentInout::query()->delete();
+            Payment::query()->delete();
+            SaleOrder::query()->delete();
+            VehiclePreparation::query()->delete();
 
-            RentalVehicleForceTake::query()->delete();
+            VehicleForceTake::query()->delete();
 
-            RentalCustomerIndividual::query()->whereRaw("cu_id not in (select cu_id from rental_customers where contact_name like '演示%')")->delete();
-            RentalCustomer::query()->whereNotLike('contact_name', '演示%')->delete();
+            CustomerIndividual::query()->whereRaw("cu_id not in (select cu_id from customers where contact_name like '演示%')")->delete();
+            Customer::query()->whereNotLike('contact_name', '演示%')->delete();
 
-            RentalVehicle::query()->update(['status_service' => VeStatusService::YES, 'status_rental' => VeStatusRental::LISTED, 'status_dispatch' => VeStatusDispatch::NOT_DISPATCHED]);
+            Vehicle::query()->update(['status_service' => VeStatusService::YES, 'status_rental' => VeStatusRental::LISTED, 'status_dispatch' => VeStatusDispatch::NOT_DISPATCHED]);
 
             DB::statement('call reset_identity_sequences(?)', ['public']);
         });
 
-        /** @var Collection $rentalServiceCenters */
-        $rentalServiceCenters = null;
-        DB::transaction(function () use (&$rentalServiceCenters) {
-            RentalServiceCenter::factory()->count(5)->create();
+        /** @var Collection $serviceCenters */
+        $serviceCenters = null;
+        DB::transaction(function () use (&$serviceCenters) {
+            ServiceCenter::factory()->count(5)->create();
 
-            $rentalServiceCenters = RentalServiceCenter::query()->where('sc_status', '=', ScScStatus::ENABLED)->get();
+            $serviceCenters = ServiceCenter::query()->where('sc_status', '=', ScScStatus::ENABLED)->get();
 
-            /** @var Collection $rentalCustomers */
-            $rentalCustomers = RentalCustomer::factory()->count(20)->create();
-            foreach ($rentalCustomers as $rentalCustomer) {
-                if (CuCuType::INDIVIDUAL === $rentalCustomer->cu_type) {
-                    RentalCustomerIndividual::factory()->for($rentalCustomer)->create();
+            /** @var Collection $customers */
+            $customers = Customer::factory()->count(20)->create();
+            foreach ($customers as $customer) {
+                if (CuCuType::INDIVIDUAL === $customer->cu_type) {
+                    CustomerIndividual::factory()->for($customer)->create();
                 }
             }
         });
 
-        $RentalVehicles  = RentalVehicle::query()->get();
-        $rentalCustomers = RentalCustomer::query()->get();
+        $Vehicles  = Vehicle::query()->get();
+        $customers = Customer::query()->get();
 
         for ($month = $month_form; $month <= $month_to; ++$month) {
             config(['setting.gen.month.current' => $month]);
@@ -109,7 +109,7 @@ class CsvDataGenerate extends Command
             $this->info(sprintf("# \033[32mGenerating data for month %s \033[0m", $month));
             $this->info(str_repeat('#', 80));
 
-            DB::transaction(function () use ($RentalVehicles, $rentalCustomers, $rentalServiceCenters) {
+            DB::transaction(function () use ($Vehicles, $customers, $serviceCenters) {
                 $factor = config('setting.gen.factor');
 
                 // ---------- group customer ----------
@@ -117,81 +117,81 @@ class CsvDataGenerate extends Command
                 for ($length = 0; $length < $factor; ++$length) {
                     $progressDisplay->displayProgress($length);
 
-                    /** @var RentalVehicle $RentalVehicle */
-                    $RentalVehicle = $RentalVehicles->random();
+                    /** @var Vehicle $Vehicle */
+                    $Vehicle = $Vehicles->random();
 
-                    /** @var RentalCustomer $rentalCustomer */
-                    $rentalCustomer = $rentalCustomers->random();
+                    /** @var Customer $customer */
+                    $customer = $customers->random();
 
-                    RentalVehiclePreparation::factory()->for($RentalVehicle)->create();
+                    VehiclePreparation::factory()->for($Vehicle)->create();
 
-                    /** @var RentalSaleOrder $RentalSaleOrder */
-                    $RentalSaleOrder = RentalSaleOrder::factory()->for($RentalVehicle)->for($rentalCustomer)->create();
+                    /** @var SaleOrder $SaleOrder */
+                    $SaleOrder = SaleOrder::factory()->for($Vehicle)->for($customer)->create();
 
-                    if (SoRentalType::LONG_TERM === $RentalSaleOrder->rental_type->value) {
-                        $payments = RentalSaleOrderController::callRentalPaymentsOption($RentalSaleOrder->toArray());
+                    if (SoRentalType::LONG_TERM === $SaleOrder->rental_type->value) {
+                        $payments = SaleOrderController::callPaymentsOption($SaleOrder->toArray());
                         foreach ($payments as $payment) {
-                            $RentalSaleOrder->RentalPayments()->create($payment);
+                            $SaleOrder->Payments()->create($payment);
                         }
-                    } elseif (SoRentalType::SHORT_TERM === $RentalSaleOrder->rental_type->value) {
-                        if (in_array($RentalSaleOrder->order_status->value, SoOrderStatus::getSignAndAfter)) {
+                    } elseif (SoRentalType::SHORT_TERM === $SaleOrder->rental_type->value) {
+                        if (in_array($SaleOrder->order_status->value, SoOrderStatus::getSignAndAfter)) {
                             $types = RpPtId::getFeeTypes(SoRentalType::SHORT_TERM);
                             foreach ($types as $type) {
                                 if (fake()->boolean(75)) {
-                                    RentalPayment::factory()->for($RentalSaleOrder)->create(['pt_id' => $type]);
+                                    Payment::factory()->for($SaleOrder)->create(['pt_id' => $type]);
                                 }
                             }
                         }
                     }
 
-                    switch ($RentalSaleOrder->order_status) {
+                    switch ($SaleOrder->order_status) {
                         case SoOrderStatus::PENDING:
-                            $RentalVehicle->updateStatus(status_service: VeStatusService::YES, status_rental: VeStatusRental::RESERVED, status_dispatch: VeStatusDispatch::NOT_DISPATCHED);
+                            $Vehicle->updateStatus(status_service: VeStatusService::YES, status_rental: VeStatusRental::RESERVED, status_dispatch: VeStatusDispatch::NOT_DISPATCHED);
 
                             break;
 
                         case SoOrderStatus::CANCELLED:
-                            $RentalVehicle->updateStatus(status_service: VeStatusService::YES, status_rental: VeStatusRental::LISTED, status_dispatch: VeStatusDispatch::NOT_DISPATCHED);
+                            $Vehicle->updateStatus(status_service: VeStatusService::YES, status_rental: VeStatusRental::LISTED, status_dispatch: VeStatusDispatch::NOT_DISPATCHED);
 
                             break;
 
                         case SoOrderStatus::SIGNED:
-                            $RentalVehicle->updateStatus(status_service: VeStatusService::YES, status_rental: VeStatusRental::RENTED, status_dispatch: VeStatusDispatch::DISPATCHED);
+                            $Vehicle->updateStatus(status_service: VeStatusService::YES, status_rental: VeStatusRental::RENTED, status_dispatch: VeStatusDispatch::DISPATCHED);
 
                             break;
 
                         case SoOrderStatus::COMPLETED:
                         case SoOrderStatus::EARLY_TERMINATION:
-                            $RentalVehicle->updateStatus(status_service: VeStatusService::YES, status_rental: VeStatusRental::PENDING, status_dispatch: VeStatusDispatch::NOT_DISPATCHED);
+                            $Vehicle->updateStatus(status_service: VeStatusService::YES, status_rental: VeStatusRental::PENDING, status_dispatch: VeStatusDispatch::NOT_DISPATCHED);
 
                             break;
                     }
 
-                    if (SoOrderStatus::PENDING === $RentalSaleOrder->order_status) {
-                        RentalVehicleReplacement::factory()->for($RentalSaleOrder)->for($RentalVehicle, 'CurrentVehicle')->for($RentalVehicles->random(), 'NewVehicle')->create();
+                    if (SoOrderStatus::PENDING === $SaleOrder->order_status) {
+                        VehicleReplacement::factory()->for($SaleOrder)->for($Vehicle, 'CurrentVehicle')->for($Vehicles->random(), 'NewVehicle')->create();
                     }
 
-                    if (in_array($RentalSaleOrder->order_status, [SoOrderStatus::SIGNED, SoOrderStatus::COMPLETED, SoOrderStatus::EARLY_TERMINATION])) {
+                    if (in_array($SaleOrder->order_status, [SoOrderStatus::SIGNED, SoOrderStatus::COMPLETED, SoOrderStatus::EARLY_TERMINATION])) {
                         for ($groupSize = 0; $groupSize < 2; ++$groupSize) {
-                            $rentalVehicleInspection1 = RentalVehicleInspection::factory()->for($RentalVehicle)->for($RentalSaleOrder)->create(['inspection_type' => ViInspectionType::DISPATCH]);
-                            $rentalVehicleInspection2 = RentalVehicleInspection::factory()->for($RentalVehicle)->for($RentalSaleOrder)->create(['inspection_type' => ViInspectionType::RETURN]);
+                            $vehicleInspection1 = VehicleInspection::factory()->for($Vehicle)->for($SaleOrder)->create(['inspection_type' => ViInspectionType::DISPATCH]);
+                            $vehicleInspection2 = VehicleInspection::factory()->for($Vehicle)->for($SaleOrder)->create(['inspection_type' => ViInspectionType::RETURN]);
 
-                            $RentalVehicleUsage = RentalVehicleUsage::factory()->for($RentalSaleOrder)->for($RentalVehicle)->for($rentalVehicleInspection1, 'RentalVehicleInspectionStart')->for($rentalVehicleInspection2, 'RentalVehicleInspectionEnd')->create();
+                            $VehicleUsage = VehicleUsage::factory()->for($SaleOrder)->for($Vehicle)->for($vehicleInspection1, 'VehicleInspectionStart')->for($vehicleInspection2, 'VehicleInspectionEnd')->create();
                         }
 
-                        RentalVehicleRepair::factory()->for($RentalVehicle)->for($RentalSaleOrder)->for($rentalServiceCenters->random())->create();
-                        RentalVehicleMaintenance::factory()->for($RentalVehicle)->for($RentalSaleOrder)->for($rentalServiceCenters->random())->create();
+                        VehicleRepair::factory()->for($Vehicle)->for($SaleOrder)->for($serviceCenters->random())->create();
+                        VehicleMaintenance::factory()->for($Vehicle)->for($SaleOrder)->for($serviceCenters->random())->create();
 
-                        RentalVehicleManualViolation::factory()->for($RentalVehicle)->for($RentalVehicleUsage)->create();
+                        VehicleManualViolation::factory()->for($Vehicle)->for($VehicleUsage)->create();
                     }
 
-                    if (in_array($RentalSaleOrder->order_status, [SoOrderStatus::COMPLETED, SoOrderStatus::EARLY_TERMINATION])) {
-                        RentalSaleSettlement::factory()->for($RentalSaleOrder)->create();
+                    if (in_array($SaleOrder->order_status, [SoOrderStatus::COMPLETED, SoOrderStatus::EARLY_TERMINATION])) {
+                        SaleSettlement::factory()->for($SaleOrder)->create();
                     }
 
-                    RentalVehicleInsurance::factory()->for($RentalVehicle)->create();
+                    VehicleInsurance::factory()->for($Vehicle)->create();
 
-                    RentalVehicleSchedule::factory()->for($RentalVehicle)->create();
+                    VehicleSchedule::factory()->for($Vehicle)->create();
                 }
             });
 

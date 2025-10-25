@@ -2,30 +2,30 @@
 
 namespace App\Enum\Config;
 
-use App\Models\Rental\Customer\RentalCustomer;
-use App\Models\Rental\Payment\RentalPayment;
-use App\Models\Rental\Sale\RentalSaleOrder;
-use App\Models\Rental\Vehicle\RentalVehicle;
-use App\Models\Rental\Vehicle\RentalVehicleAccident;
-use App\Models\Rental\Vehicle\RentalVehicleInsurance;
-use App\Models\Rental\Vehicle\RentalVehicleMaintenance;
-use App\Models\Rental\Vehicle\RentalVehicleManualViolation;
-use App\Models\Rental\Vehicle\RentalVehicleRepair;
-use App\Models\Rental\Vehicle\RentalVehicleSchedule;
+use App\Models\Customer\Customer;
+use App\Models\Payment\Payment;
+use App\Models\Sale\SaleOrder;
+use App\Models\Vehicle\Vehicle;
+use App\Models\Vehicle\VehicleAccident;
+use App\Models\Vehicle\VehicleInsurance;
+use App\Models\Vehicle\VehicleMaintenance;
+use App\Models\Vehicle\VehicleManualViolation;
+use App\Models\Vehicle\VehicleRepair;
+use App\Models\Vehicle\VehicleSchedule;
 
 class ImportConfig
 {
     private static array $keys = [
-        RentalVehicle::class,
-        RentalCustomer::class,
-        RentalVehicleSchedule::class,
-        RentalVehicleInsurance::class,
-        RentalSaleOrder::class,
-        RentalPayment::class,  // 必须先导入 RentalSaleOrder
-        RentalVehicleRepair::class,
-        RentalVehicleMaintenance::class,
-        RentalVehicleAccident::class,
-        RentalVehicleManualViolation::class,
+        Vehicle::class,
+        Customer::class,
+        VehicleSchedule::class,
+        VehicleInsurance::class,
+        SaleOrder::class,
+        Payment::class,  // 必须先导入 SaleOrder
+        VehicleRepair::class,
+        VehicleMaintenance::class,
+        VehicleAccident::class,
+        VehicleManualViolation::class,
     ];
 
     public static function keys(): array

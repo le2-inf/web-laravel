@@ -6,7 +6,7 @@ use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
 use App\Http\Controllers\Controller;
 use App\Models\Iot\IotDeviceBinding;
-use App\Models\Rental\Vehicle\RentalVehicle;
+use App\Models\Vehicle\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -27,7 +27,7 @@ class GpsDataController extends Controller
      * @throws ValidationException
      */
     #[PermissionAction('history')]
-    public function history(Request $request, RentalVehicle $rentalVehicle): Response
+    public function history(Request $request, Vehicle $vehicle): Response
     {
         $validator = Validator::make(
             $request->all(),
@@ -69,7 +69,7 @@ WHERE b.ve_id = :ve_id
 ORDER BY b.d_id, start_ts;
 SQL,
             [
-                've_id'       => $rentalVehicle->ve_id,
+                've_id'       => $vehicle->ve_id,
                 'db_start_at' => $input['db_start_at'],
                 'db_end_at'   => $input['db_end_at'],
             ]

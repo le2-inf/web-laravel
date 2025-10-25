@@ -3,7 +3,7 @@
 namespace App\Models\Iot;
 
 use App\Attributes\ClassName;
-use App\Models\ModelTrait;
+use App\Models\_\ModelTrait;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;

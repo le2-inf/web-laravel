@@ -8,7 +8,7 @@ use App\Attributes\PermissionType;
 use App\Enum\Config\ImportConfig;
 use App\Exceptions\ClientException;
 use App\Http\Controllers\Controller;
-use App\Models\Rental\ImportTrait;
+use App\Models\_\ImportTrait;
 use App\Services\Uploader;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -45,7 +45,7 @@ class ImportController extends Controller
                 'model' => ['required', 'string', Rule::in(ImportConfig::keys())],
             ]
         )
-            ->after(function (\Illuminate\Validation\Validator $validator) use (&$rentalVehicle) {
+            ->after(function (\Illuminate\Validation\Validator $validator) use (&$vehicle) {
                 if (!$validator->failed()) {
                 }
             })

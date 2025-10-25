@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Http\Controllers\Controller;
-use App\Models\Rental\Ocr\RentalOcrImage;
-use App\Models\Rental\Ocr\RentalOcrPdf;
+use App\Models\Ocr\OcrImage;
+use App\Models\Ocr\OcrPdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -28,9 +28,9 @@ class Uploader
         $filepath = Storage::disk('s3')->putFileAs($upload_path, $input['file'], $filename);
 
         if ('application/pdf' === $input['file']->getClientMimeType()) {
-            $ocr = RentalOcrPdf::extract($input['field_name'], $md5Hash, $input['file']);
+            $ocr = OcrPdf::extract($input['field_name'], $md5Hash, $input['file']);
         } else {
-            $ocr = RentalOcrImage::ocr($input['field_name'], $md5Hash, $input['file']);
+            $ocr = OcrImage::ocr($input['field_name'], $md5Hash, $input['file']);
         }
 
         return $controller->response()->withData([

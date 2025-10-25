@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\App;
 
-use App\Models\Rental\Vehicle\RentalVehicleManualViolation;
-use App\Models\Rental\Vehicle\RentalVehicleViolation;
+use App\Models\Vehicle\VehicleManualViolation;
+use App\Models\Vehicle\VehicleViolation;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -27,8 +27,8 @@ class VehicleViolationUsagesIdUpdate extends Command
             $batchSize = 1000;
 
             foreach ([
-                ['vmv_id', RentalVehicleManualViolation::query()],
-                ['vv_id', RentalVehicleViolation::query()],
+                ['vmv_id', VehicleManualViolation::query()],
+                ['vv_id', VehicleViolation::query()],
             ] as $class) {
                 [$pk,$query] = $class;
 
@@ -52,15 +52,15 @@ class VehicleViolationUsagesIdUpdate extends Command
                     $this->info("处理违章记录块，包含 {$violations->count()} 条记录。");
 
                     // 提取当前批次中的所有 ve_id 和 violation_datetime
-                    $rentalVehicleIds = $violations->pluck('ve_id')->unique();
+                    $vehicleIds = $violations->pluck('ve_id')->unique();
 
                     // 查询当前批次涉及的所有 VehicleUsage 记录
                     $usages = DB::query()
-                        ->from('rental_vehicle_usages', 'vu')
-                        ->leftJoin('rental_vehicle_inspections as vi1', 'vi1.vi_id', '=', 'vu.start_vi_id')
-                        ->leftJoin('rental_vehicle_inspections as vi2', 'vi2.vi_id', '=', 'vu.end_vi_id')
+                        ->from('vehicle_usages', 'vu')
+                        ->leftJoin('vehicle_inspections as vi1', 'vi1.vi_id', '=', 'vu.start_vi_id')
+                        ->leftJoin('vehicle_inspections as vi2', 'vi2.vi_id', '=', 'vu.end_vi_id')
                         ->select('vu.*', 'vi1.inspection_datetime as vu_start_dt', 'vi2.inspection_datetime as vu_end_dt')
-                        ->whereIn('vu.ve_id', $rentalVehicleIds)
+                        ->whereIn('vu.ve_id', $vehicleIds)
                         ->whereNotNull('vu.end_vi_id')
                         ->orderBy('vu.ve_id')
                         ->orderBy('vi1.inspection_datetime')

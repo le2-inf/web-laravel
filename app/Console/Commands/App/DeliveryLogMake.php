@@ -4,8 +4,8 @@ namespace App\Console\Commands\App;
 
 use App\Enum\Delivery\DcDcStatus;
 use App\Enum\Delivery\DlSendStatus;
-use App\Models\Delivery\RentalDeliveryChannel;
-use App\Models\Delivery\RentalDeliveryLog;
+use App\Models\Delivery\DeliveryChannel;
+use App\Models\Delivery\DeliveryLog;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Database\Query\Expression;
@@ -21,8 +21,8 @@ class DeliveryLogMake extends Command
     public function handle(): int
     {
         DB::transaction(function () {
-            /** @var array<RentalDeliveryChannel> $DeliveryChannels */
-            $DeliveryChannels = RentalDeliveryChannel::query()->where('dc_status', '=', DcDcStatus::ENABLED)->get();
+            /** @var array<DeliveryChannel> $DeliveryChannels */
+            $DeliveryChannels = DeliveryChannel::query()->where('dc_status', '=', DcDcStatus::ENABLED)->get();
 
             foreach ($DeliveryChannels as $DeliveryChannel) {
                 $method = 'make_'.$DeliveryChannel->dc_key;
@@ -32,16 +32,16 @@ class DeliveryLogMake extends Command
             }
         });
 
-        RentalDeliveryLog::query()
+        DeliveryLog::query()
             ->where('send_status', '!=', DlSendStatus::ST_DELIVERED)
             ->where('send_attempt', '<=', 3)
             ->where('scheduled_for', '>', now()->subDays(7)) // 超过7天就不发送了
             ->orderBy('dl_id')
-            ->with('RentalDeliveryChannel')
+            ->with('DeliveryChannel')
             ->chunk(100, function ($logs) {
-                /** @var RentalDeliveryLog $log */
+                /** @var DeliveryLog $log */
                 foreach ($logs as $log) {
-                    $method = 'send_'.$log->RentalDeliveryChannel->dc_provider;
+                    $method = 'send_'.$log->DeliveryChannel->dc_provider;
 
                     if (!method_exists($log, $method)) {
                         throw new \RuntimeException("{$method} 方法不存在");

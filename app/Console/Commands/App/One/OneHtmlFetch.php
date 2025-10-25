@@ -3,8 +3,8 @@
 namespace App\Console\Commands\App\One;
 
 use App\Enum\One\OaOaType;
-use App\Models\Rental\One\RentalOneAccount;
-use App\Models\Rental\One\RentalOneRequest;
+use App\Models\One\OneAccount;
+use App\Models\One\OneRequest;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
@@ -29,7 +29,7 @@ class OneHtmlFetch extends Command
     {
         $this->turn = $this->option('turn') ?: Carbon::now()->format('Y-m-d');
 
-        $rentalOneAccounts = RentalOneAccount::query()
+        $oneAccounts = OneAccount::query()
             ->whereRaw('LENGTH(cookie_string) > ?', [30])
             ->where(function (Builder $query) {
                 $query->where('cookie_refresh_at', '>=', now()->subMinutes(30))
@@ -39,19 +39,19 @@ class OneHtmlFetch extends Command
 
             ->get()
         ;
-        foreach ($rentalOneAccounts as $rentalOneAccount) {
-            switch ($rentalOneAccount->oa_type) {
+        foreach ($oneAccounts as $oneAccount) {
+            switch ($oneAccount->oa_type) {
                 case OaOaType::PERSON:
-                    $this->personVehicle($rentalOneAccount);
-                    $this->personViolation($rentalOneAccount);
+                    $this->personVehicle($oneAccount);
+                    $this->personViolation($oneAccount);
 
                     break;
 
                 case OaOaType::COMPANY:
-                    $this->companyVehicle($rentalOneAccount, hpzl: '02');
-                    $this->companyVehicle($rentalOneAccount, hpzl: '52');
-                    $this->companyViolation($rentalOneAccount);
-                    $this->companyViolation($rentalOneAccount);
+                    $this->companyVehicle($oneAccount, hpzl: '02');
+                    $this->companyVehicle($oneAccount, hpzl: '52');
+                    $this->companyViolation($oneAccount);
+                    $this->companyViolation($oneAccount);
 
                     break;
 
@@ -66,15 +66,15 @@ class OneHtmlFetch extends Command
     /**
      * 机动车信息管理 > 小型汽车.
      */
-    private function companyVehicle(RentalOneAccount $rentalOneAccount, string $hpzl): void
+    private function companyVehicle(OneAccount $oneAccount, string $hpzl): void
     {
-        RentalOneRequest::query()
+        OneRequest::query()
             ->where('turn', '=', $this->turn)
             ->where('key', 'like', "vehs,{$hpzl},%")
             ->where('status_code', '!=', '200')->delete()
         ;
 
-        $domain = $rentalOneAccount->province_value['url'];
+        $domain = $oneAccount->province_value['url'];
 
         // 请求的 URL
         $url = $domain.'/user/m/userinfo/vehs';
@@ -112,17 +112,17 @@ class OneHtmlFetch extends Command
         while (!$isLastPage) {
             $task_key = 'vehs,'.$hpzl.','.$currentPage;
 
-            $rentalVehicle122Request = RentalOneRequest::query()
+            $vehicle122Request = OneRequest::query()
                 ->where([
                     'turn' => $this->turn,
                     'key'  => $task_key,
                 ])->first()
             ;
-            if ($rentalVehicle122Request) {
+            if ($vehicle122Request) {
                 $this->info("车辆列表 {$task_key} 记录已存在。");
 
                 // 解析响应内容
-                $responseData = $rentalVehicle122Request->response;
+                $responseData = $vehicle122Request->response;
             } else {
                 $delaySeconds = 2;
                 $this->info("暂停 {$delaySeconds} 秒后开始...");
@@ -134,7 +134,7 @@ class OneHtmlFetch extends Command
                 $formData['page'] = (string) $currentPage;
 
                 // 将请求信息保存到数据库
-                $vehRequest = RentalOneRequest::query()->create([
+                $vehRequest = OneRequest::query()->create([
                     'turn'      => $this->turn,
                     'key'       => $task_key,
                     'url'       => $url,
@@ -146,7 +146,7 @@ class OneHtmlFetch extends Command
                     // 发送 POST 请求
                     $response = Http::withHeaders($headers)
                         ->withHeaders([
-                            'Cookie' => $rentalOneAccount->cookie_string,
+                            'Cookie' => $oneAccount->cookie_string,
                         ])
                         ->asForm()
                         ->post($url, $formData)
@@ -201,24 +201,24 @@ class OneHtmlFetch extends Command
         $this->info('所有页请求完成。');
     }
 
-    private function companyViolation($rentalOneAccount): void
+    private function companyViolation($oneAccount): void
     {
-        RentalOneRequest::query()
+        OneRequest::query()
             ->where('turn', $this->turn)
             ->where('response', 'like', '%服务异常%')->delete()
         ;
-        RentalOneRequest::query()
+        OneRequest::query()
             ->where('turn', $this->turn)
             ->where('status_code', '!=', '200')->delete()
         ;
 
-        $requests = RentalOneRequest::query()
+        $requests = OneRequest::query()
             ->where('turn', $this->turn)
             ->where('key', 'like', 'vehs,%')
             ->orderBy('or_id')->get()
         ;
 
-        $domain = $rentalOneAccount->oa_province_value['url'];
+        $domain = $oneAccount->oa_province_value['url'];
 
         foreach ($requests as $request) {
             $response = json_decode($request->response, true);
@@ -245,7 +245,7 @@ class OneHtmlFetch extends Command
                     ];
 
                     while (!$isLastPage) {
-                        if (RentalOneRequest::query()
+                        if (OneRequest::query()
                             ->where([
                                 'turn' => $this->turn,
                                 'key'  => 'violation,'.$contentItem['hphm'].','.$currentPage,
@@ -284,7 +284,7 @@ class OneHtmlFetch extends Command
                         ];
 
                         // 保存违章查询请求信息到数据库
-                        $violationRequest = RentalOneRequest::query()->create([
+                        $violationRequest = OneRequest::query()->create([
                             'turn'      => $this->turn,
                             'key'       => 'violation,'.$contentItem['hphm'].','.$currentPage,
                             'url'       => $violationUrl,
@@ -296,7 +296,7 @@ class OneHtmlFetch extends Command
                             // 发送违章查询 POST 请求
                             $violationResponse = Http::withHeaders($violationHeaders)
                                 ->withHeaders([
-                                    'Cookie' => $rentalOneAccount->cookie_string,
+                                    'Cookie' => $oneAccount->cookie_string,
                                 ])
                                 ->asForm()
                                 ->post($violationUrl, $violationFormData)
@@ -348,16 +348,16 @@ class OneHtmlFetch extends Command
         }
     }
 
-    private function personVehicle(RentalOneAccount $rentalOneAccount): void
+    private function personVehicle(OneAccount $oneAccount): void
     {
-        $affect_rows = RentalOneRequest::query()
+        $affect_rows = OneRequest::query()
             ->where('turn', '=', $this->turn)
-            ->where('key', 'like', "allvehs,{$rentalOneAccount->oa_name},%")
+            ->where('key', 'like', "allvehs,{$oneAccount->oa_name},%")
             ->where('status_code', '!=', '200')
             ->delete()
         ;
 
-        $domain = $rentalOneAccount->oa_province_value['url'];
+        $domain = $oneAccount->oa_province_value['url'];
 
         // 请求的 URL
         $url = $domain.'/user/m/userinfo/allvehs';
@@ -391,19 +391,19 @@ class OneHtmlFetch extends Command
         $isLastPage  = false;
 
         while (!$isLastPage) {
-            $task_key = 'allvehs,'.$rentalOneAccount->oa_name.','.$currentPage;
+            $task_key = 'allvehs,'.$oneAccount->oa_name.','.$currentPage;
 
-            $rentalVehicle122Request = RentalOneRequest::query()
+            $vehicle122Request = OneRequest::query()
                 ->where([
                     'turn' => $this->turn,
                     'key'  => $task_key,
                 ])->first()
             ;
-            if ($rentalVehicle122Request) {
+            if ($vehicle122Request) {
                 $this->info("车辆列表 {$task_key} 记录已存在。");
 
                 // 解析响应内容
-                $responseData = $rentalVehicle122Request->response;
+                $responseData = $vehicle122Request->response;
             } else {
                 $delaySeconds = 2;
                 $this->info("暂停 {$delaySeconds} 秒后开始...");
@@ -415,7 +415,7 @@ class OneHtmlFetch extends Command
                 $formData['page'] = (string) $currentPage;
 
                 // 将请求信息保存到数据库
-                $vehRequest = RentalOneRequest::query()->create([
+                $vehRequest = OneRequest::query()->create([
                     'turn'      => $this->turn,
                     'key'       => $task_key,
                     'url'       => $url,
@@ -426,7 +426,7 @@ class OneHtmlFetch extends Command
                 try {
                     $client = new Client();
 
-                    $cookieJar = $rentalOneAccount->initializeCookies();
+                    $cookieJar = $oneAccount->initializeCookies();
 
                     $response = $client->post($url, [
                         'headers'         => $headers,
@@ -485,28 +485,28 @@ class OneHtmlFetch extends Command
         $this->info('所有页请求完成。');
     }
 
-    private function personViolation(RentalOneAccount $rentalOneAccount): void
+    private function personViolation(OneAccount $oneAccount): void
     {
-        $affect_rows = RentalOneRequest::query()
+        $affect_rows = OneRequest::query()
             ->where('turn', $this->turn)
             ->where('key', 'like', 'violation,%')
             ->where('response', 'like', '%服务异常%')
             ->delete()
         ;
-        $affect_rows = RentalOneRequest::query()
+        $affect_rows = OneRequest::query()
             ->where('turn', $this->turn)
             ->where('key', 'like', 'violation,%')
             ->where('status_code', '!=', '200')
             ->delete()
         ;
 
-        $requests = RentalOneRequest::query()
+        $requests = OneRequest::query()
             ->where('turn', $this->turn)
-            ->where('key', 'like', 'allvehs,'.$rentalOneAccount->oa_name.'%')
+            ->where('key', 'like', 'allvehs,'.$oneAccount->oa_name.'%')
             ->orderBy('or_id')->get()
         ;
 
-        $domain = $rentalOneAccount->oa_province_value['url'];
+        $domain = $oneAccount->oa_province_value['url'];
 
         foreach ($requests as $request) {
             $response = json_decode($request->response, true);
@@ -531,7 +531,7 @@ class OneHtmlFetch extends Command
                     ];
 
                     while (!$isLastPage) {
-                        if (RentalOneRequest::query()
+                        if (OneRequest::query()
                             ->where([
                                 'turn' => $this->turn,
                                 'key'  => 'violation,'.$contentItem['hphm'].','.$currentPage,
@@ -569,7 +569,7 @@ class OneHtmlFetch extends Command
                         ];
 
                         // 保存违章查询请求信息到数据库
-                        $violationRequest = RentalOneRequest::query()->create([
+                        $violationRequest = OneRequest::query()->create([
                             'turn'      => $this->turn,
                             'key'       => 'violation,'.$contentItem['hphm'].','.$currentPage,
                             'url'       => $violationUrl,
@@ -580,7 +580,7 @@ class OneHtmlFetch extends Command
                         try {
                             $client = new Client();
 
-                            $cookieJar = $rentalOneAccount->initializeCookies();
+                            $cookieJar = $oneAccount->initializeCookies();
 
                             $response = $client->post($violationUrl, [
                                 'headers'         => $violationHeaders,

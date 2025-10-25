@@ -4,8 +4,8 @@ namespace App\Models\Admin;
 
 use App\Attributes\ClassName;
 use App\Enum\Admin\AdmUserType;
-use App\Models\ModelTrait;
-use App\Models\Rental\Vehicle\RentalVehicle;
+use App\Models\_\ModelTrait;
+use App\Models\Vehicle\Vehicle;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
@@ -105,17 +105,17 @@ class Admin extends Authenticatable
 
     public function VehicleManagers(): HasMany
     {
-        return $this->hasMany(RentalVehicle::class, 'vehicle_manager', 'id');
+        return $this->hasMany(Vehicle::class, 'vehicle_manager', 'id');
     }
 
     public function SalesManagers(): HasMany
     {
-        return $this->hasMany(RentalVehicle::class, 'vehicle_manager', 'id');
+        return $this->hasMany(Vehicle::class, 'vehicle_manager', 'id');
     }
 
     public function DriverManagers(): HasMany
     {
-        return $this->hasMany(RentalVehicle::class, 'vehicle_manager', 'id');
+        return $this->hasMany(Vehicle::class, 'vehicle_manager', 'id');
     }
 
     protected function casts(): array

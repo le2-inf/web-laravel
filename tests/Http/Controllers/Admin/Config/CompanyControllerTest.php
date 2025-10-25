@@ -2,9 +2,9 @@
 
 namespace Tests\Http\Controllers\Admin\Config;
 
-use App\Http\Controllers\Admin\Config\RentalCompanyController;
+use App\Http\Controllers\Admin\Config\CompanyController;
 use App\Http\Middleware\CheckAdminIsMock;
-use App\Models\Rental\RentalCompany;
+use App\Models\_\Company;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use Tests\TestCase;
 
@@ -21,9 +21,9 @@ class CompanyControllerTest extends TestCase
         // 测试场景下去掉该中间件影响
         //        $this->withoutMiddleware(CheckAdminIsMock::class);
 
-        RentalCompany::query()->delete();
+        Company::query()->delete();
 
-        $this->rentalCompany = RentalCompany::factory()->create([
+        $this->company = Company::factory()->create([
             'cp_name'  => '-',
             'cp_phone' => '-',
         ]);
@@ -31,14 +31,14 @@ class CompanyControllerTest extends TestCase
 
     public function testShowReturnsFirstCompany(): void
     {
-        RentalCompany::query()->updateOrCreate([
-            'cp_id' => $this->rentalCompany->cp_id,
+        Company::query()->updateOrCreate([
+            'cp_id' => $this->company->cp_id,
         ], [
             'cp_name'  => 'Acme Co',
             'cp_phone' => '123456',
         ]);
 
-        $res = $this->getJson(action([RentalCompanyController::class, 'show']));
+        $res = $this->getJson(action([CompanyController::class, 'show']));
 
         $res->assertOk()
             // 不强依赖响应顶层结构，只断言字段片段存在即可
@@ -51,9 +51,9 @@ class CompanyControllerTest extends TestCase
 
     public function testEditReturnsFirstCompany(): void
     {
-        RentalCompany::query()->delete();
+        Company::query()->delete();
 
-        $res = $this->getJson(action([RentalCompanyController::class, 'edit']));
+        $res = $this->getJson(action([CompanyController::class, 'edit']));
 
         $res->assertOk()
             ->assertJsonFragment([
@@ -63,7 +63,7 @@ class CompanyControllerTest extends TestCase
 
     public function testUpdateRequiresCpName(): void
     {
-        $res = $this->putJson(action([RentalCompanyController::class, 'update']), [
+        $res = $this->putJson(action([CompanyController::class, 'update']), [
             // 故意缺少 cp_name
         ]);
 
@@ -74,7 +74,7 @@ class CompanyControllerTest extends TestCase
 
     public function testUpdateValidatesNumericFields(): void
     {
-        $res = $this->putJson(action([RentalCompanyController::class, 'update']), [
+        $res = $this->putJson(action([CompanyController::class, 'update']), [
             'cp_name'      => 'Acme Co',
             'cp_longitude' => 'not-a-number',
             'cp_latitude'  => 'also-bad',
@@ -93,19 +93,19 @@ class CompanyControllerTest extends TestCase
             'cp_phone'   => '123456',
         ];
 
-        $res = $this->putJson(action([RentalCompanyController::class, 'update']), $payload);
+        $res = $this->putJson(action([CompanyController::class, 'update']), $payload);
 
         $res->assertOk()
             ->assertJsonFragment(['cp_name' => 'Acme Co'])
         ;
 
-        $this->assertDatabaseHas((new RentalCompany())->getTable(), [
+        $this->assertDatabaseHas((new Company())->getTable(), [
             'cp_name'    => 'Acme Co',
             'cp_address' => 'Somewhere',
             'cp_phone'   => '123456',
         ]);
 
-        $this->assertSame(1, RentalCompany::query()->count());
+        $this->assertSame(1, Company::query()->count());
     }
 
     /**
@@ -122,16 +122,16 @@ class CompanyControllerTest extends TestCase
             'cp_address' => 'New Addr',
         ];
 
-        $res = $this->putJson(action([RentalCompanyController::class, 'update']), $payload);
+        $res = $this->putJson(action([CompanyController::class, 'update']), $payload);
 
         $res->assertOk()
             ->assertJsonFragment(['cp_name' => 'New Name'])
         ;
 
         // 仍应只有 1 行数据（单例语义）
-        $this->assertSame(1, RentalCompany::query()->count());
+        $this->assertSame(1, Company::query()->count());
 
-        $this->assertDatabaseHas((new RentalCompany())->getTable(), [
+        $this->assertDatabaseHas((new Company())->getTable(), [
             'cp_name'  => 'New Name',
             'cp_phone' => '222222',
         ]);

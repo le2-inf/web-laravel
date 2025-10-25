@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Configuration;
+use App\Models\_\Configuration;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;

@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\Models\Configuration;
+use App\Models\_\Configuration;
 
 class ConfigObserver
 {

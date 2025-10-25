@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Schema;
 class ModelDocPropertiesCheck extends Command
 {
     protected $signature = '_dev:model:doc-check
-        {--path=app/Models/Rental : 要扫描的目录（相对项目根目录，可递归）}
+        {--path=app/Models : 要扫描的目录（相对项目根目录，可递归）}
         {--models= : 仅检查这些模型（逗号分隔，支持类名或 FQCN）}
         {--ignore=created_at,updated_at,deleted_at,updated_by,processed_by : 忽略的表字段（逗号分隔，不区分大小写）}
         {--include-timestamps : 包含时间戳列（将从忽略列表中移除 created_at/updated_at/deleted_at）}

@@ -3,19 +3,19 @@
 namespace App\Enum\Rental;
 
 use App\Enum\EnumLikeBase;
-use App\Models\Rental\Payment\RentalPayment;
-use App\Models\Rental\Sale\RentalSaleOrder;
-use App\Models\Rental\Sale\RentalSaleSettlement;
-use App\Models\Rental\Vehicle\RentalVehicleInspection;
+use App\Models\Payment\Payment;
+use App\Models\Sale\SaleOrder;
+use App\Models\Sale\SaleSettlement;
+use App\Models\Vehicle\VehicleInspection;
 
 class DtDtType extends EnumLikeBase
 {
-    public const string RENTAL_ORDER      = RentalSaleOrder::class;
-    public const string RENTAL_SETTLEMENT = RentalSaleSettlement::class;
+    public const string RENTAL_ORDER      = SaleOrder::class;
+    public const string RENTAL_SETTLEMENT = SaleSettlement::class;
 
-    public const string RENTAL_PAYMENT = RentalPayment::class;
+    public const string RENTAL_PAYMENT = Payment::class;
 
-    public const string RENTAL_VEHICLE_INSPECTION = RentalVehicleInspection::class;
+    public const string RENTAL_VEHICLE_INSPECTION = VehicleInspection::class;
 
     public const array LABELS = [
         self::RENTAL_ORDER              => '租车合同模板',
@@ -30,11 +30,11 @@ class DtDtType extends EnumLikeBase
 
         switch ($this->value) {
             case self::RENTAL_ORDER:
-                $RentalSaleOrder = new RentalSaleOrder();
+                $SaleOrder = new SaleOrder();
                 if ($valueOnly) {
-                    $RentalSaleOrder->setFieldMode(false);
+                    $SaleOrder->setFieldMode(false);
                 }
-                $value = $RentalSaleOrder->getFieldsAndRelations(['RentalCustomer', 'RentalCustomer.RentalCustomerIndividual', 'RentalVehicle', 'RentalCompany', 'RentalVehicle.RentalVehicleInsurances']);
+                $value = $SaleOrder->getFieldsAndRelations(['Customer', 'Customer.CustomerIndividual', 'Vehicle', 'Company', 'Vehicle.VehicleInsurances']);
 
                 if ($kv) {
                     $key = self::RENTAL_ORDER.'Fields';
@@ -45,11 +45,11 @@ class DtDtType extends EnumLikeBase
                 break;
 
             case self::RENTAL_SETTLEMENT:
-                $RentalSaleSettlement = new RentalSaleSettlement();
+                $SaleSettlement = new SaleSettlement();
                 if ($valueOnly) {
-                    $RentalSaleSettlement->setFieldMode(false);
+                    $SaleSettlement->setFieldMode(false);
                 }
-                $value = $RentalSaleSettlement->getFieldsAndRelations(['RentalSaleOrder', 'RentalSaleOrder.RentalCustomer', 'RentalSaleOrder.RentalVehicle']);
+                $value = $SaleSettlement->getFieldsAndRelations(['SaleOrder', 'SaleOrder.Customer', 'SaleOrder.Vehicle']);
                 if ($kv) {
                     $key = self::RENTAL_SETTLEMENT.'Fields';
 
@@ -59,11 +59,11 @@ class DtDtType extends EnumLikeBase
                 break;
 
             case self::RENTAL_PAYMENT:
-                $RentalPayment = new RentalPayment();
+                $Payment = new Payment();
                 if ($valueOnly) {
-                    $RentalPayment->setFieldMode(false);
+                    $Payment->setFieldMode(false);
                 }
-                $value = $RentalPayment->getFieldsAndRelations(['RentalPaymentAccount', 'RentalPaymentType', 'RentalSaleOrder', 'RentalSaleOrder.RentalCustomer']);
+                $value = $Payment->getFieldsAndRelations(['PaymentAccount', 'PaymentType', 'SaleOrder', 'SaleOrder.Customer']);
                 if ($kv) {
                     $key = self::RENTAL_PAYMENT.'Fields';
 
@@ -73,11 +73,11 @@ class DtDtType extends EnumLikeBase
                 break;
 
             case self::RENTAL_VEHICLE_INSPECTION:
-                $RentalVehicleInspection = new RentalVehicleInspection();
+                $VehicleInspection = new VehicleInspection();
                 if ($valueOnly) {
-                    $RentalVehicleInspection->setFieldMode(false);
+                    $VehicleInspection->setFieldMode(false);
                 }
-                $value = $RentalVehicleInspection->getFieldsAndRelations(['RentalVehicle', 'RentalSaleOrder', 'RentalSaleOrder.RentalCustomer']);
+                $value = $VehicleInspection->getFieldsAndRelations(['Vehicle', 'SaleOrder', 'SaleOrder.Customer']);
                 if ($kv) {
                     $key = self::RENTAL_VEHICLE_INSPECTION.'Fields';
 

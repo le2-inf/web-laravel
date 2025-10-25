@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands\App\One;
 
-use App\Models\Rental\One\RentalOneRequest;
-use App\Models\Rental\Vehicle\RentalVehicle;
+use App\Models\One\OneRequest;
+use App\Models\Vehicle\Vehicle;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -22,7 +22,7 @@ class OneVehiclesImport extends Command
     {
         $this->info('开始导入车辆信息...');
 
-        $turn = $this->option('turn') ?: RentalOneRequest::query()->max('turn');
+        $turn = $this->option('turn') ?: OneRequest::query()->max('turn');
 
         if (!$turn) {
             $this->info('vehicle_122_requests 表中没有 turn 数据。');
@@ -32,7 +32,7 @@ class OneVehiclesImport extends Command
 
         $this->info("最大 turn 日期为: {$turn}");
 
-        $requests = RentalOneRequest::query()->where('status_code', '=', '200')
+        $requests = OneRequest::query()->where('status_code', '=', '200')
             ->where('turn', $turn)
             ->where('key', 'like', 'vehs,%')
             ->get()
@@ -45,7 +45,7 @@ class OneVehiclesImport extends Command
         }
 
         DB::transaction(function () use ($requests) {
-            /** @var RentalOneRequest $request */
+            /** @var OneRequest $request */
             foreach ($requests as $request) {
                 $response = $request->response;
 
@@ -58,22 +58,22 @@ class OneVehiclesImport extends Command
                     continue;
                 }
 
-                $rentalVehiclesJson = $response['data']['content'] ?? [];
+                $vehiclesJson = $response['data']['content'] ?? [];
 
-                $rentalVehiclesToUpsert = [];
+                $vehiclesToUpsert = [];
 
-                foreach ($rentalVehiclesJson as $rentalVehicleJson) {
+                foreach ($vehiclesJson as $vehicleJson) {
                     // 准备 upsert 数据
-                    $rentalVehiclesToUpsert[] = [
-                        'plate_no' => $rentalVehicleJson['hphm'],
-                        've_type'  => $rentalVehicleJson['hpzl'],
+                    $vehiclesToUpsert[] = [
+                        'plate_no' => $vehicleJson['hphm'],
+                        've_type'  => $vehicleJson['hpzl'],
                     ];
                 }
 
-                if (!empty($rentalVehiclesToUpsert)) {
+                if (!empty($vehiclesToUpsert)) {
                     // 使用 upsert 插入或更新车辆记录
-                    $rentalVehiclesToUpsertAffectRows = RentalVehicle::query()->upsert(
-                        $rentalVehiclesToUpsert,
+                    $vehiclesToUpsertAffectRows = Vehicle::query()->upsert(
+                        $vehiclesToUpsert,
                         ['plate_no'], // 唯一键
                         [ // 需要更新的字段
                             'plate_no',
@@ -81,7 +81,7 @@ class OneVehiclesImport extends Command
                         ]
                     );
 
-                    $this->info("成功 upsert {$rentalVehiclesToUpsertAffectRows} 条车辆记录。");
+                    $this->info("成功 upsert {$vehiclesToUpsertAffectRows} 条车辆记录。");
                 } else {
                     $this->info('没有新的车辆记录需要 upsert。');
                 }

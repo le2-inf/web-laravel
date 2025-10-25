@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin\Admin;
 use App\Models\Iot\IotDevice;
 use App\Models\Iot\IotDeviceBinding;
-use App\Models\Rental\Vehicle\RentalVehicle;
+use App\Models\Vehicle\Vehicle;
 use App\Services\PaginateService;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
@@ -71,7 +71,7 @@ class IotDeviceBindingController extends Controller
 
         $this->response()->withExtras(
             Admin::optionsWithRoles(),
-            RentalVehicle::options(),
+            Vehicle::options(),
         );
 
         if (null === $iotDeviceBinding) {
@@ -97,7 +97,7 @@ class IotDeviceBindingController extends Controller
             $request->all(),
             [
                 'd_id'         => ['required', 'integer', Rule::exists(IotDevice::class)],
-                've_id'        => ['required', 'integer', Rule::exists(RentalVehicle::class)->where('status_service', VeStatusService::YES)],
+                've_id'        => ['required', 'integer', Rule::exists(Vehicle::class)->where('status_service', VeStatusService::YES)],
                 'db_start_at'  => ['required', 'date'],
                 'db_end_at'    => ['nullable', 'date', 'after:db_start_at'],
                 'db_note'      => ['nullable', 'string', 'max:200'],

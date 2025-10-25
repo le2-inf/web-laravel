@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin\Config;
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
 use App\Enum\Config\CfgUsageCategory;
-use App\Models\Configuration;
+use App\Models\_\Configuration;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
