@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands\App\Vehicle;
+namespace App\Console\Commands\App;
 
 use App\Models\Rental\Vehicle\RentalVehicleManualViolation;
 use App\Models\Rental\Vehicle\RentalVehicleViolation;

@@ -92,6 +92,9 @@ use Illuminate\Validation\ValidationException;
  * @property null|string $commercial_insurance_company        商业险保险公司
  * @property null|int    $is_company_borne                    是否公司承担;1表示是，0表示否
  * @property null|string $vi_remark                           保险单备注
+ *
+ * -- relation
+ * @property RentalVehicle $RentalVehicle
  */
 class RentalVehicleInsurance extends Model
 {

@@ -1,12 +1,15 @@
 <?php
 
-use App\Console\Commands\App\Vehicle\OneHtmlFetch;
-use App\Console\Commands\App\Vehicle\OneRefreshCookie;
-use App\Console\Commands\App\Vehicle\OneVehiclesImport;
-use App\Console\Commands\App\Vehicle\OneViolationsImport;
-use App\Console\Commands\App\Vehicle\VehicleViolationUsagesIdUpdate;
+use App\Console\Commands\App\DeliveryLogMake;
+use App\Console\Commands\App\One\OneHtmlFetch;
+use App\Console\Commands\App\One\OneRefreshCookie;
+use App\Console\Commands\App\One\OneVehiclesImport;
+use App\Console\Commands\App\One\OneViolationsImport;
+use App\Console\Commands\App\VehicleViolationUsagesIdUpdate;
 use App\Console\Commands\Sys\SmtpSelfTest;
 use Illuminate\Support\Facades\Schedule;
+
+// Schedule::command(DeliveryLogMake::class)->cron('* 8-20 * * *')->withoutOverlapping();
 
 Schedule::command(OneRefreshCookie::class)->everyFifteenMinutes()->withoutOverlapping();
 

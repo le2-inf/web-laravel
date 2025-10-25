@@ -5,14 +5,14 @@ namespace App\Console\Commands\Sys;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command as CommandAlias;
 
 /**
  * @internal
- *
- * @coversNothing
  */
+#[CoversNothing]
 #[AsCommand(
     name: '_sys:smtp:self-test',
     description: 'Send a self-check email to verify SMTP delivery'

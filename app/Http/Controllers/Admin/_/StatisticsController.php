@@ -92,12 +92,12 @@ class StatisticsController extends Controller
         $user = $request->user();
 
         $sql_permission_array = [
-            'rental_sale_orders'         => 'Order',
-            'rental_sale_settlements'    => 'Settlement',
-            'rental_payments'            => 'Payment',
-            'actual_rental_payments'     => 'Payment',
-            'rental_vehicle_inspections' => 'Inspection',
-            'rental_vehicle_repairs'     => 'Repair',
+            'rental_sale_orders'         => 'RentalSaleOrder',
+            'rental_sale_settlements'    => 'RentalSaleSettlement',
+            'rental_payments'            => 'RentalPayment',
+            'actual_rental_payments'     => 'RentalPayment',
+            'rental_vehicle_inspections' => 'RentalVehicleInspection',
+            'rental_vehicle_repairs'     => 'RentalVehicleRepair',
         ];
 
         $sql_array = [

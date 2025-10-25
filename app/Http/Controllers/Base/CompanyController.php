@@ -45,7 +45,7 @@ class CompanyController extends Controller
 
         $vars = Dotenv::parse($rawContent);
 
-        $result = array_intersect_key($vars, array_flip(['COMPANY_ID', 'MOCK_ENABLE', 'COMPANY__HOST_DOMAIN_PREFIX', 'COMPANY__HOST_DOMAIN_BASE']));
+        $result = array_intersect_key($vars, array_flip(['COMPANY_ID', 'MOCK_ENABLE', 'COMPANY__HOST_ID', 'COMPANY__HOST_DOMAIN_BASE']));
 
         return $this->response()->withData($result)->respond();
     }

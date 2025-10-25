@@ -74,4 +74,12 @@ return [
         'name'     => env('SUPER_USER_NAME', '超级管理员'),
         'password' => env('SUPER_USER_PASSWORD', ''),
     ],
+
+    'wecom' => [
+        'corp_id'                      => env('WECOM_CORP_ID'),
+        'app_delivery_agent_id'        => env('WECOM_APP_DELIVERY_AGENT_ID'),
+        'app_delivery_secret'          => env('WECOM_APP_DELIVERY_SECRET'),
+        'app_delivery_token_cache_key' => env('WECOM_APP_DELIVERY_TOKEN_CACHE_KEY', 'wecom:app_delivery:access_token'),
+        'cache_ttl_buffer'             => (int) env('WECOM_TOKEN_TTL_BUFFER', 120), // 以秒为单位的安全缓冲，避免刚好过期
+    ],
 ];

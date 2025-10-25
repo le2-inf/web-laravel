@@ -80,7 +80,7 @@ class CsvDataGenerate extends Command
 
             RentalVehicle::query()->update(['status_service' => VeStatusService::YES, 'status_rental' => VeStatusRental::LISTED, 'status_dispatch' => VeStatusDispatch::NOT_DISPATCHED]);
 
-            DB::statement('call reset_identity_sequences_in_schema(?)', ['public']);
+            DB::statement('call reset_identity_sequences(?)', ['public']);
         });
 
         /** @var Collection $rentalServiceCenters */
@@ -88,7 +88,7 @@ class CsvDataGenerate extends Command
         DB::transaction(function () use (&$rentalServiceCenters) {
             RentalServiceCenter::factory()->count(5)->create();
 
-            $rentalServiceCenters = RentalServiceCenter::query()->where('status', '=', ScScStatus::ENABLED)->get();
+            $rentalServiceCenters = RentalServiceCenter::query()->where('sc_status', '=', ScScStatus::ENABLED)->get();
 
             /** @var Collection $rentalCustomers */
             $rentalCustomers = RentalCustomer::factory()->count(20)->create();

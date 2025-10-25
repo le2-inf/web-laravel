@@ -5,6 +5,10 @@ return [
         'name'   => '员工',
         'suffix' => '',
     ],
+    'AdminExt' => [
+        'name'   => '员工扩展',
+        'suffix' => '',
+    ],
     'AdminPermission' => [
         'name'   => '员工权限',
         'suffix' => '',

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands\App\Vehicle;
+namespace App\Console\Commands\App\One;
 
 use App\Enum\One\OaOaType;
 use App\Models\Rental\One\RentalOneAccount;

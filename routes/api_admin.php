@@ -14,15 +14,19 @@ use App\Http\Controllers\Admin\Config\Configuration1Controller;
 use App\Http\Controllers\Admin\Config\ImportController;
 use App\Http\Controllers\Admin\Config\RentalCompanyController;
 use App\Http\Controllers\Admin\Config\RentalDocTplController;
-use App\Http\Controllers\Admin\Config\RentalPaymentTypeController;
 use App\Http\Controllers\Admin\Config\RentalServiceCenterController;
 use App\Http\Controllers\Admin\Customer\RentalCustomerController;
+use App\Http\Controllers\Admin\Delivery\RentalDeliveryChannelController;
+use App\Http\Controllers\Admin\Delivery\RentalDeliveryLogController;
+use App\Http\Controllers\Admin\Delivery\RentalDeliveryWecomGroupController;
+use App\Http\Controllers\Admin\Delivery\RentalDeliveryWecomMemberController;
 use App\Http\Controllers\Admin\Device\GpsDataController;
 use App\Http\Controllers\Admin\Device\IotDeviceBindingController;
 use App\Http\Controllers\Admin\File\StorageController;
 use App\Http\Controllers\Admin\Payment\RentalInoutController;
 use App\Http\Controllers\Admin\Payment\RentalPaymentAccountController;
 use App\Http\Controllers\Admin\Payment\RentalPaymentController;
+use App\Http\Controllers\Admin\Payment\RentalPaymentTypeController;
 use App\Http\Controllers\Admin\Payment\RentalSaleOrderRentPaymentController;
 use App\Http\Controllers\Admin\Payment\RentalSaleOrderSignPaymentController;
 use App\Http\Controllers\Admin\Risk\RentalExpiryDriverController;
@@ -90,7 +94,7 @@ Route::group(['middleware' => [config('setting.mock.enable') ? TemporaryAdmin::c
 
     Route::singleton('rental-company', RentalCompanyController::class);
 
-    Route::apiSingleton('rental-payment-types', RentalPaymentTypeController::class);
+    Route::apiSingleton('rental-payment-type', RentalPaymentTypeController::class);
 
     Route::resource('rental-vehicle-models', RentalVehicleModelController::class);
 
@@ -104,9 +108,16 @@ Route::group(['middleware' => [config('setting.mock.enable') ? TemporaryAdmin::c
 
     Route::resource('rental-service-centers', RentalServiceCenterController::class);
 
+    Route::resource('rental-delivery-channels', RentalDeliveryChannelController::class);
+
+    Route::resource('rental-delivery-logs', RentalDeliveryLogController::class);
+
+    Route::apiSingleton('rental-delivery-wecom-group', RentalDeliveryWecomGroupController::class);
+    Route::apiSingleton('rental-delivery-wecom-member', RentalDeliveryWecomMemberController::class);
+
     Route::get('rental-imports/template', [ImportController::class, 'template']);
     Route::post('rental-imports/upload', [ImportController::class, 'upload']);
-    Route::singleton('rental-imports', ImportController::class);
+    Route::singleton('rental-import', ImportController::class);
 
     Route::post('rental-vehicles/upload', [RentalVehicleController::class, 'upload']);
     Route::resource('rental-vehicles', RentalVehicleController::class);

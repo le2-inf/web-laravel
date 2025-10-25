@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\DB;
  * @property string              $process_status_label 违章处理状态
  * @property string              $payment_status_label 违章交款状态
  * @property null|string         $vv_remark            违章备注
+ * @property RentalVehicleUsage  $RentalVehicleUsage
  */
 class RentalVehicleViolation extends Model
 {

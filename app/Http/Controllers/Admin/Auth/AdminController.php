@@ -89,6 +89,7 @@ class AdminController extends Controller
             $request->all(),
             [
                 'name'                  => ['required', 'string', 'max:255'],
+                'wecom_name'            => ['required', 'string', 'max:255'],
                 'email'                 => ['required', 'string', 'email', 'max:255', Rule::unique(Admin::class, 'email')],
                 'password'              => ['required', 'string', 'min:8', 'confirmed'],
                 'password_confirmation' => ['required', 'string', 'min:8'],
@@ -135,6 +136,7 @@ class AdminController extends Controller
             $request->all(),
             [
                 'name'                  => ['required', 'string', 'max:255'],
+                'wecom_name'            => ['required', 'string', 'max:255'],
                 'email'                 => ['required', 'string', 'email', 'max:255', Rule::unique(Admin::class)->ignore($admin)],
                 'roles_'                => ['nullable'],
                 'password'              => ['nullable', 'required_with:password_confirmation', 'string', 'min:8', 'confirmed'],

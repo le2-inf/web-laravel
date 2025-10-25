@@ -33,13 +33,14 @@ use Illuminate\Validation\ValidationException;
  * @property string                  $inspector                  年检处理人
  * @property Carbon                  $inspection_date            年检日期
  * @property float                   $inspection_amount          年检金额
- * @property Carbon                  $next_inspection_date       下次年检日期
+ * @property Carbon|string           $next_inspection_date       下次年检日期
  * @property null|mixed              $additional_photos          附加照片;存储照片路径的JSON数组
  * @property null|string             $vs_remark                  年检备注
  * @property null|string             $vehicle_last_date          最后一次车辆年检时间
  * @property null|string             $gas_cylinder_last_date     最后一次气罐年检时间
  * @property null|string             $certificate_last_date      最后一次车证年检时间
  * @property null|string             $business_license_last_date 最后一次营业执照年检时间
+ * @property RentalVehicle           $RentalVehicle
  */
 class RentalVehicleSchedule extends Model
 {
@@ -54,8 +55,8 @@ class RentalVehicleSchedule extends Model
     protected $attributes = [];
 
     protected $casts = [
-        'inspection_date'      => 'datetime:Y-m-d',
-        'next_inspection_date' => 'datetime:Y-m-d',
+        'inspection_date'      => 'date:Y-m-d',
+        'next_inspection_date' => 'date:Y-m-d',
         'maintenance_amount'   => 'decimal:2',
         'inspection_type'      => VsInspectionType::class,
     ];

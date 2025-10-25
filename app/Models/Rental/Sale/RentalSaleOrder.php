@@ -123,6 +123,7 @@ use PhpOffice\PhpWord\SimpleType\TblWidth;
  * @property RentalSaleSettlement                   $RentalSaleSettlement
  * @property RentalVehicle                          $RentalVehicle
  * @property Collection<RentalPayment>              $RentalPayments
+ * @property RentalSaleOrderExt                     $RentalSaleOrderExt
  */
 class RentalSaleOrder extends Model
 {
@@ -181,6 +182,11 @@ class RentalSaleOrder extends Model
     public function RentalPayments(): HasMany
     {
         return $this->hasMany(RentalPayment::class, 'so_id', 'so_id')->with('RentalPaymentType');
+    }
+
+    public function RentalSaleOrderExt(): HasOne
+    {
+        return $this->HasOne(RentalSaleOrderExt::class, 'so_id', 'so_id');
     }
 
     /**
@@ -659,7 +665,7 @@ class RentalSaleOrder extends Model
         return Attribute::make(
             get: fn () => join(' | ', array_filter([
                 $this->RentalCustomer?->getOriginal('contact_name'),
-                $this->RentalCustomer?->getOriginal('contact_phone'),
+                substr($this->RentalCustomer?->getOriginal('contact_phone'), -4),
                 $this->RentalVehicle?->getOriginal('plate_no'),
                 $this->getOriginal('rental_type_short_label'),
                 $this->getOriginal('rental_payment_type_label'),

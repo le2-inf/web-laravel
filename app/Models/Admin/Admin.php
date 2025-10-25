@@ -7,6 +7,7 @@ use App\Enum\Admin\AdmUserType;
 use App\Models\ModelTrait;
 use App\Models\Rental\Vehicle\RentalVehicle;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -28,6 +29,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property AdmUserType|int $user_type             账号类型
  * @property null|Carbon     $expires_at            账号过期时间；当为 null 的时候，永不过期
  * @property null|bool       $is_mock
+ *                                                  -- relation
+ * @property AdminExt        $AdminExt
  */
 class Admin extends Authenticatable
 {
@@ -58,7 +61,7 @@ class Admin extends Authenticatable
 
     public static function indexQuery(array $search = []): Builder
     {
-        return DB::query();
+        return DB::query()->from('admins as adm');
     }
 
     public static function options(?\Closure $where = null): array
@@ -93,6 +96,11 @@ class Admin extends Authenticatable
         });
 
         return [$key => $value];
+    }
+
+    public function AdminExt(): HasOne
+    {
+        return $this->hasOne(AdminExt::class, 'adm_id', 'id');
     }
 
     public function VehicleManagers(): HasMany

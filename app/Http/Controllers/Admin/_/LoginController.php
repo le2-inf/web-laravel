@@ -32,7 +32,7 @@ class LoginController extends Controller
         $input = $request->validate([
             $this->username() => ['required', 'string'],
             'password'        => ['required', 'string'],
-            'client'          => ['required', Rule::enum(\App\Http\Controllers\Admin\AdminLoginClientEnum::class)],
+            'client'          => ['required', Rule::enum(AdminLoginClientEnum::class)],
         ]);
 
         if (method_exists($this, 'hasTooManyLoginAttempts')
@@ -63,8 +63,8 @@ class LoginController extends Controller
                 $admin->tokens()->where('name', '=', $input['client'])->delete();
 
                 $expiresAt = match ($input['client']) {
-                    \App\Http\Controllers\Admin\AdminLoginClientEnum::H5->value => Carbon::now()->addHours(12),
-                    \App\Http\Controllers\Admin\AdminLoginClientEnum::MP->value => Carbon::now()->addYears(10),
+                    AdminLoginClientEnum::H5->value => Carbon::now()->addHours(12),
+                    AdminLoginClientEnum::MP->value => Carbon::now()->addYears(10),
                 };
 
                 $token = $admin->createToken($input['client'], ['*'], $expiresAt)->plainTextToken;
