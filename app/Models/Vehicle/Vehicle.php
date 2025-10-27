@@ -422,12 +422,12 @@ class Vehicle extends Model
         );
     }
 
-    protected function licenseFacePhoto(): Attribute
+    protected function veLicenseFacePhoto(): Attribute
     {
         return $this->uploadFile();
     }
 
-    protected function licenseBackPhoto(): Attribute
+    protected function veLicenseBackPhoto(): Attribute
     {
         return $this->uploadFile();
     }
