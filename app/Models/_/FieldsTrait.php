@@ -2,7 +2,7 @@
 
 namespace App\Models\_;
 
-use App\Enum\Rental\DtDtTypeMacroChars;
+use App\Enum\Sale\DtDtTypeMacroChars;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;

@@ -3,8 +3,8 @@
 namespace App\Models\Payment;
 
 use App\Attributes\ClassName;
-use App\Enum\Rental\RpIsValid;
-use App\Enum\Rental\RptIsActive;
+use App\Enum\Payment\RpIsValid;
+use App\Enum\Payment\RptIsActive;
 use App\Models\_\ModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;

@@ -3,9 +3,9 @@
 namespace App\Models\Vehicle;
 
 use App\Attributes\ClassName;
-use App\Enum\Rental\RpIsValid;
-use App\Enum\Rental\RpPayStatus;
-use App\Enum\Rental\RpPtId;
+use App\Enum\Payment\RpIsValid;
+use App\Enum\Payment\RpPayStatus;
+use App\Enum\Payment\RpPtId;
 use App\Enum\Vehicle\ViDrivingLicense;
 use App\Enum\Vehicle\ViInspectionType;
 use App\Enum\Vehicle\ViOperationLicense;

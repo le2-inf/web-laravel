@@ -2,6 +2,6 @@
 
 namespace App\Enum\Booking;
 
-use App\Enum\Rental\RpPayStatus;
+use App\Enum\Payment\RpPayStatus;
 
 class BoPaymentStatus extends RpPayStatus {}

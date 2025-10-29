@@ -4,16 +4,16 @@ namespace App\Http\Controllers\Admin\Sale;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
-use App\Enum\Rental\DtDtExportType;
-use App\Enum\Rental\DtDtStatus;
-use App\Enum\Rental\DtDtType;
-use App\Enum\Rental\RpPtId;
-use App\Enum\Rental\SoOrderStatus;
-use App\Enum\Rental\SoPaymentDay_Month;
-use App\Enum\Rental\SoPaymentDay_Week;
-use App\Enum\Rental\SoPaymentDayType;
-use App\Enum\Rental\SoRentalType;
-use App\Enum\Rental\SoRentalType_Short;
+use App\Enum\Payment\RpPtId;
+use App\Enum\Sale\DtDtExportType;
+use App\Enum\Sale\DtDtStatus;
+use App\Enum\Sale\DtDtType;
+use App\Enum\Sale\SoOrderStatus;
+use App\Enum\Sale\SoPaymentDay_Month;
+use App\Enum\Sale\SoPaymentDay_Week;
+use App\Enum\Sale\SoPaymentDayType;
+use App\Enum\Sale\SoRentalType;
+use App\Enum\Sale\SoRentalType_Short;
 use App\Enum\Vehicle\VeStatusDispatch;
 use App\Enum\Vehicle\VeStatusRental;
 use App\Enum\Vehicle\VeStatusService;
@@ -197,7 +197,7 @@ class SaleOrderController extends Controller
             VehicleManualViolation::kvList(so_id: $saleOrder->so_id),
             VehicleManualViolation::kvStat(),
             DocTpl::options(function (Builder $query) {
-                $query->where('dt.dt_type', '=', DtDtType::RENTAL_ORDER);
+                $query->where('dt.dt_type', '=', DtDtType::SALE_ORDER);
             }),
         );
 
@@ -209,7 +209,7 @@ class SaleOrderController extends Controller
     {
         $input = $request->validate([
             'mode'  => ['required', Rule::in(DtDtExportType::label_keys())],
-            'dt_id' => ['required', Rule::exists(DocTpl::class)->where('dt_type', DtDtType::RENTAL_ORDER)->where('dt_status', DtDtStatus::ENABLED)],
+            'dt_id' => ['required', Rule::exists(DocTpl::class)->where('dt_type', DtDtType::SALE_ORDER)->where('dt_status', DtDtStatus::ENABLED)],
         ]);
 
         $saleOrder->load('Customer', 'Vehicle', 'Vehicle.VehicleInsurances', 'Company', 'Payments'); // 'Company',

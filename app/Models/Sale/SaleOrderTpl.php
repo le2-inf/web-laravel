@@ -3,12 +3,12 @@
 namespace App\Models\Sale;
 
 use App\Attributes\ClassName;
-use App\Enum\Rental\SoPaymentDayType;
-use App\Enum\Rental\SoRentalType;
-use App\Enum\Rental\SoRentalType_Short;
-use App\Enum\Rental\SotPaymentDayType;
-use App\Enum\Rental\SotRentalType;
-use App\Enum\Rental\SotSotStatus;
+use App\Enum\Sale\SoPaymentDayType;
+use App\Enum\Sale\SoRentalType;
+use App\Enum\Sale\SoRentalType_Short;
+use App\Enum\Sale\SotPaymentDayType;
+use App\Enum\Sale\SotRentalType;
+use App\Enum\Sale\SotSotStatus;
 use App\Models\_\ModelTrait;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;

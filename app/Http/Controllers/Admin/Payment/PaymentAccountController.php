@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin\Payment;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
-use App\Enum\Rental\PaPaStatus;
+use App\Enum\Payment\PaPaStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Payment\PaymentAccount;
 use App\Services\PaginateService;

@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin\Delivery;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
-use App\Enum\Rental\SoOrderStatus;
-use App\Enum\Rental\SoPaymentDayType;
-use App\Enum\Rental\SoRentalType_ShortOnlyShort;
+use App\Enum\Sale\SoOrderStatus;
+use App\Enum\Sale\SoPaymentDayType;
+use App\Enum\Sale\SoRentalType_ShortOnlyShort;
 use App\Http\Controllers\Controller;
 use App\Models\Sale\SaleOrder;
 use App\Models\Sale\SaleOrderExt;

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin\Payment;
 
 use App\Attributes\PermissionType;
-use App\Enum\Rental\PaPaStatus;
-use App\Enum\Rental\RpPayStatus;
-use App\Enum\Rental\SoOrderStatus;
+use App\Enum\Payment\PaPaStatus;
+use App\Enum\Payment\RpPayStatus;
+use App\Enum\Sale\SoOrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Payment\Payment;
 use App\Models\Payment\PaymentAccount;

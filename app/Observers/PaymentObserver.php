@@ -2,9 +2,9 @@
 
 namespace App\Observers;
 
-use App\Enum\Rental\IoIoType;
-use App\Enum\Rental\RpIsValid;
-use App\Enum\Rental\RpPayStatus;
+use App\Enum\Payment\IoIoType;
+use App\Enum\Payment\RpIsValid;
+use App\Enum\Payment\RpPayStatus;
 use App\Exceptions\ClientException;
 use App\Models\Payment\Payment;
 use App\Models\Payment\PaymentAccount;

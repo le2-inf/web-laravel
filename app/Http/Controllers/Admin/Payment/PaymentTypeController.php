@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin\Payment;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
-use App\Enum\Rental\RptIsActive;
+use App\Enum\Payment\RptIsActive;
 use App\Http\Controllers\Controller;
 use App\Models\Payment\PaymentType;
 use Illuminate\Http\Request;

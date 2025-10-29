@@ -3,9 +3,9 @@
 namespace App\Models\Vehicle;
 
 use App\Attributes\ClassName;
-use App\Enum\Rental\SoOrderStatus;
-use App\Enum\Rental\SoPaymentDayType;
-use App\Enum\Rental\SoRentalType;
+use App\Enum\Sale\SoOrderStatus;
+use App\Enum\Sale\SoPaymentDayType;
+use App\Enum\Sale\SoRentalType;
 use App\Models\_\ModelTrait;
 use App\Models\Sale\SaleOrder;
 use Illuminate\Database\Eloquent\Model;

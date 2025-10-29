@@ -4,14 +4,14 @@ namespace App\Http\Controllers\Admin\Payment;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
-use App\Enum\Rental\DtDtExportType;
-use App\Enum\Rental\DtDtStatus;
-use App\Enum\Rental\DtDtType;
-use App\Enum\Rental\PaPaStatus;
-use App\Enum\Rental\RpIsValid;
-use App\Enum\Rental\RpPayStatus;
-use App\Enum\Rental\RpPtId;
-use App\Enum\Rental\SoOrderStatus;
+use App\Enum\Payment\PaPaStatus;
+use App\Enum\Payment\RpIsValid;
+use App\Enum\Payment\RpPayStatus;
+use App\Enum\Payment\RpPtId;
+use App\Enum\Sale\DtDtExportType;
+use App\Enum\Sale\DtDtStatus;
+use App\Enum\Sale\DtDtType;
+use App\Enum\Sale\SoOrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Payment\Payment;
 use App\Models\Payment\PaymentAccount;
@@ -123,7 +123,7 @@ class PaymentController extends Controller
         $this->response()->withExtras(
             PaymentAccount::options(),
             DocTpl::options(function (Builder $query) {
-                $query->where('dt.dt_type', '=', DtDtType::RENTAL_PAYMENT);
+                $query->where('dt.dt_type', '=', DtDtType::PAYMENT);
             })
         );
 
@@ -140,7 +140,7 @@ class PaymentController extends Controller
         $input = $request->validate([
             'mode'  => ['required', Rule::in(DtDtExportType::label_keys())],
             'dt_id' => ['required',
-                Rule::exists(DocTpl::class)->where('dt_type', DtDtType::RENTAL_PAYMENT)->where('dt_status', DtDtStatus::ENABLED)],
+                Rule::exists(DocTpl::class)->where('dt_type', DtDtType::PAYMENT)->where('dt_status', DtDtStatus::ENABLED)],
         ]);
 
         $payment->load(['SaleOrder', 'PaymentType', 'SaleOrder.Customer']); // toto 名字有变化

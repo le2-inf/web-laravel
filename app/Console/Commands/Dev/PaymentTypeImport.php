@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands\Dev;
 
-use App\Enum\Rental\RpPtId;
+use App\Enum\Payment\RpPtId;
 use App\Models\Payment\PaymentType;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;

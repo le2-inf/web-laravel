@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin\Sale;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
-use App\Enum\Rental\RpIsValid;
-use App\Enum\Rental\SoOrderStatus;
+use App\Enum\Payment\RpIsValid;
+use App\Enum\Sale\SoOrderStatus;
 use App\Enum\Vehicle\VeStatusDispatch;
 use App\Enum\Vehicle\VeStatusRental;
 use App\Enum\Vehicle\VeStatusService;

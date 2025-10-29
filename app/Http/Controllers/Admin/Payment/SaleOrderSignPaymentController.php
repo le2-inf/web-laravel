@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin\Payment;
 
 use App\Attributes\PermissionType;
-use App\Enum\Rental\PaPaStatus;
-use App\Enum\Rental\RpPayStatus;
-use App\Enum\Rental\RpPtId;
-use App\Enum\Rental\SoOrderStatus;
-use App\Enum\Rental\SoRentalType;
+use App\Enum\Payment\PaPaStatus;
+use App\Enum\Payment\RpPayStatus;
+use App\Enum\Payment\RpPtId;
+use App\Enum\Sale\SoOrderStatus;
+use App\Enum\Sale\SoRentalType;
 use App\Enum\Vehicle\VeStatusRental;
 use App\Http\Controllers\Controller;
 use App\Models\Payment\Payment;

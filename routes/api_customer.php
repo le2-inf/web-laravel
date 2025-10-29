@@ -1,17 +1,17 @@
 <?php
 
 use App\Http\Controllers\Customer\_\AuthController;
-use App\Http\Controllers\Customer\Rental\PaymentController;
-use App\Http\Controllers\Customer\Rental\SaleOrderController;
-use App\Http\Controllers\Customer\Rental\VehicleAccidentController;
-use App\Http\Controllers\Customer\Rental\VehicleMaintenanceController;
-use App\Http\Controllers\Customer\Rental\VehicleManualViolationController;
-use App\Http\Controllers\Customer\Rental\VehicleRepairController;
-use App\Http\Controllers\Customer\Rental\VehicleReplacementController;
-use App\Http\Controllers\Customer\Rental\VehicleViolationController;
+use App\Http\Controllers\Customer\Payment\PaymentController;
 use App\Http\Controllers\Customer\Risk\ExpiryDriverController;
 use App\Http\Controllers\Customer\Risk\ExpiryVehicleController;
 use App\Http\Controllers\Customer\Risk\VehicleScheduleController;
+use App\Http\Controllers\Customer\Sale\SaleOrderController;
+use App\Http\Controllers\Customer\Vehicle\VehicleAccidentController;
+use App\Http\Controllers\Customer\Vehicle\VehicleMaintenanceController;
+use App\Http\Controllers\Customer\Vehicle\VehicleManualViolationController;
+use App\Http\Controllers\Customer\Vehicle\VehicleRepairController;
+use App\Http\Controllers\Customer\Vehicle\VehicleReplacementController;
+use App\Http\Controllers\Customer\Vehicle\VehicleViolationController;
 use App\Http\Middleware\TemporaryCustomer;
 use Illuminate\Support\Facades\Route;
 

@@ -4,7 +4,7 @@ namespace App\Models\Delivery;
 
 use App\Enum\Delivery\DlDcKey;
 use App\Enum\Delivery\DlSendStatus;
-use App\Enum\Rental\DtDtStatus;
+use App\Enum\Sale\DtDtStatus;
 use App\Models\_\ModelTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;

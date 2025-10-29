@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Admin\Config;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
-use App\Enum\Rental\DtDtExportType;
-use App\Enum\Rental\DtDtFileType;
-use App\Enum\Rental\DtDtStatus;
-use App\Enum\Rental\DtDtType;
-use App\Enum\Rental\DtDtTypeMacroChars;
+use App\Enum\Sale\DtDtExportType;
+use App\Enum\Sale\DtDtFileType;
+use App\Enum\Sale\DtDtStatus;
+use App\Enum\Sale\DtDtType;
+use App\Enum\Sale\DtDtTypeMacroChars;
 use App\Http\Controllers\Controller;
 use App\Models\Sale\DocTpl;
 use App\Services\DocTplService;
@@ -70,10 +70,10 @@ class DocTplController extends Controller
         ]);
 
         $this->response()->withExtras(
-            DtDtType::tryFrom(DtDtType::RENTAL_ORDER)->getFieldsAndRelations(true),
-            DtDtType::tryFrom(DtDtType::RENTAL_SETTLEMENT)->getFieldsAndRelations(true),
-            DtDtType::tryFrom(DtDtType::RENTAL_PAYMENT)->getFieldsAndRelations(true),
-            DtDtType::tryFrom(DtDtType::RENTAL_VEHICLE_INSPECTION)->getFieldsAndRelations(true),
+            DtDtType::tryFrom(DtDtType::SALE_ORDER)->getFieldsAndRelations(true),
+            DtDtType::tryFrom(DtDtType::SALE_SETTLEMENT)->getFieldsAndRelations(true),
+            DtDtType::tryFrom(DtDtType::PAYMENT)->getFieldsAndRelations(true),
+            DtDtType::tryFrom(DtDtType::VEHICLE_INSPECTION)->getFieldsAndRelations(true),
             DtDtStatus::options(),
         );
 
@@ -114,10 +114,10 @@ class DocTplController extends Controller
         $this->options();
 
         $this->response()->withExtras(
-            DtDtType::tryFrom(DtDtType::RENTAL_ORDER)->getFieldsAndRelations(true),
-            DtDtType::tryFrom(DtDtType::RENTAL_SETTLEMENT)->getFieldsAndRelations(true),
-            DtDtType::tryFrom(DtDtType::RENTAL_PAYMENT)->getFieldsAndRelations(true),
-            DtDtType::tryFrom(DtDtType::RENTAL_VEHICLE_INSPECTION)->getFieldsAndRelations(true),
+            DtDtType::tryFrom(DtDtType::SALE_ORDER)->getFieldsAndRelations(true),
+            DtDtType::tryFrom(DtDtType::SALE_SETTLEMENT)->getFieldsAndRelations(true),
+            DtDtType::tryFrom(DtDtType::PAYMENT)->getFieldsAndRelations(true),
+            DtDtType::tryFrom(DtDtType::VEHICLE_INSPECTION)->getFieldsAndRelations(true),
             DtDtStatus::options(),
         );
 

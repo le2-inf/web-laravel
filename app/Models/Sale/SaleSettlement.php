@@ -3,11 +3,11 @@
 namespace App\Models\Sale;
 
 use App\Attributes\ClassName;
-use App\Enum\Rental\RsDeleteOption;
-use App\Enum\Rental\SoOrderStatus;
-use App\Enum\Rental\SoPaymentDayType;
-use App\Enum\Rental\SoRentalType;
-use App\Enum\Rental\SsReturnStatus;
+use App\Enum\Payment\RsDeleteOption;
+use App\Enum\Sale\SoOrderStatus;
+use App\Enum\Sale\SoPaymentDayType;
+use App\Enum\Sale\SoRentalType;
+use App\Enum\Sale\SsReturnStatus;
 use App\Models\_\ModelTrait;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;

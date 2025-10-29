@@ -3,8 +3,8 @@
 namespace App\Models\Payment;
 
 use App\Attributes\ClassName;
-use App\Enum\Rental\IoIoType;
-use App\Enum\Rental\RpPayStatus;
+use App\Enum\Payment\IoIoType;
+use App\Enum\Payment\RpPayStatus;
 use App\Models\_\ModelTrait;
 use App\Models\Customer\Customer;
 use Illuminate\Database\Eloquent\Casts\Attribute;

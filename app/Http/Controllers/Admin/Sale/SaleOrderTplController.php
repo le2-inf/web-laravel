@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Admin\Sale;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
-use App\Enum\Rental\SoPaymentDay_Month;
-use App\Enum\Rental\SoPaymentDay_Week;
-use App\Enum\Rental\SoPaymentDayType;
-use App\Enum\Rental\SoRentalType;
-use App\Enum\Rental\SoRentalType_Short;
-use App\Enum\Rental\SotSotStatus;
+use App\Enum\Sale\SoPaymentDay_Month;
+use App\Enum\Sale\SoPaymentDay_Week;
+use App\Enum\Sale\SoPaymentDayType;
+use App\Enum\Sale\SoRentalType;
+use App\Enum\Sale\SoRentalType_Short;
+use App\Enum\Sale\SotSotStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Sale\SaleOrderTpl;
 use App\Rules\PaymentDayCheck;

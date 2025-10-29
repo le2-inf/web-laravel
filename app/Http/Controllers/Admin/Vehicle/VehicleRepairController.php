@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin\Vehicle;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
-use App\Enum\Rental\RpIsValid;
-use App\Enum\Rental\RpPayStatus;
-use App\Enum\Rental\RpPtId;
+use App\Enum\Payment\RpIsValid;
+use App\Enum\Payment\RpPayStatus;
+use App\Enum\Payment\RpPtId;
 use App\Enum\Vehicle\ScScStatus;
 use App\Enum\Vehicle\VeStatusService;
 use App\Enum\Vehicle\VrCustodyVehicle;

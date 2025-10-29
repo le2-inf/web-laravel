@@ -4,15 +4,15 @@ namespace App\Http\Controllers\Admin\Sale;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
-use App\Enum\Rental\DtDtExportType;
-use App\Enum\Rental\DtDtStatus;
-use App\Enum\Rental\DtDtType;
-use App\Enum\Rental\RpIsValid;
-use App\Enum\Rental\RpPayStatus;
-use App\Enum\Rental\RpPtId;
-use App\Enum\Rental\RsDeleteOption;
-use App\Enum\Rental\SoOrderStatus;
-use App\Enum\Rental\SsReturnStatus;
+use App\Enum\Payment\RpIsValid;
+use App\Enum\Payment\RpPayStatus;
+use App\Enum\Payment\RpPtId;
+use App\Enum\Payment\RsDeleteOption;
+use App\Enum\Sale\DtDtExportType;
+use App\Enum\Sale\DtDtStatus;
+use App\Enum\Sale\DtDtType;
+use App\Enum\Sale\SoOrderStatus;
+use App\Enum\Sale\SsReturnStatus;
 use App\Enum\Vehicle\VeStatusRental;
 use App\Enum\Vehicle\VeStatusService;
 use App\Http\Controllers\Controller;
@@ -144,7 +144,7 @@ class SaleSettlementController extends Controller
         } else {
             $this->response()->withExtras(
                 DocTpl::options(function (Builder $query) {
-                    $query->where('dt.dt_type', '=', DtDtType::RENTAL_SETTLEMENT);
+                    $query->where('dt.dt_type', '=', DtDtType::SALE_SETTLEMENT);
                 }),
                 Admin::optionsWithRoles(),
             );
@@ -158,7 +158,7 @@ class SaleSettlementController extends Controller
     {
         $input = $request->validate([
             'mode'  => ['required', Rule::in(DtDtExportType::label_keys())],
-            'dt_id' => ['required', Rule::exists(DocTpl::class)->where('dt_type', DtDtType::RENTAL_SETTLEMENT)->where('dt_status', DtDtStatus::ENABLED)],
+            'dt_id' => ['required', Rule::exists(DocTpl::class)->where('dt_type', DtDtType::SALE_SETTLEMENT)->where('dt_status', DtDtStatus::ENABLED)],
         ]);
 
         $docTpl = DocTpl::query()->find($input['dt_id']);

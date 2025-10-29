@@ -3,7 +3,7 @@
 namespace App\Models\Payment;
 
 use App\Attributes\ClassName;
-use App\Enum\Rental\PaPaStatus;
+use App\Enum\Payment\PaPaStatus;
 use App\Models\_\ModelTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;

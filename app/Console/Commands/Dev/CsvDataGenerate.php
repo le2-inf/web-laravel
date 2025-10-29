@@ -3,9 +3,9 @@
 namespace App\Console\Commands\Dev;
 
 use App\Enum\Customer\CuCuType;
-use App\Enum\Rental\RpPtId;
-use App\Enum\Rental\SoOrderStatus;
-use App\Enum\Rental\SoRentalType;
+use App\Enum\Payment\RpPtId;
+use App\Enum\Sale\SoOrderStatus;
+use App\Enum\Sale\SoRentalType;
 use App\Enum\Vehicle\ScScStatus;
 use App\Enum\Vehicle\VeStatusDispatch;
 use App\Enum\Vehicle\VeStatusRental;

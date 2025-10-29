@@ -3,8 +3,8 @@
 namespace App\Models\Sale;
 
 use App\Attributes\ClassName;
-use App\Enum\Rental\VrReplacementStatus;
-use App\Enum\Rental\VrReplacementType;
+use App\Enum\Sale\VrReplacementStatus;
+use App\Enum\Sale\VrReplacementType;
 use App\Models\_\ModelTrait;
 use App\Models\Vehicle\Vehicle;
 use Illuminate\Database\Eloquent\Casts\Attribute;

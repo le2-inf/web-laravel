@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Enum\Rental\DtDtExportType;
-use App\Enum\Rental\DtDtTypeMacroChars;
+use App\Enum\Sale\DtDtExportType;
+use App\Enum\Sale\DtDtTypeMacroChars;
 use App\Exceptions\ServerException;
 use App\Models\Sale\DocTpl;
 use GuzzleHttp\Client;

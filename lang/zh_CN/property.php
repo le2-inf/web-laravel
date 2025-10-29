@@ -410,7 +410,6 @@ return [
         'vm_id'                       => '车型序号',
         'status_service'              => '运营状态',
         'status_rental'               => '租赁状态',
-        'pending_status_rental'       => '待租赁状态',
         'status_dispatch'             => '是否发车',
         'status_accident__'           => '',
         'status_maintenance__'        => '',

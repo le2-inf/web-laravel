@@ -2,7 +2,7 @@
 
 namespace App\Rules;
 
-use App\Enum\Rental\SoPaymentDayType;
+use App\Enum\Sale\SoPaymentDayType;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Translation\PotentiallyTranslatedString;
 

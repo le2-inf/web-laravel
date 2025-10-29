@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin\Payment;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
-use App\Enum\Rental\IoIoType;
+use App\Enum\Payment\IoIoType;
 use App\Http\Controllers\Controller;
 use App\Models\Payment\PaymentAccount;
 use App\Models\Payment\PaymentInout;

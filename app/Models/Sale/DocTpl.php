@@ -3,9 +3,9 @@
 namespace App\Models\Sale;
 
 use App\Attributes\ClassName;
-use App\Enum\Rental\DtDtFileType;
-use App\Enum\Rental\DtDtStatus;
-use App\Enum\Rental\DtDtType;
+use App\Enum\Sale\DtDtFileType;
+use App\Enum\Sale\DtDtStatus;
+use App\Enum\Sale\DtDtType;
 use App\Models\_\ModelTrait;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
