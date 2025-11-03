@@ -30,16 +30,17 @@ function getNamespaceByComposerMap(string $shortName, string $include): ?string
 /**
  * 根据表名和主键值，载入 Composer 的 classmap，找到对应模型并返回 Eloquent 实例.
  *
- * @param string $table 表名（复数，下划线风格）
+ * @param string $name 表名（复数，下划线风格）
  *
  * @return Model
  *
  * @throws ModelNotFoundException
  */
-function getModelByTable(string $table)
+function getModel(string $name)
 {
     // 1. 由表名生成模型名称后缀，如 'users' → 'User'
-    $baseName = Str::studly(Str::singular($table));
+    //    $baseName = Str::studly(Str::singular($name));
+    $baseName = $name;
 
     // 2. 载入 Composer 的 classmap（FullClassName => filePath）
     $classMap = require base_path('vendor/composer/autoload_classmap.php');
@@ -66,7 +67,7 @@ function getModelByTable(string $table)
     // 6. 使用 Eloquent 的 findOrFail 拿到实例，找不到时自动抛 404
 }
 
-function getAllControllers($path = 'Http/Controllers/Admin'): array
+function getAllControllers($path): array
 {
     $appPath = app_path($path);
     $files   = File::allFiles($appPath);

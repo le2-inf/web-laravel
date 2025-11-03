@@ -70,7 +70,7 @@ class PermissionImport3 extends Command
 
     private function getAllControllers(): void
     {
-        $controllers = getAllControllers();
+        $controllers = getAllControllers('Http/Controllers/Admin');
 
         $names = [];
         $zh_CN = [];

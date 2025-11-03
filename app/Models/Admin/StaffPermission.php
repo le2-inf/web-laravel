@@ -12,14 +12,17 @@ use Spatie\Permission\Models\Permission;
  * @property string $title      权限标题
  * @property string $guard_name
  */
-class AdminPermission extends Permission
+class StaffPermission extends Permission
 {
+    protected $table = 'permissions';
+
     public static function options(?\Closure $where = null): array
     {
         $key   = preg_replace('/^.*\\\/', '', get_called_class()).'Options';
         $value = static::query()->toBase()
             ->orderBy('group_name')->orderBy('name')
             ->get()
+            ->groupBy(fn ($row) => $row->group_name)
         ;
 
         return [$key => $value];

@@ -30,9 +30,9 @@ use Spatie\Permission\Traits\HasRoles;
  * @property null|Carbon     $expires_at            账号过期时间；当为 null 的时候，永不过期
  * @property null|bool       $is_mock
  *                                                  -- relation
- * @property AdminExt        $AdminExt
+ * @property StaffExt        $AdminExt
  */
-class Admin extends Authenticatable
+class Staff extends Authenticatable
 {
     use HasApiTokens;
     use Notifiable;
@@ -40,6 +40,8 @@ class Admin extends Authenticatable
     use HasRoles;
 
     use ModelTrait;
+
+    protected $table = 'admins';
 
     protected $attributes = [];
 
@@ -100,7 +102,7 @@ class Admin extends Authenticatable
 
     public function AdminExt(): HasOne
     {
-        return $this->hasOne(AdminExt::class, 'adm_id', 'id');
+        return $this->hasOne(StaffExt::class, 'adm_id', 'id');
     }
 
     public function VehicleManagers(): HasMany

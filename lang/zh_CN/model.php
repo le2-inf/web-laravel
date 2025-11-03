@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'Admin' => [
+    'Staff' => [
         'name'   => '员工',
         'suffix' => '',
     ],
-    'AdminExt' => [
+    'StaffExt' => [
         'name'   => '员工扩展',
         'suffix' => '',
     ],
-    'AdminPermission' => [
+    'StaffPermission' => [
         'name'   => '员工权限',
         'suffix' => '',
     ],
-    'AdminRole' => [
+    'StaffRole' => [
         'name'   => '员工角色',
         'suffix' => '',
     ],

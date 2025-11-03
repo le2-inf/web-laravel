@@ -8,7 +8,7 @@ use App\Enum\Customer\CuCuType;
 use App\Enum\Customer\CuiCuiGender;
 use App\Http\Controllers\Controller;
 use App\Models\_\Configuration;
-use App\Models\Admin\Admin;
+use App\Models\Admin\Staff;
 use App\Models\Customer\Customer;
 use App\Models\Customer\CustomerCompany;
 use App\Models\Customer\CustomerIndividual;
@@ -121,8 +121,8 @@ class CustomerController extends Controller
                 'cu_cert_valid_to'     => ['nullable', 'date'],
                 'cu_remark'            => ['nullable', 'string', 'max:255'],
 
-                'sales_manager'  => ['nullable', Rule::exists(Admin::class)],
-                'driver_manager' => ['nullable', Rule::exists(Admin::class)],
+                'sales_manager'  => ['nullable', Rule::exists(Staff::class)],
+                'driver_manager' => ['nullable', Rule::exists(Staff::class)],
 
                 'customer_individual'                                => ['nullable', 'array'],
                 'customer_individual.cui_name'                       => ['nullable', 'string', 'max:255'],
@@ -221,7 +221,7 @@ class CustomerController extends Controller
         $this->options();
 
         $this->response()->withExtras(
-            Admin::optionsWithRoles(),
+            Staff::optionsWithRoles(),
         );
 
         $customer = new Customer([
@@ -237,7 +237,7 @@ class CustomerController extends Controller
         $this->options();
 
         $this->response()->withExtras(
-            Admin::optionsWithRoles(),
+            Staff::optionsWithRoles(),
         );
 
         $this->response()->withExtras(

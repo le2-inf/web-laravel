@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Admin\Vehicle;
 
-use App\Http\Controllers\Admin\Vehicle\VehicleAccidentController;
+use App\Http\Controllers\Admin\VehicleService\VehicleAccidentController;
 use App\Models\Vehicle\VehicleAccident;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;

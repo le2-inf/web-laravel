@@ -16,7 +16,7 @@ use App\Enum\Sale\SsReturnStatus;
 use App\Enum\Vehicle\VeStatusRental;
 use App\Enum\Vehicle\VeStatusService;
 use App\Http\Controllers\Controller;
-use App\Models\Admin\Admin;
+use App\Models\Admin\Staff;
 use App\Models\Payment\Payment;
 use App\Models\Sale\DocTpl;
 use App\Models\Sale\SaleOrder;
@@ -139,14 +139,14 @@ class SaleSettlementController extends Controller
             ]);
 
             $this->response()->withExtras(
-                Admin::optionsWithRoles(),
+                Staff::optionsWithRoles(),
             );
         } else {
             $this->response()->withExtras(
                 DocTpl::options(function (Builder $query) {
                     $query->where('dt.dt_type', '=', DtDtType::SALE_SETTLEMENT);
                 }),
-                Admin::optionsWithRoles(),
+                Staff::optionsWithRoles(),
             );
         }
 
@@ -220,7 +220,7 @@ class SaleSettlementController extends Controller
                 'return_datetime'            => ['required', 'date'],
                 'delete_option'              => ['required', Rule::in(RsDeleteOption::label_keys())],
                 'ss_remark'                  => ['nullable', 'string'],
-                'processed_by'               => ['bail', 'nullable', 'integer', Rule::exists(Admin::class, 'id')],
+                'processed_by'               => ['bail', 'nullable', 'integer', Rule::exists(Staff::class, 'id')],
             ]
             + Uploader::validator_rule_upload_array('additional_photos'),
             [],

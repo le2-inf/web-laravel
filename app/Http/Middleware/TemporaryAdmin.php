@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Admin\Admin;
+use App\Models\Admin\Staff;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Http\Request;
@@ -45,7 +45,7 @@ class TemporaryAdmin
         }
 
         // 构造临时用户对象
-        $tempAdmin = new Admin();
+        $tempAdmin = new Staff();
         $tempAdmin->forceFill($adminCached);
 
         //        $tempAdmin->exists = true;

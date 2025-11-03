@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Auth;
+namespace App\Http\Controllers\Admin\Staff;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\CheckAdminIsMock;
-use App\Models\Admin\AdminPermission;
+use App\Models\Admin\StaffPermission;
 use App\Services\PaginateService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -17,7 +17,7 @@ use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
 #[PermissionType('员工权限管理')]
-class PermissionController extends Controller
+class StaffPermissionController extends Controller
 {
     public function __construct()
     {
@@ -30,7 +30,7 @@ class PermissionController extends Controller
         $this->options(true);
         $this->response()->withExtras();
 
-        $query = AdminPermission::query()
+        $query = StaffPermission::query()
             ->orderBy('name')
             ->with('roles')
         ;
@@ -58,11 +58,11 @@ class PermissionController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'name'  => ['required', Rule::unique(AdminPermission::class, 'name')],
+                'name'  => ['required', Rule::unique(StaffPermission::class, 'name')],
                 'title' => ['nullable'],
             ],
             [],
-            trans_property(AdminPermission::class)
+            trans_property(StaffPermission::class)
         );
 
         if ($validator->fails()) {
@@ -71,8 +71,8 @@ class PermissionController extends Controller
 
         $input = $validator->validated();
 
-        DB::transaction(function () use (&$input, &$permission) {
-            $permission = AdminPermission::query()->create($input);
+        DB::transaction(function () use (&$input, &$staff_permission) {
+            $staff_permission = StaffPermission::query()->create($input);
         });
 
         $this->response()->withMessages(message_success(__METHOD__));
@@ -80,16 +80,16 @@ class PermissionController extends Controller
         return $this->response()->withRedirect(redirect()->route('permissions.index'))->respond();
     }
 
-    public function update(Request $request, AdminPermission $permission): Response
+    public function update(Request $request, StaffPermission $staff_permission): Response
     {
         $validator = Validator::make(
             $request->all(),
             [
-                'name'  => ['required', Rule::unique(AdminPermission::class, 'name')->ignore($permission)],
+                'name'  => ['required', Rule::unique(StaffPermission::class, 'name')->ignore($staff_permission)],
                 'title' => ['nullable'],
             ],
             [],
-            trans_property(AdminPermission::class)
+            trans_property(StaffPermission::class)
         );
 
         if ($validator->fails()) {
@@ -98,10 +98,10 @@ class PermissionController extends Controller
 
         $input = $validator->validated();
 
-        DB::transaction(function () use (&$input, &$permission) {
-            $permission->fill($input);
+        DB::transaction(function () use (&$input, &$staff_permission) {
+            $staff_permission->fill($input);
 
-            $permission->save();
+            $staff_permission->save();
         });
 
         $this->response()->withMessages(message_success(__METHOD__));
@@ -109,12 +109,12 @@ class PermissionController extends Controller
         return $this->response()->withRedirect(redirect()->route('permissions.index'))->respond();
     }
 
-    public function destroy(AdminPermission $permission): Response
+    public function destroy(StaffPermission $staff_permission): Response
     {
-        DB::transaction(function () use (&$permission) {
-            DB::table('model_has_permissions')->where('permission_id', $permission->id)->delete();
-            DB::table('role_has_permissions')->where('permission_id', $permission->id)->delete();
-            $permission->delete();
+        DB::transaction(function () use (&$staff_permission) {
+            DB::table('model_has_permissions')->where('permission_id', $staff_permission->id)->delete();
+            DB::table('role_has_permissions')->where('permission_id', $staff_permission->id)->delete();
+            $staff_permission->delete();
         });
 
         $this->response()->withMessages(message_success(__METHOD__));

@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin\_;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,13 +21,13 @@ class HistoryController extends Controller
         $this->config = config('setting.dblog');
     }
 
-    public function __invoke(Request $request, string $table, string $pk): Response
+    public function __invoke(Request $request): Response
     {
         $validator = Validator::make(
-            ['table' => $table, 'pk' => $pk],
+            $request->route()->parameters(),
             [
-                'table' => ['required', Rule::in(array_keys($this->config['tables']))],
-                'pk'    => ['required'],
+                'model_name_short' => ['required', Rule::in(array_keys($this->config['models']))],
+                'pk'               => ['required', 'int'],
             ]
         );
 
@@ -36,16 +36,23 @@ class HistoryController extends Controller
             throw new ValidationException($validator);
         }
 
-        $modelClass = getModelByTable($table);
+        $input = $validator->validated();
 
-        $object = $modelClass::findOrFail($pk);
+        $modelName = getModel($input['model_name_short']);
 
-        $unions = $this->config['union'][$table] ?? [];
+        /** @var Model $modelClass */
+        $modelClass = new $modelName();
+
+        $table = $modelClass->getTable();
+
+        $row = $modelClass->findOrFail($input['pk']);
+
+        $unions = $this->config['union'][$input['model_name_short']] ?? [];
         if ($unions) {
             foreach ($unions as $key => &$union) {
                 list($relation_class, $relation_id) = $union;
 
-                $relation_object   = $object->{$relation_class};
+                $relation_object   = $row->{$relation_class};
                 $relation_id_value = $relation_object?->{$relation_id};
 
                 if ($relation_id_value) {
@@ -65,7 +72,7 @@ class HistoryController extends Controller
                 DB::raw("DATE_TRUNC('second', changed_at) as changed_at"),
                 DB::raw(sprintf(" '%s' as tb", $table)),
             )
-            ->where('pk', '=', $pk)
+            ->where('pk', '=', $input['pk'])
             ->when($unions, function (Builder $query) use ($auditSchema, $unions) {
                 foreach ($unions as $union) {
                     list($_, $__, $union_table, $union_id) = $union;
@@ -99,7 +106,7 @@ class HistoryController extends Controller
             //                        $rec->changed = $model->toArray();
         });
 
-        $properties = trans('property.'.$model = Str::studly(Str::singular($table)));
+        $properties = trans('property.'.$input['model_name_short']);
         $this->response()->withLang($properties);
 
         if ($unions) {
@@ -114,7 +121,7 @@ class HistoryController extends Controller
             }
         }
 
-        $controller_class = getNamespaceByComposerMap($model.'Controller', 'Admin');
+        $controller_class = getNamespaceByComposerMap($input['model_name_short'].'Controller', 'Admin');
 
         try {
             $controller_class::{'labelOptions'}($this);

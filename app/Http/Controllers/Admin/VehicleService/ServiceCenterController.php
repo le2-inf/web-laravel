@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Config;
+namespace App\Http\Controllers\Admin\VehicleService;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
 use App\Enum\Vehicle\ScScStatus;
 use App\Http\Controllers\Controller;
-use App\Models\Admin\Admin;
+use App\Models\Admin\Staff;
 use App\Models\Vehicle\ServiceCenter;
 use App\Models\Vehicle\VehicleAccident;
 use App\Models\Vehicle\VehicleMaintenance;
@@ -70,7 +70,7 @@ class ServiceCenterController extends Controller
         ]);
 
         $this->response()->withExtras(
-            Admin::optionsWithRoles(),
+            Staff::optionsWithRoles(),
         );
 
         $arr = (string) $serviceCenter;
@@ -99,7 +99,7 @@ class ServiceCenterController extends Controller
     {
         $this->options();
         $this->response()->withExtras(
-            Admin::optionsWithRoles(),
+            Staff::optionsWithRoles(),
             VehicleRepair::kvList(sc_id: $serviceCenter->sc_id),
             VehicleMaintenance::kvList(sc_id: $serviceCenter->sc_id),
             VehicleAccident::kvList(sc_id: $serviceCenter->sc_id),

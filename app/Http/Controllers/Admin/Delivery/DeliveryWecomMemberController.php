@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Admin\Delivery;
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
 use App\Http\Controllers\Controller;
-use App\Models\Admin\Admin;
-use App\Models\Admin\AdminExt;
+use App\Models\Admin\Staff;
+use App\Models\Admin\StaffExt;
 use App\Models\Sale\SaleOrderExt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -31,7 +31,7 @@ class DeliveryWecomMemberController extends Controller
         $this->response()->withExtras(
         );
 
-        $items = Admin::indexQuery()
+        $items = Staff::indexQuery()
             ->leftJoin('admin_exts as ext', 'ext.adm_id', '=', 'adm.id')
             ->select('id as adm_id', 'name', 'wecom_name')
             ->orderByDesc('adm.id')
@@ -48,7 +48,7 @@ class DeliveryWecomMemberController extends Controller
             $request->all(),
             [
                 'items'              => ['bail', 'nullable', 'array'],
-                'items.*.adm_id'     => ['bail', 'required', 'integer', Rule::exists(Admin::class, 'id')],
+                'items.*.adm_id'     => ['bail', 'required', 'integer', Rule::exists(Staff::class, 'id')],
                 'items.*.wecom_name' => ['bail', 'nullable', 'max:255'],
             ],
             [],
@@ -69,9 +69,9 @@ class DeliveryWecomMemberController extends Controller
 
         DB::transaction(function () use (&$items) {
             foreach ($items->chunk(50) as $chunks) {
-                AdminExt::query()->upsert($chunks->all(), ['adm_id'], ['wecom_name']);
+                StaffExt::query()->upsert($chunks->all(), ['adm_id'], ['wecom_name']);
             }
-            AdminExt::query()->whereNotIn('adm_id', $items->pluck('adm_id')->all())->delete();
+            StaffExt::query()->whereNotIn('adm_id', $items->pluck('adm_id')->all())->delete();
         });
 
         return $this->response()->respond();

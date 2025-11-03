@@ -1,33 +1,59 @@
 <?php
 
+use App\Models\_\Configuration;
+use App\Models\Admin\Staff;
+use App\Models\Customer\Customer;
+use App\Models\Customer\CustomerCompany;
+use App\Models\Customer\CustomerIndividual;
+use App\Models\One\OneAccount;
+use App\Models\Payment\Payment;
+use App\Models\Sale\BookingOrder;
+use App\Models\Sale\BookingVehicle;
+use App\Models\Sale\DocTpl;
+use App\Models\Sale\SaleOrder;
+use App\Models\Sale\SaleOrderTpl;
+use App\Models\Sale\SaleSettlement;
+use App\Models\Sale\VehicleReplacement;
+use App\Models\Vehicle\ServiceCenter;
+use App\Models\Vehicle\Vehicle;
+use App\Models\Vehicle\VehicleAccident;
+use App\Models\Vehicle\VehicleForceTake;
+use App\Models\Vehicle\VehicleInspection;
+use App\Models\Vehicle\VehicleInsurance;
+use App\Models\Vehicle\VehicleMaintenance;
+use App\Models\Vehicle\VehicleManualViolation;
+use App\Models\Vehicle\VehicleModel;
+use App\Models\Vehicle\VehicleRepair;
+use App\Models\Vehicle\VehicleSchedule;
+
 return [
     'dblog' => [
-        'tables' => [
-            'admins'                    => 'id',
-            'configurations'            => 'cfg_id',
-            'admin_model_has_roles'     => 'role_id',
-            'doc_tpls'                  => 'dt_id',
-            'customers'                 => 'cu_id',
-            'customer_individuals'      => 'cui_id',
-            'vehicle_models'            => 'vm_id',
-            'vehicles'                  => 've_id',
-            'vehicle_accidents'         => 'va_id',
-            'one_accounts'              => 'oa_id',
-            'vehicle_repairs'           => 'vr_id',
-            'vehicle_maintenances'      => 'vm_id',
-            'vehicle_inspections'       => 'vi_id',
-            'vehicle_manual_violations' => 'vmv_id',
-            'vehicle_force_takes'       => 'vft_id',
-            'vehicle_replacements'      => 'vr_id',
-            'vehicle_schedules'         => 'vs_id',
-            'vehicle_insurances'        => 'vi_id',
-            'sale_orders'               => 'so_id',
-            'sale_order_tpls'           => 'sot_id',
-            'sale_settlements'          => 'ss_id',
-            'payments'                  => 'rp_id',
-            'booking_vehicles'          => 'bv_id',
-            'booking_orders'            => 'bo_id',
-            'service_centers'           => 'sc_id',
+        'models' => [
+            class_basename(Staff::class)                  => 'id',
+            class_basename(Configuration::class)          => 'cfg_id',
+            class_basename(DocTpl::class)                 => 'dt_id',
+            class_basename(Customer::class)               => 'cu_id',
+            class_basename(CustomerIndividual::class)     => 'cui_id',
+            class_basename(CustomerCompany::class)        => 'cui_id',
+            class_basename(VehicleModel::class)           => 'vm_id',
+            class_basename(Vehicle::class)                => 've_id',
+            class_basename(VehicleAccident::class)        => 'va_id',
+            class_basename(OneAccount::class)             => 'oa_id',
+            class_basename(VehicleRepair::class)          => 'vr_id',
+            class_basename(VehicleMaintenance::class)     => 'vm_id',
+            class_basename(VehicleInspection::class)      => 'vi_id',
+            class_basename(VehicleManualViolation::class) => 'vmv_id',
+            class_basename(VehicleForceTake::class)       => 'vft_id',
+            class_basename(VehicleReplacement::class)     => 'vr_id',
+            class_basename(VehicleSchedule::class)        => 'vs_id',
+            class_basename(VehicleInsurance::class)       => 'vi_id',
+            class_basename(SaleOrder::class)              => 'so_id',
+            class_basename(SaleOrderTpl::class)           => 'sot_id',
+            class_basename(SaleSettlement::class)         => 'ss_id',
+            class_basename(Payment::class)                => 'rp_id',
+            class_basename(BookingVehicle::class)         => 'bv_id',
+            class_basename(BookingOrder::class)           => 'bo_id',
+            class_basename(ServiceCenter::class)          => 'sc_id',
         ],
 
         'schema' => 'table_log',

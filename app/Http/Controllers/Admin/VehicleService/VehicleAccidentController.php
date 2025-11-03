@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Vehicle;
+namespace App\Http\Controllers\Admin\VehicleService;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;

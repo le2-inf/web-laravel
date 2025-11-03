@@ -10,7 +10,7 @@ use App\Enum\Vehicle\VeStatusService;
 use App\Enum\YesNo;
 use App\Http\Controllers\Controller;
 use App\Models\_\Configuration;
-use App\Models\Admin\Admin;
+use App\Models\Admin\Staff;
 use App\Models\Vehicle\Vehicle;
 use App\Models\Vehicle\VehiclePreparation;
 use App\Services\PaginateService;
@@ -63,7 +63,7 @@ class VehiclePreparationController extends Controller
             )
         );
 
-        /** @var Admin $user */
+        /** @var Staff $user */
         $user = $request->user();
 
         $role_prep_vehicle  = $user->hasRole(Configuration::fetch('role_prep_vehicle')) || $user->hasRole(config('setting.super_role.name'));

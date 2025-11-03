@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use App\Models\Admin\Admin;
+use App\Models\Admin\Staff;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
@@ -15,7 +15,7 @@ abstract class TestCase extends BaseTestCase
         //                $this->withoutExceptionHandling();
 
         try {
-            $admin = Admin::query()->where('name', '=', config('setting.super_user.name'))->first();
+            $admin = Staff::query()->where('name', '=', config('setting.super_user.name'))->first();
         } catch (\Throwable $e) {
             $admin = null;
         }

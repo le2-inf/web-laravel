@@ -6,7 +6,7 @@ use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
 use App\Enum\Vehicle\VeStatusService;
 use App\Http\Controllers\Controller;
-use App\Models\Admin\Admin;
+use App\Models\Admin\Staff;
 use App\Models\Iot\IotDevice;
 use App\Models\Iot\IotDeviceBinding;
 use App\Models\Vehicle\Vehicle;
@@ -70,7 +70,7 @@ class IotDeviceBindingController extends Controller
         $this->options();
 
         $this->response()->withExtras(
-            Admin::optionsWithRoles(),
+            Staff::optionsWithRoles(),
             Vehicle::options(),
         );
 
@@ -101,7 +101,7 @@ class IotDeviceBindingController extends Controller
                 'db_start_at'  => ['required', 'date'],
                 'db_end_at'    => ['nullable', 'date', 'after:db_start_at'],
                 'db_note'      => ['nullable', 'string', 'max:200'],
-                'processed_by' => ['required', Rule::exists(Admin::class, 'id')],
+                'processed_by' => ['required', Rule::exists(Staff::class, 'id')],
             ],
             trans_property(IotDeviceBinding::class),
         )->after(function (\Illuminate\Validation\Validator $validator) use ($iotDeviceBinding, $request) {

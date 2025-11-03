@@ -5,7 +5,7 @@ namespace App\Models\Vehicle;
 use App\Attributes\ColumnDesc;
 use App\Enum\Vehicle\ScScStatus;
 use App\Models\_\ModelTrait;
-use App\Models\Admin\Admin;
+use App\Models\Admin\Staff;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -71,16 +71,16 @@ class ServiceCenter extends Model
         $key = preg_replace('/^.*\\\/', '', get_called_class())
             .'Options';
 
-        /** @var Admin $admin */
+        /** @var Staff $admin */
         $admin = Auth::user();
 
         $value = DB::query()
             ->from('service_centers', 'sc')
-            ->where('sc.status', ScScStatus::ENABLED)
+            ->where('sc.sc_status', ScScStatus::ENABLED)
             ->when(!$admin->hasRole(config('setting.super_role.name')), function (Builder $query) use ($admin) {
                 $query->whereRaw('permitted_admin_ids @> ?', [json_encode([$admin->id])]);
             })
-            ->select(DB::raw('name as text,sc_id as value'))
+            ->select(DB::raw('sc_name as text,sc_id as value'))
             ->get()
         ;
 

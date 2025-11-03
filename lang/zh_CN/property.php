@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'Admin' => [
+    'Staff' => [
         'id'                    => '序号',
         'name'                  => '姓名',
         'email'                 => '邮件地址',
@@ -14,21 +14,22 @@ return [
         'expires_at'            => '账号过期时间',
         'is_mock'               => '',
     ],
-    'AdminExt' => [
+    'StaffExt' => [
         'adm_id'     => '序号',
         'wecom_name' => '企业微信账号',
     ],
-    'AdminPermission' => [
+    'StaffPermission' => [
         'id'         => '',
         'name'       => '权限英文名',
         'title'      => '权限标题',
         'guard_name' => '',
     ],
-    'AdminRole' => [
-        'id'         => '序号',
-        'name'       => '角色名',
-        'guard_name' => '',
-        'is_custom'  => '是否是自定义',
+    'StaffRole' => [
+        'id'          => '序号',
+        'name'        => '角色名',
+        'guard_name'  => '',
+        'is_custom'   => '是否是自定义',
+        'permissions' => '',
     ],
     'Customer' => [
         'cu_id'                => '客户序号',
@@ -410,6 +411,7 @@ return [
         'vm_id'                       => '车型序号',
         'status_service'              => '运营状态',
         'status_rental'               => '租赁状态',
+        'pending_status_rental'       => '待租赁状态',
         'status_dispatch'             => '是否发车',
         'status_accident__'           => '',
         'status_maintenance__'        => '',

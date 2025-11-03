@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Auth;
+namespace App\Http\Controllers\Admin\Staff;
 
 use App\Attributes\PermissionNoneType;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\CheckAdminIsMock;
-use App\Models\Admin\Admin;
+use App\Models\Admin\Staff;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +14,7 @@ use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
 #[PermissionNoneType('个人密码')]
-class ProfileController extends Controller
+class StaffProfileController extends Controller
 {
     public function __construct()
     {
@@ -45,7 +45,7 @@ class ProfileController extends Controller
                 'password_confirmation' => ['required', 'string', 'min:8'],
             ],
             [],
-            trans_property(Admin::class)
+            trans_property(Staff::class)
         );
 
         if ($validator->fails()) {
@@ -54,7 +54,7 @@ class ProfileController extends Controller
 
         $input = $validator->validated();
 
-        /** @var Admin $admin */
+        /** @var Staff $admin */
         $admin = $request->user();
 
         DB::transaction(function () use (&$input, &$admin) {

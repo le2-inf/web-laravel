@@ -10,7 +10,7 @@ use App\Enum\Customer\CuiCuiGender;
 use App\Exceptions\ClientException;
 use App\Models\_\ImportTrait;
 use App\Models\_\ModelTrait;
-use App\Models\Admin\Admin;
+use App\Models\Admin\Staff;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -54,8 +54,8 @@ use Laravel\Sanctum\HasApiTokens;
  *                                                           -
  * @property null|CustomerIndividual   $CustomerIndividual
  * @property null|CustomerCompany      $CustomerCompany
- * @property null|Admin                $SalesManager
- * @property null|Admin                $DriverManager
+ * @property null|Staff                $SalesManager
+ * @property null|Staff                $DriverManager
  *                                                           -
  */
 class Customer extends Authenticatable
@@ -182,12 +182,12 @@ class Customer extends Authenticatable
 
     public function SalesManager(): BelongsTo
     {
-        return $this->belongsTo(Admin::class, 'sales_manager', 'cu_id');
+        return $this->belongsTo(Staff::class, 'sales_manager', 'cu_id');
     }
 
     public function DriverManager(): BelongsTo
     {
-        return $this->belongsTo(Admin::class, 'driver_manager', 'cu_id');
+        return $this->belongsTo(Staff::class, 'driver_manager', 'cu_id');
     }
 
     public static function importColumns(): array

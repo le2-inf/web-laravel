@@ -4,18 +4,22 @@ namespace App\Models\Admin;
 
 use App\Attributes\ClassName;
 use App\Enum\Admin\ArIsCustom;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 
 #[ClassName('员工角色')]
 /**
- * @property int            $id         序号
- * @property string         $name       角色名
+ * @property int            $id          序号
+ * @property string         $name        角色名
  * @property string         $guard_name
- * @property ArIsCustom|int $is_custom  是否是自定义
+ * @property ArIsCustom|int $is_custom   是否是自定义
+ * @property Collection     $permissions
  */
-class AdminRole extends Role
+class StaffRole extends Role
 {
+    protected $table = 'admin_roles';
+
     protected $attributes = [
         'is_custom' => ArIsCustom::NO,
     ];

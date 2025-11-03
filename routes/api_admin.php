@@ -5,16 +5,11 @@ use App\Http\Controllers\Admin\_\LoginController;
 use App\Http\Controllers\Admin\_\MockController;
 use App\Http\Controllers\Admin\_\PasswordResetController;
 use App\Http\Controllers\Admin\_\StatisticsController;
-use App\Http\Controllers\Admin\Auth\AdminController;
-use App\Http\Controllers\Admin\Auth\PermissionController;
-use App\Http\Controllers\Admin\Auth\ProfileController;
-use App\Http\Controllers\Admin\Auth\RoleController;
 use App\Http\Controllers\Admin\Config\CompanyController;
 use App\Http\Controllers\Admin\Config\Configuration0Controller;
 use App\Http\Controllers\Admin\Config\Configuration1Controller;
 use App\Http\Controllers\Admin\Config\DocTplController;
 use App\Http\Controllers\Admin\Config\ImportController;
-use App\Http\Controllers\Admin\Config\ServiceCenterController;
 use App\Http\Controllers\Admin\Customer\CustomerController;
 use App\Http\Controllers\Admin\Delivery\DeliveryChannelController;
 use App\Http\Controllers\Admin\Delivery\DeliveryLogController;
@@ -43,15 +38,20 @@ use App\Http\Controllers\Admin\Sale\SaleOrderTplController;
 use App\Http\Controllers\Admin\Sale\saleSettlementController;
 use App\Http\Controllers\Admin\Sale\VehiclePreparationController;
 use App\Http\Controllers\Admin\Sale\VehicleReplacementController;
+use App\Http\Controllers\Admin\Staff\StaffController;
+use App\Http\Controllers\Admin\Staff\StaffPermissionController;
+use App\Http\Controllers\Admin\Staff\StaffProfileController;
+use App\Http\Controllers\Admin\Staff\StaffRoleController;
 use App\Http\Controllers\Admin\Vehicle\OneAccountController;
-use App\Http\Controllers\Admin\Vehicle\VehicleAccidentController;
 use App\Http\Controllers\Admin\Vehicle\VehicleController;
 use App\Http\Controllers\Admin\Vehicle\VehicleInspectionController;
-use App\Http\Controllers\Admin\Vehicle\VehicleMaintenanceController;
 use App\Http\Controllers\Admin\Vehicle\VehicleManualViolationController;
 use App\Http\Controllers\Admin\Vehicle\VehicleModelController;
-use App\Http\Controllers\Admin\Vehicle\VehicleRepairController;
 use App\Http\Controllers\Admin\Vehicle\VehicleViolationController;
+use App\Http\Controllers\Admin\VehicleService\ServiceCenterController;
+use App\Http\Controllers\Admin\VehicleService\VehicleAccidentController;
+use App\Http\Controllers\Admin\VehicleService\VehicleMaintenanceController;
+use App\Http\Controllers\Admin\VehicleService\VehicleRepairController;
 use App\Http\Middleware\CheckPermission;
 use App\Http\Middleware\TemporaryAdmin;
 use Illuminate\Support\Facades\Route;
@@ -74,15 +74,15 @@ Route::group(['middleware' => [config('setting.mock.enable') ? TemporaryAdmin::c
 
     Route::resource('statistics', StatisticsController::class)->only('index');
 
-    Route::get('/history/{table}/{id}', HistoryController::class);
+    Route::get('/history/{model_name_short}/{pk}', HistoryController::class);
 
-    Route::singleton('profile', ProfileController::class);
+    Route::singleton('staff-profile', StaffProfileController::class);
 
-    Route::resource('admins', AdminController::class);
+    Route::resource('staff', StaffController::class);
 
-    Route::resource('permissions', PermissionController::class);
+    Route::resource('staff-permissions', StaffPermissionController::class);
 
-    Route::resource('roles', RoleController::class);
+    Route::resource('staff-roles', StaffRoleController::class);
 
     Route::resource('configuration-app', Configuration0Controller::class)->parameters(['configuration-app' => 'configuration']);
     Route::resource('configuration-system', Configuration1Controller::class)->parameters(['configuration-system' => 'configuration']);

@@ -10,7 +10,7 @@ use App\Enum\Vehicle\VeStatusService;
 use App\Enum\Vehicle\VeVeType;
 use App\Http\Controllers\Controller;
 use App\Models\_\Configuration;
-use App\Models\Admin\Admin;
+use App\Models\Admin\Staff;
 use App\Models\Vehicle\Vehicle;
 use App\Models\Vehicle\VehicleInspection;
 use App\Models\Vehicle\VehicleManualViolation;
@@ -121,7 +121,7 @@ class VehicleController extends Controller
                 'status_service'              => ['required', Rule::in(VeStatusService::label_keys())],
                 'status_rental'               => ['required', Rule::in(VeStatusRental::label_keys())],
                 'status_dispatch'             => ['required', Rule::in(VeStatusDispatch::label_keys())],
-                'vehicle_manager'             => ['nullable', Rule::exists(Admin::class, 'id')],
+                'vehicle_manager'             => ['nullable', Rule::exists(Staff::class, 'id')],
                 've_license_owner'            => ['nullable', 'string', 'max:100'],
                 've_license_address'          => ['nullable', 'string', 'max:255'],
                 've_license_usage'            => ['nullable', 'string', 'max:50'],
@@ -184,7 +184,7 @@ class VehicleController extends Controller
 
         $this->response()->withExtras(
             VehicleModel::options(),
-            Admin::optionsWithRoles(),
+            Staff::optionsWithRoles(),
         );
 
         $vehicle = new Vehicle();
@@ -199,7 +199,7 @@ class VehicleController extends Controller
 
         $this->response()->withExtras(
             VehicleModel::options(),
-            Admin::optionsWithRoles(),
+            Staff::optionsWithRoles(),
         );
 
         $this->response()->withExtras(

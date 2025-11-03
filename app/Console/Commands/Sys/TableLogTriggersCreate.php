@@ -19,7 +19,12 @@ class TableLogTriggersCreate extends Command
     {
         $this->auditSchema = config('setting.dblog.schema');
 
-        $this->tables = config('setting.dblog.tables');
+        foreach (config('setting.dblog.models') as $modelClass => $pk) {
+            $modelClassFull = getModel($modelClass);
+            $table          = new $modelClassFull()->getTable();
+
+            $this->tables[$table] = $pk;
+        }
 
         // 1. Deploy schema, tables, function and triggers in transaction
         DB::transaction(function () {

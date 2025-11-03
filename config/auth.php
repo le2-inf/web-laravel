@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Admin\Admin;
+use App\Models\Admin\Staff;
 
 return [
     /*
@@ -63,7 +63,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model'  => env('AUTH_MODEL', Admin::class),
+            'model'  => env('AUTH_MODEL', Staff::class),
         ],
 
         // 'users' => [

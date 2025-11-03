@@ -16,9 +16,9 @@ use Spatie\Permission\Traits\HasRoles;
 /**
  * @property int    $adm_id     序号
  * @property string $wecom_name 企业微信账号
- * @property Admin  $Admin
+ * @property Staff  $Admin
  */
-class AdminExt extends Authenticatable
+class StaffExt extends Authenticatable
 {
     use HasApiTokens;
     use Notifiable;
@@ -26,6 +26,8 @@ class AdminExt extends Authenticatable
     use HasRoles;
 
     use ModelTrait;
+
+    protected $table = 'admin_exts';
 
     protected $attributes = [];
 
@@ -36,7 +38,7 @@ class AdminExt extends Authenticatable
 
     public function Admin(): BelongsTo
     {
-        return $this->belongsTo(Admin::class, 'adm_id', 'id');
+        return $this->belongsTo(Staff::class, 'adm_id', 'id');
     }
 
     public static function indexQuery(array $search = []): Builder
