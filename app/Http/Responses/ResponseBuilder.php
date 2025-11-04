@@ -164,13 +164,13 @@ final class ResponseBuilder
             'lang'     => $this->lang,
             'option'   => $this->option,
             'meta'     => [
-                'method'           => Request::method(),
-                'url'              => Request::fullUrl(),
-                'ip'               => Request::ip(),
-                'timestamp'        => now()->toIso8601String(),
-                'model_name_short' => $this->data instanceof Model ? class_basename(get_class($this->data)) : null,
-                'table'            => $this->data instanceof Model ? $this->data->getTable() : null,
-                'auth_user'        => AuthUserType::getValue(),
+                'method'         => Request::method(),
+                'url'            => Request::fullUrl(),
+                'ip'             => Request::ip(),
+                'timestamp'      => now()->toIso8601String(),
+                'class_basename' => $this->data instanceof Model ? class_basename(get_class($this->data)) : null,
+                'table'          => $this->data instanceof Model ? $this->data->getTable() : null,
+                'auth_user'      => AuthUserType::getValue(),
             ],
         ];
     }

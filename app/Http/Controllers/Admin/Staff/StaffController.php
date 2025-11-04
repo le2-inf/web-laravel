@@ -88,12 +88,13 @@ class StaffController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'name'                  => ['required', 'string', 'max:255'],
-                'wecom_name'            => ['required', 'string', 'max:255'],
-                'email'                 => ['required', 'string', 'email', 'max:255', Rule::unique(Staff::class, 'email')],
-                'password'              => ['required', 'string', 'min:8', 'confirmed'],
-                'password_confirmation' => ['required', 'string', 'min:8'],
-                'roles_'                => ['required'],
+                'name'                  => ['bail', 'required', 'string', 'max:255'],
+                'wecom_name'            => ['bail', 'nullable', 'string', 'max:255'],
+                'email'                 => ['bail', 'nullable', 'string', 'email', 'max:255', Rule::unique(Staff::class, 'email')],
+                'password'              => ['bail', 'required', 'string', 'min:8', 'confirmed'],
+                'password_confirmation' => ['bail', 'required', 'string', 'min:8'],
+                'roles_'                => ['bail', 'required'],
+                'expires_at'            => ['bail', 'nullable', 'datet'],
             ],
             [],
             trans_property(Staff::class)
@@ -135,12 +136,13 @@ class StaffController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'name'                  => ['required', 'string', 'max:255'],
-                'wecom_name'            => ['required', 'string', 'max:255'],
-                'email'                 => ['required', 'string', 'email', 'max:255', Rule::unique(Staff::class)->ignore($staff)],
-                'roles_'                => ['nullable'],
-                'password'              => ['nullable', 'required_with:password_confirmation', 'string', 'min:8', 'confirmed'],
-                'password_confirmation' => ['nullable', 'required_with:password', 'string', 'min:8'],
+                'name'                  => ['bail', 'required', 'string', 'max:255'],
+                'admin_ext.wecom_name'  => ['bail', 'nullable', 'string', 'max:255'],
+                'email'                 => ['bail', 'nullable', 'string', 'email', 'max:255', Rule::unique(Staff::class)->ignore($staff)],
+                'roles_'                => ['bail', 'nullable'],
+                'password'              => ['bail', 'nullable', 'required_with:password_confirmation', 'string', 'min:8', 'confirmed'],
+                'password_confirmation' => ['bail', 'nullable', 'required_with:password', 'string', 'min:8'],
+                'expires_at'            => ['bail', 'nullable', 'date'],
             ],
             [],
             trans_property(Staff::class)
@@ -170,6 +172,8 @@ class StaffController extends Controller
             $roles_ = $input['roles_'] ?? [];
             $staff->syncRoles($roles_);
             unset($staff->roles);
+
+            $admin_ext = $input['admin_ext'] ?? null;
         });
 
         $this->response()->withMessages(message_success(__METHOD__));

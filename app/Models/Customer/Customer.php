@@ -112,12 +112,12 @@ class Customer extends Authenticatable
 
     public function CustomerIndividual(): HasOne
     {
-        return $this->hasOne(CustomerIndividual::class, 'cu_id', 'cu_id');
+        return $this->hasOne(CustomerIndividual::class, 'cu_id', 'cu_id')->withDefault();
     }
 
     public function CustomerCompany(): HasOne
     {
-        return $this->hasOne(CustomerCompany::class, 'cu_id', 'cu_id');
+        return $this->hasOne(CustomerCompany::class, 'cu_id', 'cu_id')->withDefault();
     }
 
     public static function indexQuery(array $search = []): Builder

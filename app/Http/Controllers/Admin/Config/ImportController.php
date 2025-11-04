@@ -57,18 +57,18 @@ class ImportController extends Controller
 
         $input = $validator->validated();
 
-        $model      = $input['model'];
-        $model_name = class_basename($input['model']);
+        $model_name     = $input['model_name'];
+        $model_basename = class_basename($input['model']);
 
         $ts       = now()->format('ymdHis');
-        $filename = "template_{$model_name}_{$ts}.xlsx";
+        $filename = "template_{$model_basename}_{$ts}.xlsx";
         $path     = "tmp/{$filename}";
 
         /**
          * 根据配置生成带表头和说明的 Spreadsheet.
          */
-        $buildSpreadsheet = function () use ($model) {
-            /** @var ImportTrait $model */
+        $buildSpreadsheet = function () use ($model_name) {
+            /** @var ImportTrait $model_name */
             $ss = new Spreadsheet();
 
             $sheet = $ss->getActiveSheet();
@@ -80,7 +80,7 @@ class ImportController extends Controller
             ;
 
             // columnDesc
-            $columns = $model::importColumns();
+            $columns = $model_name::importColumns();
 
             [$fieldAttributes,$fieldKeys,$fieldHeader,$modelDescArray] = static::parseField($columns);
 
@@ -151,25 +151,25 @@ class ImportController extends Controller
         // 验证上传文件
         $input = $request->validate(
             [
-                'model' => ['required', Rule::in(ImportConfig::keys())],
+                'model_name' => ['required', Rule::in(ImportConfig::keys())],
             ] + Uploader::validator_rule_upload_object('import_file', true)
         );
 
-        /** @var ImportTrait $model */
-        $model = $input['model'];
+        /** @var ImportTrait $model_name */
+        $model_name = $input['model_name'];
 
         /** @var UploadedFile $import_file */
         $import_file = $input['import_file'];
 
         //        $filePath = $input_file->getRealPath();
 
-        $fieldConfig = $model::importColumns();
+        $fieldConfig = $model_name::importColumns();
 
         [$fieldAttributes,$fieldKeys,$fieldHeader,$modelDescArray] = static::parseField($fieldConfig);
 
-        $fieldValidateBefore = $model::importBeforeValidateDo();
+        $fieldValidateBefore = $model_name::importBeforeValidateDo();
 
-        $batchInsert = $model::importCreateDo();
+        $batchInsert = $model_name::importCreateDo();
 
         $fullPath = Storage::disk('local')->path($import_file['path_']);
 
@@ -197,7 +197,7 @@ class ImportController extends Controller
 
         $datas = $datas
             ->filter(fn ($row) => array_filter($row)) // 跳过空行
-            ->map(function (array $row) use ($model, &$count, $fieldAttributes, $fieldKeys, $fieldValidateBefore) {
+            ->map(function (array $row) use ($model_name, &$count, $fieldAttributes, $fieldKeys, $fieldValidateBefore) {
                 // trim
                 $row = array_map('trim', $row);
                 // 先组合成关联数组
@@ -208,7 +208,7 @@ class ImportController extends Controller
                 $fieldValidateBefore($item);
 
                 // 执行验证
-                $model::importValidatorRule($item, $fieldAttributes);
+                $model_name::importValidatorRule($item, $fieldAttributes);
                 //                $validator = Validator::make($item, $rules, [], $fieldAttributes);
                 //                if ($validator->fails()) {
                 //                    // a) 抛出异常，整个导入中断
@@ -225,7 +225,7 @@ class ImportController extends Controller
         ;
 
         // 批量检查
-        $afterValidator = $model::importAfterValidatorDo();
+        $afterValidator = $model_name::importAfterValidatorDo();
         $afterValidator();
 
         // 事务，循环插入
@@ -291,9 +291,9 @@ class ImportController extends Controller
         return [$column_lang, $fieldKeys, $headers, $column_desc_array];
     }
 
-    private static function parseColumnDesc(string $model): ?array
+    private static function parseColumnDesc(string $model_name): ?array
     {
-        $reflection = new \ReflectionClass($model);
+        $reflection = new \ReflectionClass($model_name);
         $attributes = $reflection->getAttributes(ColumnDesc::class);
         if (!$attributes) {
             return null;

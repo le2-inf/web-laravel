@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Sys;
 
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class TableLogTriggersCreate extends Command
@@ -19,9 +20,10 @@ class TableLogTriggersCreate extends Command
     {
         $this->auditSchema = config('setting.dblog.schema');
 
-        foreach (config('setting.dblog.models') as $modelClass => $pk) {
-            $modelClassFull = getModel($modelClass);
-            $table          = new $modelClassFull()->getTable();
+        foreach (config('setting.dblog.models') as $class_name => $pk) {
+            /** @var Model $model */
+            $model = new $class_name();
+            $table = $model->getTable();
 
             $this->tables[$table] = $pk;
         }

@@ -206,11 +206,11 @@ class DeliveryChannel extends Model
         VehicleInsurance::query()
             ->whereBetween('compulsory_end_date', [$from, $to])
             ->orderBy('vi_id')
-            ->with(['Vehicle.VehicleManager.AdminExt'])
+            ->with(['Vehicle.VehicleManager'])
             ->chunk(100, function ($vehicleInsurances) {
                 /** @var array<VehicleInsurance> $vehicleInsurances */
                 foreach ($vehicleInsurances as $vehicleInsurance) {
-                    $wecom_name = $vehicleInsurance?->Vehicle?->VehicleManager?->AdminExt?->wecom_name;
+                    $wecom_name = $vehicleInsurance?->Vehicle?->VehicleManager?->wecom_name;
                     if (!$wecom_name) {
                         Log::channel('console')->info("wecom_name,跳过{$this->dc_key}类型通知。", [$vehicleInsurance?->Vehicle?->plate_no, $vehicleInsurance?->Vehicle?->VehicleManager?->name]);
 
@@ -260,7 +260,7 @@ class DeliveryChannel extends Model
             ->chunk(100, function ($vehicleSchedules) {
                 /** @var VehicleSchedule $vehicleSchedule */
                 foreach ($vehicleSchedules as $vehicleSchedule) {
-                    $wecom_name = $vehicleSchedule?->Vehicle?->VehicleManager?->AdminExt?->wecom_name;
+                    $wecom_name = $vehicleSchedule?->Vehicle?->VehicleManager?->wecom_name;
                     if (!$wecom_name) {
                         Log::channel('console')->info("wecom_name,跳过{$this->dc_key}类型通知。", [$vehicleSchedule?->Vehicle?->plate_no, $vehicleSchedule?->Vehicle?->VehicleManager?->name]);
 

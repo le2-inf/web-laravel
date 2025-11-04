@@ -74,7 +74,7 @@ Route::group(['middleware' => [config('setting.mock.enable') ? TemporaryAdmin::c
 
     Route::resource('statistics', StatisticsController::class)->only('index');
 
-    Route::get('/history/{model_name_short}/{pk}', HistoryController::class);
+    Route::get('/history/{class_basename}/{pk}', HistoryController::class);
 
     Route::singleton('staff-profile', StaffProfileController::class);
 

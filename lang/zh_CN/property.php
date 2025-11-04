@@ -14,10 +14,6 @@ return [
         'expires_at'            => '账号过期时间',
         'is_mock'               => '',
     ],
-    'StaffExt' => [
-        'adm_id'     => '序号',
-        'wecom_name' => '企业微信账号',
-    ],
     'StaffPermission' => [
         'id'         => '',
         'name'       => '权限英文名',

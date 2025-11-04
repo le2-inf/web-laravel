@@ -6,7 +6,6 @@ use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Staff;
-use App\Models\Admin\StaffExt;
 use App\Models\Sale\SaleOrderExt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -32,7 +31,6 @@ class DeliveryWecomMemberController extends Controller
         );
 
         $items = Staff::indexQuery()
-            ->leftJoin('admin_exts as ext', 'ext.adm_id', '=', 'adm.id')
             ->select('id as adm_id', 'name', 'wecom_name')
             ->orderByDesc('adm.id')
             ->get()
@@ -69,9 +67,9 @@ class DeliveryWecomMemberController extends Controller
 
         DB::transaction(function () use (&$items) {
             foreach ($items->chunk(50) as $chunks) {
-                StaffExt::query()->upsert($chunks->all(), ['adm_id'], ['wecom_name']);
+                Staff::query()->upsert($chunks->all(), ['id'], ['wecom_name']);
             }
-            StaffExt::query()->whereNotIn('adm_id', $items->pluck('adm_id')->all())->delete();
+            Staff::query()->whereNotIn('adm_id', $items->pluck('id')->all())->delete();
         });
 
         return $this->response()->respond();

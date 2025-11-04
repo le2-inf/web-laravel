@@ -5,10 +5,6 @@ return [
         'name'   => '员工',
         'suffix' => '',
     ],
-    'StaffExt' => [
-        'name'   => '员工扩展',
-        'suffix' => '',
-    ],
     'StaffPermission' => [
         'name'   => '员工权限',
         'suffix' => '',

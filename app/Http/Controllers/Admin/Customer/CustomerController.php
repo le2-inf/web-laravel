@@ -22,6 +22,7 @@ use App\Models\Vehicle\VehicleUsage;
 use App\Models\Vehicle\VehicleViolation;
 use App\Services\PaginateService;
 use App\Services\Uploader;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -64,11 +65,20 @@ class CustomerController extends Controller
         $paginate = new PaginateService(
             [],
             [['cu.cu_id', 'desc']],
-            [],
+            ['kw'],
             []
         );
 
-        $paginate->paginator($query, $request, [], $columns);
+        $paginate->paginator($query, $request, [
+            'kw__func' => function ($value, Builder $builder) {
+                $builder->where(function (Builder $builder) use ($value) {
+                    $builder->whereLike('cu.contact_name', '%'.$value.'%')
+                        ->orWhereLike('cu.contact_phone', '%'.$value.'%')
+                        ->orWhereLike('cu.cu_remark', '%'.$value.'%')
+                    ;
+                });
+            },
+        ], $columns);
 
         return $this->response()->withData($paginate)->respond();
     }

@@ -23,40 +23,49 @@ class HistoryController extends Controller
 
     public function __invoke(Request $request): Response
     {
+        $model_keys           = array_keys($this->config['models']);
+        $class_basename_array = array_map(function ($class_name) {
+            return class_basename($class_name);
+        }, $model_keys);
+
         $validator = Validator::make(
             $request->route()->parameters(),
             [
-                'model_name_short' => ['required', Rule::in(array_keys($this->config['models']))],
-                'pk'               => ['required', 'int'],
+                'class_basename' => ['required', Rule::in($class_basename_array)],
+                'pk'             => ['required', 'int'],
             ]
         );
 
-        // 如果验证失败，返回错误信息
         if ($validator->fails()) {
             throw new ValidationException($validator);
         }
 
         $input = $validator->validated();
 
-        $modelName = getModel($input['model_name_short']);
+        $class_basename = $input['class_basename'];
+        $class_name     = getModel($class_basename);
+        $pk             = $input['pk'];
 
-        /** @var Model $modelClass */
-        $modelClass = new $modelName();
+        /** @var Model $model */
+        $model = new $class_name();
 
-        $table = $modelClass->getTable();
+        $table = $model->getTable();
 
-        $row = $modelClass->findOrFail($input['pk']);
+        //        $row = $model->query()->findOrFail($pk);
 
-        $unions = $this->config['union'][$input['model_name_short']] ?? [];
+        $unions = $this->config['union'][$class_name] ?? [];
         if ($unions) {
             foreach ($unions as $key => &$union) {
-                list($relation_class, $relation_id) = $union;
+                [$relation_class, $field] = $union;
 
-                $relation_object   = $row->{$relation_class};
-                $relation_id_value = $relation_object?->{$relation_id};
+                /** @var Model $relation_model */
+                $relation_model = new $relation_class();
+                $relation_value = $relation_model->query()->where($field, '=', $pk)->first()?->getKey();
 
-                if ($relation_id_value) {
-                    $union[] = $relation_id_value;
+                if ($relation_value) {
+                    $union[] = class_basename($relation_class);
+                    $union[] = $relation_model->getTable();
+                    $union[] = $relation_value;
                 } else {
                     unset($unions[$key]);
                 }
@@ -69,14 +78,15 @@ class HistoryController extends Controller
         $history = DB::table($auditSchema.'.'.$table)
             ->select(
                 '*',
-                DB::raw("DATE_TRUNC('second', changed_at) as changed_at"),
+                DB::raw("DATE_TRUNC('second', changed_at) as changed_at_"),
                 DB::raw(sprintf(" '%s' as tb", $table)),
             )
-            ->where('pk', '=', $input['pk'])
+            ->where('pk', '=', $pk)
             ->when($unions, function (Builder $query) use ($auditSchema, $unions) {
                 foreach ($unions as $union) {
-                    list($_, $__, $union_table, $union_id) = $union;
-                    $sub                                   = DB::table($auditSchema.'.'.$union_table)
+                    list(, , , $union_table, $union_id) = $union;
+
+                    $sub = DB::table($auditSchema.'.'.$union_table)
                         ->select(
                             '*',
                             DB::raw("DATE_TRUNC('second', changed_at) as changed_at"),
@@ -88,7 +98,7 @@ class HistoryController extends Controller
                     $query->union($sub);
                 }
             })
-            ->orderBy('log_id', 'desc')
+            ->orderBy('changed_at', 'desc')
             ->get()
         ;
 
@@ -96,36 +106,30 @@ class HistoryController extends Controller
             $rec->new_data = $rec->new_data ? json_decode($rec->new_data, true) : null;
             $rec->old_data = $rec->old_data ? json_decode($rec->old_data, true) : null;
 
-            //            /** @var Customer $modelClass */
-            //            $modelClass = getModelByTable($rec->tb);
-            //
-            //                        $changed = array_udiff_assoc($rec->new_data, $rec->old_data, 'shallow_diff');
-            //
-            //                        $model = (new $modelClass())->fill($changed);
-            //
-            //                        $rec->changed = $model->toArray();
+            //            $rec->changed = array_udiff_assoc($rec->new_data, $rec->old_data, 'shallow_diff');
         });
 
-        $properties = trans('property.'.$input['model_name_short']);
+        $properties = trans('property.'.$class_basename);
         $this->response()->withLang($properties);
 
         if ($unions) {
             foreach ($unions as $key => $union) {
-                list($relation_class, $_, $relation_table) = $union;
+                list(, , $relation_basename, $relation_table) = $union;
 
-                $properties = trans('property.'.$relation_class);
-                $this->response()->withLang($properties);
+                $relation_basename_props = trans('property.'.$relation_basename);
+                $this->response()->withLang($relation_basename_props);
 
-                $model_name = trans('model.'.$relation_class.'.name');
-                $this->response()->withLang(['model.'.$relation_table => $model_name]);
+                $relation_basename_trans = trans('model.'.$relation_basename.'.name');
+                $this->response()->withLang(['model.'.$relation_table => $relation_basename_trans]);
             }
         }
 
-        $controller_class = getNamespaceByComposerMap($input['model_name_short'].'Controller', 'Admin');
+        $controller_class = getNamespaceByComposerMap($class_basename.'Controller', 'Admin');
 
         try {
             $controller_class::{'labelOptions'}($this);
         } catch (\Throwable $e) {
+            report($e);
         }
 
         return $this->response()->withData($history)->respond();

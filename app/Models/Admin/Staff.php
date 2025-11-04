@@ -7,7 +7,6 @@ use App\Enum\Admin\AdmUserType;
 use App\Models\_\ModelTrait;
 use App\Models\Vehicle\Vehicle;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -21,6 +20,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property int             $id                    序号
  * @property string          $name                  姓名
  * @property string          $email                 邮件地址
+ * @property string          $wecom_name            企业微信账号
  * @property null|Carbon     $email_verified_at
  * @property string          $password              密码
  * @property null|string     $remember_token
@@ -30,7 +30,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property null|Carbon     $expires_at            账号过期时间；当为 null 的时候，永不过期
  * @property null|bool       $is_mock
  *                                                  -- relation
- * @property StaffExt        $AdminExt
  */
 class Staff extends Authenticatable
 {
@@ -98,11 +97,6 @@ class Staff extends Authenticatable
         });
 
         return [$key => $value];
-    }
-
-    public function AdminExt(): HasOne
-    {
-        return $this->hasOne(StaffExt::class, 'adm_id', 'id');
     }
 
     public function VehicleManagers(): HasMany
