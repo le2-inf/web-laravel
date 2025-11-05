@@ -14,12 +14,12 @@ use Illuminate\Support\Facades\DB;
 
 #[ClassName('设定值')]
 /**
- * @property int    $cfg_id
- * @property string $cfg_key        设定名
- * @property string $cfg_value      设定值
- * @property string $cfg_remark     设定备注
- * @property int    $usage_category 使用区分
- * @property int    $masked         是否打码
+ * @property int                  $cfg_id
+ * @property string               $cfg_key        设定名
+ * @property string               $cfg_value      设定值
+ * @property string               $cfg_remark     设定备注
+ * @property CfgUsageCategory|int $usage_category 使用区分
+ * @property int                  $masked         是否打码
  */
 class Configuration extends Model
 {

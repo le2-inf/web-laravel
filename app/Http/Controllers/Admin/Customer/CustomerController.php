@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Admin\Customer;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
+use App\Console\Commands\Sys\ImportAdminAndRoles;
 use App\Enum\Customer\CuCuType;
 use App\Enum\Customer\CuiCuiGender;
 use App\Http\Controllers\Controller;
-use App\Models\_\Configuration;
 use App\Models\Admin\Staff;
 use App\Models\Customer\Customer;
 use App\Models\Customer\CustomerCompany;
@@ -46,35 +46,35 @@ class CustomerController extends Controller
     {
         $this->options(true);
 
-        $query   = Customer::indexQuery();
+        $query   = Customer::modelQuery();
         $columns = Customer::indexColumns();
 
         // 如果是管理员或经理，则可以看到所有的用户；如果不是管理员或经理，则只能看到销售或驾管为自己的用户。
         $user = $request->user();
 
-        $role_sales_manager = $user->hasRole(Configuration::fetch('role_sales_manager'));
+        $role_sales_manager = $user->hasRole(ImportAdminAndRoles::role_sales);
         if ($role_sales_manager) {
             $query->whereNull('cu.sales_manager')->orWhere('cu.sales_manager', '=', $user->id);
         }
 
-        $role_driver_manager = $user->hasRole(Configuration::fetch('role_driver_manager'));
-        if ($role_driver_manager) {
+        $has_role_driver = $user->hasRole(ImportAdminAndRoles::role_driver);
+        if ($has_role_driver) {
             $query->whereNull('cu.driver_manager')->orWhere('cu.driver_manager', '=', $user->id);
         }
 
         $paginate = new PaginateService(
             [],
-            [['cu.cu_id', 'desc']],
+            [['cu_id', 'desc']],
             ['kw'],
             []
         );
 
         $paginate->paginator($query, $request, [
-            'kw__func' => function ($value, Builder $builder) {
+            '__kw__func' => function ($value, Builder $builder) {
                 $builder->where(function (Builder $builder) use ($value) {
-                    $builder->whereLike('cu.contact_name', '%'.$value.'%')
-                        ->orWhereLike('cu.contact_phone', '%'.$value.'%')
-                        ->orWhereLike('cu.cu_remark', '%'.$value.'%')
+                    $builder->whereLike('contact_name', '%'.$value.'%')
+                        ->orWhereLike('contact_phone', '%'.$value.'%')
+                        ->orWhereLike('cu_remark', '%'.$value.'%')
                     ;
                 });
             },

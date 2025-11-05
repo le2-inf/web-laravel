@@ -66,6 +66,16 @@ class VehicleModel extends Model
         ;
     }
 
+    public static function modelQuery(array $search = []): \Illuminate\Database\Eloquent\Builder
+    {
+        return static::query()
+            ->withCount([
+                'vehicles as vehicle_count_service'    => fn ($q) => $q->where('status_service', VeStatusService::YES),
+                'vehicles as vehicle_count_un_service' => fn ($q) => $q->where('status_service', VeStatusService::NO),
+            ])
+        ;
+    }
+
     public static function indexColumns(): array
     {
         return [

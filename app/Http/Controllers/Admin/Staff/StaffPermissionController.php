@@ -45,7 +45,9 @@ class StaffPermissionController extends Controller
         $paginate->paginator($query, $request, [
             'kw__func' => function ($value, Builder $builder) {
                 $builder->where(function (Builder $builder) use ($value) {
-                    $builder->where('name', 'like', '%'.$value.'%')->orWhere('title', 'like', '%'.$value.'%');
+                    $builder->where('name', 'like', '%'.$value.'%')
+                        ->orWhere('title', 'like', '%'.$value.'%')
+                    ;
                 });
             },
         ]);

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends Factory<ServiceCenter>
  */
-class CenterFactory extends Factory
+class ServiceCenterFactory extends Factory
 {
     /**
      * Define the model's default state.

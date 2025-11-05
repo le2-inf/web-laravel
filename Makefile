@@ -26,6 +26,10 @@ composer-version:
 	composer --version
 	php artisan --version
 
+composer-run:
+	php artisan serve
+
+
 npm-update:
 	npm update
 

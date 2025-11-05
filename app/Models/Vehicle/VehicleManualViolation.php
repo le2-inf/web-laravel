@@ -53,7 +53,8 @@ class VehicleManualViolation extends Model
     protected $guarded = ['vmv_id'];
 
     protected $casts = [
-        'status' => VmvStatus::class,
+        'status'             => VmvStatus::class,
+        'violation_datetime' => 'datetime:Y-m-d H:i',
     ];
 
     protected $appends = [

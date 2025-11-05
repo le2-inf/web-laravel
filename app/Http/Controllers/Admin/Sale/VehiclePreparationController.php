@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Admin\Sale;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
+use App\Console\Commands\Sys\ImportAdminAndRoles;
 use App\Enum\Vehicle\VeStatusDispatch;
 use App\Enum\Vehicle\VeStatusRental;
 use App\Enum\Vehicle\VeStatusService;
 use App\Enum\YesNo;
 use App\Http\Controllers\Controller;
-use App\Models\_\Configuration;
 use App\Models\Admin\Staff;
 use App\Models\Vehicle\Vehicle;
 use App\Models\Vehicle\VehiclePreparation;
@@ -66,12 +66,12 @@ class VehiclePreparationController extends Controller
         /** @var Staff $user */
         $user = $request->user();
 
-        $role_prep_vehicle  = $user->hasRole(Configuration::fetch('role_prep_vehicle')) || $user->hasRole(config('setting.super_role.name'));
-        $role_prep_document = $user->hasRole(Configuration::fetch('role_prep_document')) || $user->hasRole(config('setting.super_role.name'));
+        $has_role_prep_vehicle  = $user->hasRole(ImportAdminAndRoles::role_vehicle) || $user->hasRole(config('setting.super_role.name'));
+        $has_role_prep_document = $user->hasRole(ImportAdminAndRoles::role_payment) || $user->hasRole(config('setting.super_role.name'));
 
         return $this->response()->withData([
-            'role_prep_vehicle'  => $role_prep_vehicle,
-            'role_prep_document' => $role_prep_document,
+            'role_prep_vehicle'  => $has_role_prep_vehicle,
+            'role_prep_document' => $has_role_prep_document,
         ])->respond();
     }
 
@@ -80,8 +80,8 @@ class VehiclePreparationController extends Controller
     {
         $user = $request->user();
 
-        $role_prep_vehicle  = $user->hasRole(Configuration::fetch('role_prep_vehicle')) || $user->hasRole(config('setting.super_role.name'));
-        $role_prep_document = $user->hasRole(Configuration::fetch('role_prep_document')) || $user->hasRole(config('setting.super_role.name'));
+        $role_prep_vehicle  = $user->hasRole(ImportAdminAndRoles::role_vehicle) || $user->hasRole(config('setting.super_role.name'));
+        $role_prep_document = $user->hasRole(ImportAdminAndRoles::role_payment) || $user->hasRole(config('setting.super_role.name'));
 
         $validator = Validator::make(
             $request->all(),

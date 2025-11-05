@@ -137,7 +137,7 @@ class StaffController extends Controller
             $request->all(),
             [
                 'name'                  => ['bail', 'required', 'string', 'max:255'],
-                'admin_ext.wecom_name'  => ['bail', 'nullable', 'string', 'max:255'],
+                'wecom_name'            => ['bail', 'nullable', 'string', 'max:255'],
                 'email'                 => ['bail', 'nullable', 'string', 'email', 'max:255', Rule::unique(Staff::class)->ignore($staff)],
                 'roles_'                => ['bail', 'nullable'],
                 'password'              => ['bail', 'nullable', 'required_with:password_confirmation', 'string', 'min:8', 'confirmed'],
@@ -172,8 +172,6 @@ class StaffController extends Controller
             $roles_ = $input['roles_'] ?? [];
             $staff->syncRoles($roles_);
             unset($staff->roles);
-
-            $admin_ext = $input['admin_ext'] ?? null;
         });
 
         $this->response()->withMessages(message_success(__METHOD__));

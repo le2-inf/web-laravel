@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Sale;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
+use App\Console\Commands\Sys\ImportAdminAndRoles;
 use App\Enum\Payment\RpPtId;
 use App\Enum\Sale\DtDtExportType;
 use App\Enum\Sale\DtDtStatus;
@@ -18,7 +19,6 @@ use App\Enum\Vehicle\VeStatusDispatch;
 use App\Enum\Vehicle\VeStatusRental;
 use App\Enum\Vehicle\VeStatusService;
 use App\Http\Controllers\Controller;
-use App\Models\_\Configuration;
 use App\Models\Customer\Customer;
 use App\Models\Payment\Payment;
 use App\Models\Payment\PaymentType;
@@ -79,7 +79,7 @@ class SaleOrderController extends Controller
         // 如果是管理员或经理，则可以看到所有的用户；如果不是管理员或经理，则只能看到销售或驾管为自己的用户。
         $user = $request->user();
 
-        $role_sales_manager = $user->hasRole(Configuration::fetch('role_sales_manager'));
+        $role_sales_manager = $user->hasRole(ImportAdminAndRoles::role_sales);
         if ($role_sales_manager) {
             $query->whereNull('cu.sales_manager')->orWhere('cu.sales_manager', '=', $user->id);
         }

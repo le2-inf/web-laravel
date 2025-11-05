@@ -35,7 +35,7 @@ trait ModelTrait
         return array_merge($this->hidden, ['created_at', 'updated_at']);
     }
 
-    abstract public static function indexQuery(array $search = []): Builder;
+    abstract public static function indexQuery(array $search = []);
 
     public function toArray(): array|object
     {

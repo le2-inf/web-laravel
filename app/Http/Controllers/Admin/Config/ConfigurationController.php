@@ -51,11 +51,19 @@ abstract class ConfigurationController extends Controller
         $paginate = new PaginateService(
             [],
             [['cfg_key', 'asc']],
-            [],
+            ['kw'],
             []
         );
 
-        $paginate->paginator($query, $request, []);
+        $paginate->paginator($query, $request, [
+            'kw__func' => function ($value, Builder $builder) {
+                $builder->where(function (Builder $builder) use ($value) {
+                    $builder->where('cfg_key', 'like', '%'.$value.'%')
+                        ->orWhere('cfg_remark', 'like', '%'.$value.'%')
+                    ;
+                });
+            },
+        ]);
 
         return $this->response()->withData($paginate)->respond();
     }
@@ -92,7 +100,7 @@ abstract class ConfigurationController extends Controller
     public function destroy(Configuration $configuration): Response
     {
         DB::transaction(function () use ($configuration) {
-            if ($configuration['usage_category'] === $this->usageCategory) {
+            if ($configuration->usage_category->value === $this->usageCategory) {
                 $configuration->deleteOrFail();
             }
         });

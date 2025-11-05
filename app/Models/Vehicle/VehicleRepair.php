@@ -141,10 +141,10 @@ class VehicleRepair extends Model
             ->where('pt_id', '=', $pt_id)->where('is_valid', '=', RpIsValid::VALID)
             ->withDefault(
                 [
-                    'pt_id'            => $pt_id,
-                    'payment_day_type' => PaymentType::query()->where('pt_id', '=', $pt_id)->first(),
-                    'should_pay_date'  => now()->format('Y-m-d'),
-                    'pay_status'       => RpPayStatus::UNPAID,
+                    'pt_id'           => $pt_id,
+                    'payment_type'    => PaymentType::query()->where('pt_id', '=', $pt_id)->first(),
+                    'should_pay_date' => now()->format('Y-m-d'),
+                    'pay_status'      => RpPayStatus::UNPAID,
                 ]
             )
         ;

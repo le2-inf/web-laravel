@@ -7,6 +7,7 @@ use App\Enum\Vehicle\VeStatusRental;
 use App\Enum\Vehicle\VeStatusService;
 use App\Models\Vehicle\Vehicle;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 
 /**
@@ -39,11 +40,11 @@ class VehicleFactory extends Factory
 
             // jsonb 可空；给出一个简单对象，Eloquent 会自动 JSON 编码
             've_license_face_photo' => $this->faker->boolean(60) ? [
-                'url'  => $this->faker->imageUrl(800, 600, 'document', true),
+                'url'  => UploadedFile::fake()->image('photo.jpg', 640, 480),
                 'hash' => $this->faker->sha1(),
             ] : null,
             've_license_back_photo' => $this->faker->boolean(60) ? [
-                'url'  => $this->faker->imageUrl(800, 600, 'document', true),
+                'url'  => UploadedFile::fake()->image('photo.jpg', 640, 480),
                 'hash' => $this->faker->sha1(),
             ] : null,
 

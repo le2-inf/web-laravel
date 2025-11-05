@@ -77,6 +77,7 @@ use Illuminate\Validation\Validator;
  * @property VehicleModel                 $VehicleModel
  * @property Staff                        $VehicleManager
  *                                                                     -
+ * @property string|VeVeType              $ve_type_label               车辆类型-中文
  * @property null|string                  $vehicle_brand_model_name    车牌品牌车型
  * @property null|string                  $status_service_label        运营状态-中文
  * @property null|string                  $status_repair_label         维修状态-中文
