@@ -83,7 +83,7 @@ class BookingOrder extends Model
 
     public function Customer(): BelongsTo
     {
-        return $this->belongsTo(Customer::class, 'cu_id', 'cu_id');
+        return $this->belongsTo(Customer::class, 'cu_id', 'cu_id')->withDefault();
     }
 
     public static function indexQuery(array $search = []): Builder

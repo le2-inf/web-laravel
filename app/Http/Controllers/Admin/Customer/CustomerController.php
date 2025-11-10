@@ -46,7 +46,7 @@ class CustomerController extends Controller
     {
         $this->options(true);
 
-        $query   = Customer::modelQuery();
+        $query   = Customer::indexQuery();
         $columns = Customer::indexColumns();
 
         // 如果是管理员或经理，则可以看到所有的用户；如果不是管理员或经理，则只能看到销售或驾管为自己的用户。
@@ -64,17 +64,17 @@ class CustomerController extends Controller
 
         $paginate = new PaginateService(
             [],
-            [['cu_id', 'desc']],
+            [['cu.cu_id', 'desc']],
             ['kw'],
             []
         );
 
         $paginate->paginator($query, $request, [
-            '__kw__func' => function ($value, Builder $builder) {
+            'kw__func' => function ($value, Builder $builder) {
                 $builder->where(function (Builder $builder) use ($value) {
-                    $builder->whereLike('contact_name', '%'.$value.'%')
-                        ->orWhereLike('contact_phone', '%'.$value.'%')
-                        ->orWhereLike('cu_remark', '%'.$value.'%')
+                    $builder->whereLike('cu.contact_name', '%'.$value.'%')
+                        ->orWhereLike('cu.contact_phone', '%'.$value.'%')
+                        ->orWhereLike('cu.cu_remark', '%'.$value.'%')
                     ;
                 });
             },

@@ -31,7 +31,7 @@ composer-run:
 
 
 npm-update:
-	npm update
+	npm update --verbose
 
 npm-dev:
 	rm -f public/hot

@@ -58,7 +58,7 @@ class BookingVehicle extends Model
 
     public function Vehicle(): BelongsTo
     {
-        return $this->belongsTo(Vehicle::class, 'plate_no', 'plate_no')->with('VehicleModel');
+        return $this->belongsTo(Vehicle::class, 'plate_no', 'plate_no')->withDefault()->with('VehicleModel');
     }
 
     public static function indexQuery(array $search = []): Builder

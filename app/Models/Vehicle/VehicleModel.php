@@ -57,12 +57,12 @@ class VehicleModel extends Model
             ->from('vehicle_models', 'vm')
             ->select(
                 'vm.*',
-                DB::raw("COUNT(ve.ve_id) FILTER (WHERE ve.status_service = '".VeStatusService::YES."') AS vehicle_count_service"),
-                DB::raw("COUNT(ve.ve_id) FILTER (WHERE ve.status_service = '".VeStatusService::NO."') AS vehicle_count_un_service"),
                 DB::raw(VmVmStatus::toCaseSQL()),
             )
-            ->leftJoin('vehicles as ve', 'vm.vm_id', '=', 've.vm_id')
-            ->groupBy('vm.vm_id')
+            ->addSelect([
+                'vehicle_count_service'    => Vehicle::query()->selectRaw('count(*)')->whereColumn('vehicles.vm_id', 'vm.vm_id')->where('vehicles.status_service', '=', VeStatusService::YES),
+                'vehicle_count_un_service' => Vehicle::query()->selectRaw('count(*)')->whereColumn('vehicles.vm_id', 'vm.vm_id')->where('vehicles.status_service', '=', VeStatusService::NO),
+            ])
         ;
     }
 
