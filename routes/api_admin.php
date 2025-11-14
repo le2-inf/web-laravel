@@ -35,6 +35,7 @@ use App\Http\Controllers\Admin\Sale\BookingVehicleController;
 use App\Http\Controllers\Admin\Sale\SaleOrderCancelController;
 use App\Http\Controllers\Admin\Sale\SaleOrderController;
 use App\Http\Controllers\Admin\Sale\SaleOrderTplController;
+use App\Http\Controllers\Admin\Sale\SaleSettlementApproveController;
 use App\Http\Controllers\Admin\Sale\saleSettlementController;
 use App\Http\Controllers\Admin\Sale\VehiclePreparationController;
 use App\Http\Controllers\Admin\Sale\VehicleReplacementController;
@@ -161,8 +162,9 @@ Route::group(['middleware' => [config('setting.mock.enable') ? TemporaryAdmin::c
 
     Route::post('sale-settlement/upload', [saleSettlementController::class, 'upload']);
     Route::get('sale-settlement/{sale_settlement}/doc', [saleSettlementController::class, 'doc']);
-    Route::put('sale-settlement/{sale_settlement}/approve', [saleSettlementController::class, 'approve']);
     Route::resource('sale-settlement', saleSettlementController::class);
+
+    Route::apiSingleton('sale-settlement.approve', SaleSettlementApproveController::class);
 
     Route::post('booking-vehicles/upload', [BookingVehicleController::class, 'upload']);
     Route::put('booking-vehicles/{booking_vehicle}/status', [BookingVehicleController::class, 'status']);

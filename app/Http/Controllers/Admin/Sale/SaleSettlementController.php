@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Admin\Sale;
 
 use App\Attributes\PermissionAction;
 use App\Attributes\PermissionType;
-use App\Enum\Payment\RpIsValid;
-use App\Enum\Payment\RpPayStatus;
 use App\Enum\Payment\RpPtId;
 use App\Enum\Payment\RsDeleteOption;
 use App\Enum\Sale\DtDtExportType;
@@ -21,6 +19,12 @@ use App\Models\Payment\Payment;
 use App\Models\Sale\DocTpl;
 use App\Models\Sale\SaleOrder;
 use App\Models\Sale\SaleSettlement;
+use App\Models\Sale\VehicleReplacement;
+use App\Models\Vehicle\VehicleInspection;
+use App\Models\Vehicle\VehicleManualViolation;
+use App\Models\Vehicle\VehicleRepair;
+use App\Models\Vehicle\VehicleUsage;
+use App\Models\Vehicle\VehicleViolation;
 use App\Services\DocTplService;
 use App\Services\PaginateService;
 use App\Services\Uploader;
@@ -111,7 +115,7 @@ class SaleSettlementController extends Controller
         $input = $validator->validated();
 
         $saleSettlement = $saleOrder->SaleSettlement;
-        if (!$saleSettlement) {
+        if (!$saleSettlement) { // 是新增
             /** @var Payment $payment */
             $payment = $saleOrder->Payments()->where('pt_id', '=', RpPtId::DEPOSIT)->first();
 
@@ -141,7 +145,7 @@ class SaleSettlementController extends Controller
             $this->response()->withExtras(
                 Staff::optionsWithRoles(),
             );
-        } else {
+        } else { // 是修改
             $this->response()->withExtras(
                 DocTpl::options(function (Builder $query) {
                     $query->where('dt.dt_type', '=', DtDtType::SALE_SETTLEMENT);
@@ -149,6 +153,24 @@ class SaleSettlementController extends Controller
                 Staff::optionsWithRoles(),
             );
         }
+
+        $saleOrder->load('Customer', 'Vehicle', 'Payments');
+
+        $this->response()->withExtras(
+            ['sale_order' => $saleOrder],
+            VehicleReplacement::kvList(so_id: $saleOrder->so_id),
+            VehicleInspection::kvList(so_id: $saleOrder->so_id),
+            Payment::kvList(so_id: $saleOrder->so_id),
+            Payment::kvStat(),
+            SaleSettlement::kvList(so_id: $saleOrder->so_id),
+            VehicleUsage::kvList(so_id: $saleOrder->so_id),
+            VehicleRepair::kvList(so_id: $saleOrder->so_id),
+            VehicleRepair::kvStat(),
+            VehicleViolation::kvList(so_id: $saleOrder->so_id),
+            VehicleViolation::kvStat(),
+            VehicleManualViolation::kvList(so_id: $saleOrder->so_id),
+            VehicleManualViolation::kvStat(),
+        );
 
         return $this->response()->withData($saleSettlement)->respond();
     }
@@ -297,98 +319,6 @@ class SaleSettlementController extends Controller
     public function upload(Request $request): Response
     {
         return Uploader::upload($request, 'sale_settlement', ['additional_photos'], $this);
-    }
-
-    #[PermissionAction(PermissionAction::APPROVE)]
-    public function approve(Request $request, SaleSettlement $saleSettlement): Response
-    {
-        $validator = Validator::make(
-            $request->all(),
-            [
-            ],
-            [],
-            trans_property(Payment::class)
-        )
-            ->after(function (\Illuminate\Validation\Validator $validator) use ($saleSettlement) {
-                if (!$validator->failed()) {
-                    if (SsReturnStatus::CONFIRMED === $saleSettlement->return_status) {
-                        $validator->errors()->add('return_status', '不能重复审核');
-                    }
-                }
-            })
-        ;
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-
-        //        $input = $validator->validated();
-
-        $saleOrder = $saleSettlement->SaleOrder;
-
-        $unPayCount = Payment::query()
-            ->where('so_id', '=', $saleOrder->so_id)
-            ->where('is_valid', '=', RpIsValid::VALID)
-            ->where('pay_status', '=', RpPayStatus::UNPAID)
-            ->where('pt_id', '!=', RpPtId::VEHICLE_RETURN_SETTLEMENT_FEE)
-            ->count()
-        ;
-
-        DB::transaction(function () use ($saleOrder, $unPayCount, $saleSettlement) {
-            $saleOrder->update([
-                'order_status'                                            => $unPayCount > 0 ? SoOrderStatus::EARLY_TERMINATION : SoOrderStatus::COMPLETED,
-                $unPayCount > 0 ? 'early_termination_at' : 'completed_at' => now(),
-            ]);
-
-            $saleOrder->Vehicle->updateStatus(status_rental: VeStatusRental::PENDING);
-
-            switch ($saleSettlement->delete_option) {
-                case RsDeleteOption::DELETE:
-                    Payment::query()
-                        ->where('so_id', '=', $saleOrder->so_id)
-                        ->where('pay_status', '=', RpPayStatus::UNPAID)
-                        ->where('pt_id', '!=', RpPtId::VEHICLE_RETURN_SETTLEMENT_FEE)
-                        ->update([
-                            'is_valid' => RpIsValid::INVALID,
-                        ])
-                    ;
-
-                    break;
-
-                case RsDeleteOption::DO_NOT_DELETE:
-                default:
-                    break;
-            }
-
-            if ($saleSettlement->settlement_amount > 0 || $saleSettlement->deposit_return_amount > 0) {
-                Payment::query()->updateOrCreate([
-                    'so_id' => $saleOrder->so_id,
-                    'pt_id' => $saleSettlement->deposit_return_amount > 0 ? RpPtId::REFUND_DEPOSIT : RpPtId::VEHICLE_RETURN_SETTLEMENT_FEE,
-                ], [
-                    'should_pay_date'   => $saleSettlement->deposit_return_date,
-                    'should_pay_amount' => bccomp($saleSettlement->deposit_return_amount, '0', 2) > 0 ? '-'.$saleSettlement->deposit_return_amount : $saleSettlement->settlement_amount,
-                    'ss_remark'         => (function () use ($saleSettlement): string {
-                        $remark_array = array_combine(
-                            array_intersect_key(trans_property(SaleSettlement::class), array_flip(array_keys(SaleSettlement::calcOpts))),
-                            array_intersect_key($saleSettlement->toArray(), array_flip(array_keys(SaleSettlement::calcOpts)))
-                        );
-                        $remark_array = array_filter($remark_array, fn ($v) => 0.0 != floatval($v));
-
-                        return implode(';', array_map(fn ($key, $value) => "{$key}:{$value}", array_keys($remark_array), $remark_array));
-                    })(),
-                ]);
-            }
-            //                Payment::query()->where([
-            //                    'so_id' => $saleOrder->so_id,
-            //                ])->delete();
-
-            $saleSettlement->update([
-                'return_status' => SsReturnStatus::CONFIRMED,
-                'approved_by'   => Auth::id(),
-                'approved_at'   => now(),
-            ]);
-        });
-
-        return $this->response()->withData($saleSettlement)->withMessages(message_success(__METHOD__))->respond();
     }
 
     protected function options(?bool $with_group_count = false): void

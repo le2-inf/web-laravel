@@ -201,10 +201,8 @@ class S3FilesClean extends Command
 
     /**
      * 获取需要检查的表和列。
-     *
-     * @return array
      */
-    protected function getTablesAndColumns()
+    protected function getTablesAndColumns(): array
     {
         $query = <<<'SQL'
 SELECT table_name, column_name
