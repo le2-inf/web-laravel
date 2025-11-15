@@ -31,11 +31,19 @@ composer-run:
 
 
 npm-update:
-	npm update --verbose
+	pnpm update
 
 npm-dev:
 	rm -f public/hot
 	rm -rf public/build
 	echo "Non-production: running dev."
-	npm ls
-	npm run dev
+	pnpm ls
+	pnpm run dev
+
+pnpm-config:
+	npm config set registry https://registry.npmmirror.com
+	pnpm config set registry https://registry.npmmirror.com
+	npm config get registry
+	pnpm config get registry
+	cat ~/.npmrc
+	pnpm store path
